@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>signup</title>
+    <link rel="stylesheet" href="../static/css/style.css" />
+  </head>
+  <body>
+    <div class="main_wrap">
+      <div class="main_img">
+        <h1 class="main_title">Todo Checkk</h1>
+      </div>
+      <div class="main_con">
+        <h3 class="sub_title">
+          <span>SignUp</span>
+          <span></span>
+        </h3>
+        <form name="form-signup" method="post">
+          <label>
+            <span>EMAIL</span>
+            <input
+              type="email"
+              placeholder="email을 입력하세요"
+              name="userEmail"
+              required
+            />
+          </label>
+          <label>
+            <span>PW</span>
+            <input
+              type="password"
+              placeholder="4글자에서 18글자 사이"
+              name="userPw"
+              required
+              minlength="4"
+              maxlength="18"
+            />
+          </label>
+
+          <button>회원가입</button>
+        </form>
+
+        <div class="link">
+          <a href="/auth/search-pw">아이디 / 비밀번호 찾기</a>
+          <a href="/">로그인</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

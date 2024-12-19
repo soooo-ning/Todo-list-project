@@ -1,0 +1,221 @@
+* {
+  /* border: 1px solid #000; */
+}
+
+p {
+  margin: 10px 0px;
+}
+
+body {
+  display: flex;
+  margin: 0; /* 기본 마진 제거 */
+}
+
+.sidebar {
+  position: fixed; /* fixed 대신 relative 사용 */
+  height: 100%; /* 화면 높이 */
+  width: 300px;
+  background-color: rgb(255, 249, 228);
+  overflow-y: auto;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none; /* 크롬, 사파리 등에서 스크롤바 숨김 */
+}
+
+.main-container {
+  /* padding: 300px; */
+  margin-left: 320px;
+}
+
+#profileImg {
+  border-radius: 50%;
+  border: 3px solid #dddddd;
+  background-color: #fff;
+}
+
+a {
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+.naviBar {
+  margin: 30px 50px;
+}
+
+.displaybox {
+  margin-top: 30px;
+}
+.setbox {
+  display: none;
+  border: 1px solid black;
+  background-color: white;
+  width: 180px;
+  border-radius: 10px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+.mode-set {
+  cursor: pointer;
+}
+
+.box {
+  /* width: 128px; */
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.keyBar {
+  margin: 30px 50px;
+}
+
+#keyul {
+  list-style: none;
+  /* margin: 20px; */
+}
+
+.container1 {
+  position: fixed;
+  height: 100%;
+  width: 300px;
+  background-color: rgb(255, 249, 228);
+}
+
+.profile {
+  text-align: center;
+  padding-top: 30px;
+}
+
+.logoutBtn {
+  display: flex;
+  margin: 0px 50px;
+  justify-content: space-between;
+}
+
+.btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 13px;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.allBox {
+  width: 40rem;
+  max-width: 100%;
+  box-shadow: 0 0 10px #0003;
+  border-radius: 10px;
+  padding: 10px 30px;
+  padding-bottom: 30px;
+  margin-bottom: 10px;
+  /* text-align: start; */
+}
+
+.profileImg {
+  display: flex;
+  justify-content: center;
+}
+
+.dynamic {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+input {
+  /* width: 20rem; */
+  max-width: 100%;
+  border: 1px solid darkgray;
+  border-radius: 30px;
+  padding: 5px 10px;
+}
+
+.pwbox {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.deletebox {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+label {
+  display: flex;
+  margin: 10px 0px;
+  justify-content: center;
+}
+
+span {
+  width: 150px;
+}
+
+.changePwbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button.changePw {
+  margin-top: 30px;
+  align-self: center; /* 버튼을 중앙에 정렬 */
+}
+
+/* 다크모드 설정 */
+:root {
+  --background-color: #ffffff; /* 기본 배경색 (라이트 모드) */
+  --text-color: #000000; /* 기본 글자색 (라이트 모드) */
+  --button-bg: rgba(233, 195, 251, 0.87); /* 버튼 배경색 (라이트 모드) */
+  --button-color: rgba(128, 37, 170, 0.87); /* 버튼 텍스트 색상 (라이트 모드) */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.btn-dark {
+  background-color: rgba(233, 195, 251, 0.87);
+  border-radius: 13px;
+  color: rgba(115, 29, 144, 0.87);
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.btn-light {
+  background-color: rgba(128, 37, 170, 0.87);
+  border-radius: 13px;
+  color: rgba(233, 195, 251, 0.87);
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.sidebar.dark-mode {
+  position: fixed; /* fixed 대신 relative 사용 */
+  height: 100vh; /* 화면 높이 */
+  width: 300px;
+  background-color: rgba(128, 37, 170, 0.87);
+  color: white;
+  overflow-y: auto;
+}
+
+body.dark-mode {
+  --background-color: rgba(128, 37, 170, 0.87);
+  --text-color: white;
+}

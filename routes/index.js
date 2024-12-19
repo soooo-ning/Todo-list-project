@@ -27,7 +27,7 @@ router.get('/user/profile', userController.getProfile);
 router.patch('/user/api/profile', userController.editProfile);
 router.get('/user/reset-pw', userController.getResetPw);
 router.patch('/user/api/reset-pw', userController.resetPw);
-router.get('/user/api/delete-account', userController.getDeleteAccount);
+router.get('/user/delete-account', userController.getDeleteAccount);
 router.delete('/user/api/delete-account', userController.deleteAccount);
 
 // Todo CRUD

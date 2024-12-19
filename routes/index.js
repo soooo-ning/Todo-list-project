@@ -1,42 +1,47 @@
 const express = require('express');
 const router = express.Router();
-const controller = require('../controllers/AuthController');
-const controller = require('../controllers/TodoController');
-const controller = require('../controllers/UserController');
+
+// 컨트롤러를 각각 선언
+const authController = require('../controllers/AuthController');
+const todoController = require('../controllers/TodoController');
+const userController = require('../controllers/UserController');
 
 // Auth signin
-router.get('/', controller.getSignIn);
-router.post('/auth/api/sign-in', controller.signIn);
-router.post('/auth/api/sign-in/token', controller.jwtToken);
-router.post('/auth/api/sign-in/google', controller.signInGoogle);
-router.post('/auth/api/sign-in/kakao', controller.signInKakao);
+router.get('/', authController.getSignIn);
+router.post('/auth/api/sign-in', authController.signIn);
+router.post('/auth/api/sign-in/token', authController.jwtToken);
+router.post('/auth/api/sign-in/google', authController.signInGoogle);
+router.post('/auth/api/sign-in/kakao', authController.signInKakao);
 
 // Auth signup
-router.get('/auth/sign-up', controller.getSignUp);
-router.post('/auth/api/sign-up', controller.signUp);
-router.get('/auth/api/sign-up/check', controller.duplicatedEmail);
+router.get('/auth/sign-up', authController.getSignUp);
+router.post('/auth/api/sign-up', authController.signUp);
+router.get('/auth/api/sign-up/check', authController.duplicatedEmail);
 
 // Auth search pw
-router.get('/auth/search-pw', controller.getSearchPw);
-router.get('/auth/api/search-pw', controller.searchPw);
+router.get('/auth/search-pw', authController.getSearchPw);
+router.get('/auth/api/search-pw', authController.searchPw);
 
 // User
-router.get('/user/profile', controller.getProfile);
-router.patch('/user/api/profile', controller.editProfile);
-router.get('/user/reset-pw', controller.getResetPw);
-router.patch('/user/api/reset-pw', controller.resetPw);
-router.get('/user/api/delete-account', controller.getDeleteAccount);
-router.delete('/user/api/delete-account', controller.deleteAccount);
+router.get('/user/profile', userController.getProfile);
+router.patch('/user/api/profile', userController.editProfile);
+router.get('/user/reset-pw', userController.getResetPw);
+router.patch('/user/api/reset-pw', userController.resetPw);
+router.get('/user/api/delete-account', userController.getDeleteAccount);
+router.delete('/user/api/delete-account', userController.deleteAccount);
 
-// POST	/todo/api/write	writeTodo(투두 생성)
-// GET	/todo/api/get?id={id}	getTodo(특정 투두 조회)
-// PATCH	/todo/api/content	editTodo(투두 내용 수정)
-// PATCH	/todo/api/state	updateState(상태 업데이트)
-// DELETE	/todo/api/delete	deleteTodo(투두 삭제)
-// GET	/todo/api/search?title={title}&content={content}	searchTodo(투두 검색)
-// GET	/todo/api/calander	calendarList(날짜 리스트 조회)
-// GET	/todo/api/list/priority	priorityList(우선순위 리스트)
-// GET	/todo/api/list/keyword?keyword={keyword}	keywordList(키워드 리스트)
-// GET	/todo/api/deleted-todo	deleteList(휴지통)
+// Todo CRUD
+router.get('/todo/api/write', todoController.getWriteTodo);
+router.post('/todo/api/write', todoController.writeTodo);
+router.get('/todo/api/get', todoController.getTodo);
+router.patch('/todo/api/content', todoController.editTodo);
+router.patch('/todo/api/state', todoController.updateState);
+router.delete('/todo/api/delete', todoController.deleteTodo);
+
+router.get('/todo/api/search', todoController.searchTodo);
+router.get('/todo/api/calander', todoController.calendarList);
+router.get('/todo/api/list/priority', todoController.priorityList);
+router.get('/todo/api/list/keyword', todoController.keywordList);
+router.get('/todo/api/deleted-todo', todoController.deleteList);
 
 module.exports = router;

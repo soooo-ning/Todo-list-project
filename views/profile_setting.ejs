@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>프로필 설정</title>
+  </head>
+  <body>
+    <%- include("./include/navi") %>
+    <!-- 여기서부터 프로필 -->
+    <div class="main-container">
+      <h2>프로필 설정</h2>
+      <h4>개인정보 또는 프로필사진을 변경합니다.</h4>
+      <br />
+      <div class="allBox">
+        <h3>내 프로필</h3>
+        <hr />
+        <h4>프로필 사진</h4>
+        <div class="profileImg">
+          <img
+            src="/static/img/26139_img.png"
+            alt="기본 프로필 이미지"
+            width="200"
+            height="200"
+          />
+        </div>
+        <div class="dynamic">
+          <input type="file" name="dynamicFile" id="dynamicFile" />
+          <button type="button" onclick="fileUpload()" style="margin-top: 10px">
+            프로필 업로드
+          </button>
+        </div>
+        <br />
+        <hr />
+
+        <h4>닉네임</h4>
+        <input type="text" id="nickname" value="<%#name%>" />
+        <button>변경</button>
+      </div>
+      <div class="accountbox">
+        <div class="allBox">
+          <h3>내 계정</h3>
+          <hr />
+          <h4>이메일</h4>
+          <input
+            type="email"
+            id="email"
+            value="<%#email@email.com%>"
+            readonly
+          />
+          <br /><br />
+          <hr />
+          <!-- <h4>비밀번호 변경</h4>
+          <h5>현재 비밀번호 일치 확인 후 변경페이지로 넘어갑니다.</h5>
+          <label
+            ><span>현재 비밀번호</span><input type="password" id="currentPw" />
+            <button type="button" onclick="changePwBtn">확인</button></label
+          ><br /> -->
+          <div class="deletebox" onclick="getChangePwPage()">
+            <p>비밀번호 변경</p>
+            <p><i class="fa-solid fa-arrow-right"></i></p>
+          </div>
+          <hr />
+          <div class="deletebox" onclick="getDeletePage()">
+            <p>회원 탈퇴</p>
+            <p><i class="fa-solid fa-arrow-right"></i></p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function getChangePwPage() {
+        document.location.href = '/user/reset-pw';
+      }
+
+      function getDeletePage() {
+        document.location.href = '/user/delete-account';
+      }
+    </script>
+  </body>
+</html>

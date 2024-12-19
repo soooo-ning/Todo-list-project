@@ -16,17 +16,23 @@
         <h3>내 프로필</h3>
         <hr />
         <h4>프로필 사진</h4>
-        <div class="profileImg">
+        <div class="profile-img">
           <img
             src="/static/img/26139_img.png"
             alt="기본 프로필 이미지"
+            id="profile-img"
             width="200"
             height="200"
           />
         </div>
         <div class="dynamic">
-          <input type="file" name="dynamicFile" id="dynamicFile" />
-          <button type="button" onclick="fileUpload()" style="margin-top: 10px">
+          <input type="file" name="dynamicFile" id="dynamic-file" />
+          <button
+            type="button"
+            onclick="fileUpload()"
+            class="btn"
+            style="margin-top: 10px"
+          >
             프로필 업로드
           </button>
         </div>
@@ -34,37 +40,26 @@
         <hr />
 
         <h4>닉네임</h4>
-        <input type="text" id="nickname" value="<%#name%>" />
-        <button>변경</button>
+        <form name="nicknameForm">
+          <input type="text" id="nickname" value="<%#name%>" />
+          <button class="btn">변경</button>
+        </form>
       </div>
-      <div class="accountbox">
-        <div class="allBox">
-          <h3>내 계정</h3>
-          <hr />
-          <h4>이메일</h4>
-          <input
-            type="email"
-            id="email"
-            value="<%#email@email.com%>"
-            readonly
-          />
-          <br /><br />
-          <hr />
-          <!-- <h4>비밀번호 변경</h4>
-          <h5>현재 비밀번호 일치 확인 후 변경페이지로 넘어갑니다.</h5>
-          <label
-            ><span>현재 비밀번호</span><input type="password" id="currentPw" />
-            <button type="button" onclick="changePwBtn">확인</button></label
-          ><br /> -->
-          <div class="deletebox" onclick="getChangePwPage()">
-            <p>비밀번호 변경</p>
-            <p><i class="fa-solid fa-arrow-right"></i></p>
-          </div>
-          <hr />
-          <div class="deletebox" onclick="getDeletePage()">
-            <p>회원 탈퇴</p>
-            <p><i class="fa-solid fa-arrow-right"></i></p>
-          </div>
+      <div class="allBox">
+        <h3>내 계정</h3>
+        <hr />
+        <h4>이메일</h4>
+        <input type="email" id="email" value="<%#email@email.com%>" readonly />
+        <br /><br />
+        <hr />
+        <div class="turn-page-box" onclick="getChangePwPage()">
+          <p>비밀번호 변경</p>
+          <p><i class="fa-solid fa-arrow-right"></i></p>
+        </div>
+        <hr />
+        <div class="turn-page-box" onclick="getDeletePage()">
+          <p>회원 탈퇴</p>
+          <p><i class="fa-solid fa-arrow-right"></i></p>
         </div>
       </div>
     </div>

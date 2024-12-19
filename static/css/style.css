@@ -1,0 +1,272 @@
+/*font 설정*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+@font-face {
+  font-family: 'yg-jalnan';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Reset CSS */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'noto-sans', Arial, Helvetica, sans-serif;
+  letter-spacing: -0.08em;
+  font-size: 15px;
+  color: #333;
+}
+html,
+body {
+  height: 100%;
+}
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+input[type='text'],
+input[type='password'],
+input[type='email'] {
+  display: block;
+  width: 100%;
+  border: 1px solid #999;
+  border-radius: 15px;
+  padding: 15px 10px;
+}
+button,
+textarea,
+select {
+  font: inherit;
+}
+button {
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+ul,
+ol {
+  list-style: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+/*login, signup, find, */
+.main_wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background: linear-gradient(230deg, #c8b6ff, #e7c6ff, #b8c0ff);
+}
+.main_img {
+  width: 40%;
+  padding: 10vh 4vw;
+  background: url(../img/calendar-op.png) no-repeat bottom -78px left -50px;
+  background-size: auto 68%;
+}
+.main_con {
+  width: 60%;
+  height: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: space-around;
+  justify-content: space-evenly;
+  padding: 10vh 4vw;
+  background: #f9f9f9;
+}
+.main_con > .sub_title {
+  width: 100%;
+  padding: 0 0 30px;
+}
+.main_con > .sub_title span:first-child {
+  font-size: 35px;
+  letter-spacing: 0.3em;
+  font-weight: 400;
+}
+.main_title {
+  width: 100%;
+  font-size: 53px;
+  text-align: center;
+  font-family: 'yg-jalnan';
+  letter-spacing: -0.02em;
+}
+.main_con form,
+.container form {
+  max-width: 80%;
+  width: 60%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6vh 0;
+}
+
+.main_con form > button,
+.container form > button {
+  box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 15px 21px;
+  background: #f9f9f9;
+  margin: 30px auto 0;
+  font-weight: 600;
+}
+.main_con form .btn_wrap {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+.main_con form .btn_wrap > button {
+  box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 15px 21px;
+  background: #f9f9f9;
+  font-weight: 600;
+}
+
+.main_con form .sns_login {
+  display: flex;
+  gap: 0 10px;
+}
+.main_con form .sns_login li {
+  width: 50px;
+  height: 50px;
+  border-radius: 60px;
+  overflow: hidden;
+}
+.main_con form .sns_login li button {
+  display: flex;
+  height: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.main_con form .sns_login li.kakao button {
+  background: #fee500;
+}
+.main_con form .sns_login li.kakao button img {
+  width: 57%;
+}
+.main_con form ~ .link {
+  width: 60%;
+  height: 20px;
+  margin-top: 20px;
+  display: block;
+  text-align: right;
+}
+.main_con form ~ .link a {
+  text-decoration: underline;
+  text-underline-position: under;
+  margin-left: 10px;
+}
+
+/*container*/
+.container {
+  background: #f5f5f5;
+  min-height: 100%;
+  height: auto;
+  padding: 50px 30px;
+}
+.container form {
+  margin: 0 auto;
+}
+.container .main_title {
+  color: #c8b6ff;
+}
+.sub_title {
+  padding: 30px 0;
+  text-align: center;
+}
+.sub_title span:first-child {
+  display: block;
+  font-size: 28px;
+  color: #333;
+  line-height: 1.3em;
+}
+.sub_title span:last-child {
+  display: inline-block;
+  width: 95px;
+  height: 4px;
+  background: #c8b6ff;
+  line-height: 1;
+  vertical-align: middle;
+}
+.main_con form > label {
+  width: 100%;
+  font-size: 20px;
+  font-weight: 500;
+}
+.container form > label {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 500;
+}
+.main_con form > label > span:first-child {
+  display: block;
+  font-size: 18px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+.container form > label > span:first-child {
+  display: block;
+  font-size: 16px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.calendar_input {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+}
+.calendar_input > input {
+  width: 40%;
+  display: inline-block;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid #999;
+  border-radius: unset;
+  padding: 10px;
+}
+
+.calendar_input > button {
+  box-shadow: 1px 5px 9px 2px rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+  padding: 15px 21px;
+  background: #f9f9f9;
+  font-weight: 600;
+}
+.todo_input {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0 15px;
+}
+.todo_input > input {
+  width: 60%;
+}
+.priority {
+  display: flex;
+  width: 40%;
+  justify-content: space-evenly;
+  border: 1px solid #999;
+  border-radius: 15px;
+  padding: 15px 10px;
+  background: #fff;
+}
+.priority > p {
+  display: inline-block;
+  font-size: 17px;
+  line-height: 1.2;
+  font-weight: 600;
+}

@@ -25,6 +25,7 @@ CREATE TABLE todo
   keyword_id INT NOT NULL COMMENT '키워드 id',
   title VARCHAR(50) COMMENT '제목',
   priority ENUM('low', 'medium', 'high') COMMENT '우선순위',
+  date DATETIME NOT NULL COMMENT '투두 날짜',
   write_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '생성 날짜',
   update_date DATETIME COMMENT '수정 날짜',
   deleted BOOLEAN NOT NULL DEFAULT FALSE COMMENT '삭제 여부',

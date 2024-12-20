@@ -1,35 +1,34 @@
 const express = require('express');
 const router = express.Router();
-// const { uploadDetail } = require('../app');
 
 const authController = require('../controllers/AuthController');
 const todoController = require('../controllers/TodoController');
 const userController = require('../controllers/UserController');
 
-// // Auth signin
+// Auth signin
 router.get('/', authController.getSignIn); // 로그인 페이지
-// router.post('/auth/api/sign-in', authController.signIn); // 로그인 api
-// router.post('/auth/api/sign-in/token', authController.jwtToken); // jwt 토큰 api
-// router.post('/auth/api/sign-in/google', authController.signInGoogle); // oauth 구글
-// router.post('/auth/api/sign-in/kakao', authController.signInKakao); // oauth 카카오
+router.post('/auth/api/sign-in', authController.signIn); // 로그인 api
+router.post('/auth/api/sign-in/token', authController.jwtToken); // jwt 토큰 api
+router.post('/auth/api/sign-in/google', authController.signInGoogle); // oauth 구글
+router.post('/auth/api/sign-in/kakao', authController.signInKakao); // oauth 카카오
 
-// // Auth signup
-// router.get('/auth/sign-up', authController.getSignUp); // 회원가입 페이지
-// router.post('/auth/api/sign-up', authController.signUp); // 회원가입 api
-// router.get('/auth/api/sign-up/check', authController.duplicatedEmail); // 이메일 중복 검사
+// Auth signup
+router.get('/auth/sign-up', authController.getSignUp); // 회원가입 페이지
+router.post('/auth/api/sign-up', authController.signUp); // 회원가입 api
+router.get('/auth/api/sign-up/check', authController.duplicatedEmail); // 이메일 중복 검사
 
-// // Auth search pw
-// router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페이지
-// router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
+// Auth search pw
+router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페이지
+router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
-// // User
-// router.get('/user/profile', userController.getProfile); // 프로필 페이지
-// router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
-// router.post('/user/api/photo-upload', userController.uploadPhoto); // 프로필 사진 업로드 api
-// router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설정 페이지
-// router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
-// router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지
-// router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
+// User
+router.get('/user/profile', userController.getProfile); // 프로필 페이지
+router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
+router.post('/user/api/photo-upload', userController.uploadPhoto); // 프로필 사진 업로드 api
+router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설정 페이지
+router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
+router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지
+router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
 
 // Todo CRUD
 router.get('/todo/write', todoController.getWriteTodo); // 투두 작성 페이지

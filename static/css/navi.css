@@ -1,3 +1,14 @@
+/*font 설정*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+@font-face {
+  font-family: 'yg-jalnan';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   /* border: 1px solid #000; */
 }
@@ -36,9 +47,9 @@ body > .side-bar > .profile {
 }
 
 /* navi바의 프로필사진 */
-body > .side-bar > .profile > #profile-img {
+.profile-img {
   border-radius: 50%;
-  border: 3px solid #dddddd;
+  border: 3px solid rgba(128, 37, 170, 0.87);
   background-color: #fff;
 }
 
@@ -87,14 +98,14 @@ body > .side-bar > .key-bar > #key-ul > li {
   max-width: 100%;
   box-shadow: 0 0 10px #0003;
   border-radius: 10px;
-  padding: 10px 30px;
+  padding: 20px 30px;
   padding-bottom: 30px;
   margin-bottom: 10px;
   /* text-align: start; */
 }
 
 /* profile의 프로필사진 */
-body > .main-container > .allBox > .profile-img {
+body > .main-container > .allBox > .profile-img-div {
   display: flex;
   justify-content: center;
 }
@@ -105,6 +116,18 @@ body > .main-container > .allBox > .dynamic {
   justify-content: center;
   align-items: center;
   margin: 10px;
+}
+
+body > .main-container > .allBox > #nicknameForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body > .main-container > .allBox > #nicknameForm > .set-profile-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-self: center;
 }
 
 .btn {
@@ -121,6 +144,7 @@ input {
   border: 1px solid darkgray;
   border-radius: 30px;
   padding: 5px 10px;
+  box-sizing: border-box;
 }
 
 body > .main-container > .allBox > .turn-page-box {
@@ -133,6 +157,7 @@ body > .main-container > .allBox > .turn-page-box {
 label {
   display: flex;
   margin: 10px 0px;
+  align-items: center;
   justify-content: center;
 }
 
@@ -140,16 +165,16 @@ span {
   width: 150px;
 }
 
-.change-pw-box {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+body > .main-container > .allBox > .small-size-font {
+  font-size: 14px;
 }
 
-body > .allBox > .change-pw-box > .change-pw {
-  margin-top: 30px;
-  align-self: center;
+body > .main-container > .allBox > .change-pw-box {
 }
+
+body > .main-container > .allBox > .change-pw-box > .change-pw {
+}
+
 /* delete_account */
 textarea {
   border-radius: 10px;

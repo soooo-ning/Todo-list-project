@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+// const { uploadDetail } = require('../app');
 
 // 컨트롤러를 각각 선언
 const authController = require('../controllers/AuthController');
@@ -25,7 +26,7 @@ router.get('/auth/api/search-pw', authController.searchPw);
 // User
 router.get('/user/profile', userController.getProfile);
 router.patch('/user/api/profile', userController.editProfile);
-router.post('/user/api/photo-upload', userController.uploadPhoto);
+router.post('/user/api/photo-upload', userController.uploadPhoto); // multer만드는중! uploadDetail.single('dynamic-file'),
 router.get('/user/reset-pw', userController.getResetPw);
 router.patch('/user/api/reset-pw', userController.resetPw);
 router.get('/user/delete-account', userController.getDeleteAccount);

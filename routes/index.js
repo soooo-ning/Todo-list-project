@@ -25,6 +25,7 @@ router.get('/auth/api/search-pw', authController.searchPw);
 // User
 router.get('/user/profile', userController.getProfile);
 router.patch('/user/api/profile', userController.editProfile);
+router.post('/user/api/photo-upload', userController.uploadPhoto);
 router.get('/user/reset-pw', userController.getResetPw);
 router.patch('/user/api/reset-pw', userController.resetPw);
 router.get('/user/delete-account', userController.getDeleteAccount);

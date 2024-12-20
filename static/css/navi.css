@@ -13,7 +13,7 @@ body {
 
 /* 프로필 설정, 비번변경, 회원탈퇴 페이지 우측 이동함함 */
 .main-container {
-  /* padding: 300px; */
+  padding-top: 20px;
   margin-left: 320px;
 }
 

@@ -4,235 +4,84 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>todo</title>
-    <link rel="stylesheet" href="../static/css/style.css" />
-    <style>
-      .calendar {
-        border: 1px solid #ccc;
-        padding: 10px;
-        background-color: white;
-        position: absolute;
-        top: 48px;
-        z-index: 1000;
-      }
-      .calendar table {
-        width: 100%;
-        border-collapse: collapse;
-      }
-      .calendar th,
-      .calendar td {
-        text-align: center;
-        padding: 5px;
-        cursor: pointer;
-      }
-      .calendar td.disabled {
-        color: #ccc;
-        pointer-events: none;
-      }
-      .calendar td.selected {
-        background-color: #007bff;
-        color: white;
-      }
-    </style>
+    <link rel="stylesheet" href="../../static/css/style.css" />
+    <script defer src="../../static/js/index.js"></script>
   </head>
   <body>
+    <button type="button" class="pop_btn">팝업오픈</button>
     <!-- 네비게이션 자리 -->
-    <div class="container">
-      <h1 class="main_title">Todo Checkk</h1>
-      <h3 class="sub_title">
-        <span>Write your TodoList</span>
-        <span></span>
-      </h3>
+    <div class="container popup">
+      <div class="pop_con">
+        <h3 class="sub_title">
+          <span>Write your TodoList</span>
+        </h3>
+        <button type="button" class="pop_close">X</button>
+        <form name="form-todo" method="post" class="view">
+          <label class="todo_title">
+            <input
+              type="text"
+              name="todoTitle"
+              placeholder="제목을 입력하세요"
+              required
+            />
+          </label>
 
-      <form name="form-todo" method="post">
-        <label class="calendar_input">
-          <input
-            type="text"
-            id="datetime-input"
-            name="todoDate"
-            placeholder="할일 기한을 설정하세요"
-            readonly
-            required
-          />
-          <div class="calendar" style="display: none"></div>
-          <button type="button" id="todoAdd">ADD</button>
-        </label>
+          <div class="todo_input">
+            <label class="calendar_input">
+              <input
+                type="text"
+                id="datetime-input"
+                name="todoDate"
+                placeholder="날짜를 입력하세요"
+                readonly
+              />
+              <div class="calendar" style="display: none"></div>
+            </label>
 
-        <label class="todo_input">
-          <input type="text" placeholder="키워드를 입력하세요" name="todoKey" />
-          <div class="priority">
-            <p>우선순위</p>
-            <label>
-              <input type="radio" name="priority" value="high" />
-              상
-            </label>
-            <label>
-              <input type="radio" name="priority" value="medium" />
-              중
-            </label>
-            <label>
-              <input type="radio" name="priority" value="low" />
-              하
+            <div class="priority">
+              <p>우선순위</p>
+              <label>
+                <input type="radio" name="priority" value="high" />
+                상
+              </label>
+              <label>
+                <input type="radio" name="priority" value="medium" />
+                중
+              </label>
+              <label>
+                <input type="radio" name="priority" value="low" />
+                하
+              </label>
+            </div>
+
+            <label class="todo_key">
+              <p>키워드</p>
+              <select name="todoKey" id="" required>
+                <option value="work" selected>work</option>
+                <option value="study">study</option>
+              </select>
             </label>
           </div>
-        </label>
 
-        <button id="todoBtn">등록</button>
-      </form>
+          <ul class="todo_content">
+            <li>
+              <label>
+                <input type="checkbox" name="todoChk" />
+                <input
+                  type="text"
+                  name="todoCon"
+                  placeholder="할일을 입력하세요"
+                />
+                <input type="button" value="delete" />
+              </label>
+            </li>
+          </ul>
+
+          <button type="button" id="todoAdd">ADD</button>
+
+          <button id="todoBtn">등록</button>
+        </form>
+      </div>
     </div>
-    <script>
-      /* 달력 날짜 지정 */
-      document.addEventListener('DOMContentLoaded', () => {
-        const datetimeInput = document.getElementById('datetime-input');
-        const calendar = document.querySelector('.calendar');
-
-        if (!datetimeInput || !calendar) {
-          console.error('Required DOM elements are missing.');
-          return;
-        }
-
-        let selectedDate = null;
-        const today = new Date();
-        const currentYear = today.getFullYear();
-        const currentMonth = today.getMonth();
-
-        datetimeInput.addEventListener('click', () => {
-          calendar.innerHTML = generateCalendarHTML(currentMonth, currentYear);
-          calendar.style.display = 'block';
-
-          calendar.addEventListener('click', e => {
-            const target = e.target;
-            if (
-              target.tagName === 'TD' &&
-              !target.classList.contains('disabled')
-            ) {
-              selectedDate = target.dataset.date;
-              highlightSelectedDate(target);
-              updateInputValue();
-              calendar.style.display = 'none';
-            }
-          });
-        });
-
-        function generateCalendarHTML(month, year) {
-          const daysInMonth = new Date(year, month + 1, 0).getDate();
-          const firstDay = new Date(year, month, 1).getDay();
-          const monthNames = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December',
-          ];
-
-          let html = `<div><strong>${monthNames[month]} ${year}</strong></div>`;
-          html += '<table><tr>';
-          ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(day => {
-            html += `<th>${day}</th>`;
-          });
-          html += '</tr><tr>';
-
-          for (let i = 0; i < firstDay; i++) {
-            html += '<td></td>';
-          }
-
-          for (let day = 1; day <= daysInMonth; day++) {
-            const dateString = `${year}-${String(month + 1).padStart(
-              2,
-              '0',
-            )}-${String(day).padStart(2, '0')}`;
-            const date = new Date(dateString);
-
-            const isDisabled =
-              date < today.setHours(0, 0, 0, 0) ? 'disabled' : '';
-            html += `<td data-date="${dateString}" class="${isDisabled}">${day}</td>`;
-
-            if ((day + firstDay) % 7 === 0) {
-              html += '</tr><tr>';
-            }
-          }
-
-          html += '</tr></table>';
-          return html;
-        }
-
-        function updateInputValue() {
-          if (selectedDate) {
-            datetimeInput.value = selectedDate;
-          }
-        }
-
-        function highlightSelectedDate(target) {
-          const allDates = calendar.querySelectorAll('td');
-          allDates.forEach(td => td.classList.remove('selected'));
-          target.classList.add('selected');
-        }
-
-        document.addEventListener('click', e => {
-          if (!calendar.contains(e.target) && e.target !== datetimeInput) {
-            calendar.style.display = 'none';
-          }
-        });
-      });
-
-      /*add버튼 클릭시 할일input 하나씩 추가*/
-      document.addEventListener('DOMContentLoaded', () => {
-        const todoAddButton = document.getElementById('todoAdd');
-        const form = document.forms['form-todo'];
-        const todoBtn = document.getElementById('todoBtn');
-
-        todoAddButton.addEventListener('click', () => {
-          // 새로운 <label> 요소 생성
-          const newLabel = document.createElement('label');
-          newLabel.className = 'todo_input';
-
-          // 키워드 입력 필드 생성
-          const newInput = document.createElement('input');
-          newInput.type = 'text';
-          newInput.placeholder = '키워드를 입력하세요';
-          newInput.name = 'todoKey';
-
-          // 우선순위 섹션 생성
-          const priorityDiv = document.createElement('div');
-          priorityDiv.className = 'priority';
-
-          const priorityTitle = document.createElement('p');
-          priorityTitle.textContent = '우선순위';
-          priorityDiv.appendChild(priorityTitle);
-
-          // 우선순위 옵션 추가
-          const priorities = [
-            { value: 'high', label: '상' },
-            { value: 'medium', label: '중' },
-            { value: 'low', label: '하' },
-          ];
-
-          priorities.forEach(priority => {
-            const priorityLabel = document.createElement('label');
-            const priorityInput = document.createElement('input');
-            priorityInput.type = 'radio';
-            priorityInput.name = `priority-${Date.now()}`; // 고유한 name 속성
-            priorityInput.value = priority.value;
-
-            priorityLabel.appendChild(priorityInput);
-            priorityLabel.appendChild(document.createTextNode(priority.label));
-            priorityDiv.appendChild(priorityLabel);
-          });
-
-          // <label>에 입력 필드와 우선순위 추가
-          newLabel.appendChild(newInput);
-          newLabel.appendChild(priorityDiv);
-
-          // #todoBtn 버튼 위에 추가
-          form.insertBefore(newLabel, todoBtn);
-        });
-      });
-    </script>
   </body>
 </html>

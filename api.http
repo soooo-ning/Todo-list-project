@@ -1,0 +1,56 @@
+@server=http://localhost:8080
+
+@todo_id=1
+@keyword_id=1
+
+### 특정 투두 조회
+GET {{server}}/todo/api/get/{{todo_id}}
+
+### 투두 작성
+POST {{server}}todo/api/write
+Content-Type: application/json; charset=UTF-8
+{
+    "user_id": 1,
+    "keyword_id": 1,
+    "title": "Sample Todo Title",
+    "priority": "High",
+    "date": "2024-12-20",
+    "content": ["Content 1", "Content 2"]
+}
+
+### 투두 수정
+PATCH {{server}}todo/api/edit
+Content-Type: application/json; charset=UTF-8
+{
+    "id": 1,
+    "title": "Updated Todo Title",
+    "priority": "Medium",
+    "date": "2024-12-25"
+}
+
+### 투두 상태 업데이트
+PATCH {{server}}/todo/api/state
+Content-Type: application/json; charset=UTF-8
+{
+    "id": 1,
+    "state": true
+}
+
+### 투두 삭제
+DELETE {{server}}/todo/api/delete/{{todo_id}}
+
+### 투두 검색
+GET {{server}}/todo/api/search/query=Sample
+
+### 투두 캘린더형 조회
+GET {{server}}/todo/api/calendar/date=2024-12-20
+
+### 투두 우선순위 조회
+GET {{server}}/todo/api/list/priority?high
+
+### 투두 키워드 조회
+GET {{server}}/todo/api/list/keyword/{{keyword_id}}
+
+### 투두 휴지통 조회
+GET {{server}}/todo/api/deleted-todo
+

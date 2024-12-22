@@ -30,7 +30,22 @@ User.hasMany(Todo, {
   sourceKey: 'id',
 });
 
+Todo.belongsTo(Keyword, {
+  foreignKey: 'keyword_id',
+  sourceKey: 'id',
+});
+
+Todo.belongsTo(User, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
 Todo.hasMany(TodoContent, {
+  foreignKey: 'todo_id',
+  sourceKey: 'id',
+});
+
+TodoContent.belongsTo(Todo, {
   foreignKey: 'todo_id',
   sourceKey: 'id',
 });

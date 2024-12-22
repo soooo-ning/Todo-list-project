@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
 const authController = require('../controllers/AuthController');
 const todoController = require('../controllers/TodoController');
@@ -11,6 +12,8 @@ router.post('/auth/api/sign-in', authController.signIn); // 로그인 api
 router.post('/auth/api/sign-in/token', authController.jwtToken); // jwt 토큰 api
 router.post('/auth/api/sign-in/google', authController.signInGoogle); // oauth 구글
 router.post('/auth/api/sign-in/kakao', authController.signInKakao); // oauth 카카오
+router.get('/kakao', passport.authenticate('kakao'));
+router.get('/kakao/callback', authController.kakaoCallback);
 
 // Auth signup
 router.get('/auth/sign-up', authController.getSignUp); // 회원가입 페이지
@@ -34,7 +37,7 @@ router.delete('/user/api/delete-account', userController.deleteAccount); // 회�
 router.get('/todo/write', todoController.getWriteTodo); // 투두 작성 페이지
 router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api
 router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
-router.get('/todo/edit/:id', todoController.getEditTodo); // 투두 수정 페이지
+router.get('/todo/api/edit/:id', todoController.getEditTodo); // 투두 수정 페이지 조회
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
 router.patch('/todo/api/state', todoController.updateState); // 투두 상태 업데이트 api
 router.delete('/todo/api/delete/:id', todoController.deleteTodo); // 투두 삭제 api

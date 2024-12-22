@@ -11,8 +11,10 @@ CREATE TABLE keyword
 CREATE TABLE user
 (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 사용자 id',
+  kakaoId VARCHAR(255) UNIQUE COMMENT '카카오 고유 ID',
   nickname VARCHAR(20) NOT NULL COMMENT '닉네임',
   pw VARCHAR(20) NOT NULL COMMENT '비밀번호',
+  resetToken VARCHAR(255) COMMENT '비밀번호 재설정 토큰',
   email VARCHAR(50) NOT NULL COMMENT '이메일',
   profile_image VARCHAR(255) COMMENT '사용자 프로필 이미지',
   update_date DATETIME NOT NULL COMMENT '사용자 계정 수정일'
@@ -42,5 +44,4 @@ CREATE TABLE todo_content
   state BOOLEAN NOT NULL COMMENT '진행상태',
   CONSTRAINT fk_todo_content_todo FOREIGN KEY (todo_id) REFERENCES todo(id) ON DELETE CASCADE
 ) COMMENT '투두 콘텐츠 테이블';
-
 

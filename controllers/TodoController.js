@@ -39,7 +39,7 @@ exports.writeTodo = async (req, res) => {
 };
 
 // 특정 투두 조회
-// GET /todo/api/get:id
+// GET /todo/api/get/:id
 exports.getTodo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -56,7 +56,7 @@ exports.getTodo = async (req, res) => {
 };
 
 // 투두 수정 페이지 렌더링
-// GET /todo/edit/:id
+// GET /todo/api/edit/:id
 exports.getEditTodo = async (req, res) => {
   try {
     const { id } = req.params;
@@ -66,8 +66,7 @@ exports.getEditTodo = async (req, res) => {
     });
 
     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
-
-    res.render('write', { todo });
+    success(res, todo, 'Todo ㄱ존내용 조회 완료');
   } catch (err) {
     serverError(res, err);
   }
@@ -76,15 +75,34 @@ exports.getEditTodo = async (req, res) => {
 // 투두 수정 API
 // PATCH /todo/api/edit
 exports.editTodo = async (req, res) => {
+  const { id, title, priority, date, contents } = req.body;
+
   try {
-    const { id, title, priority, date } = req.body;
     const [updated] = await Todo.update(
       { title, priority, date },
       { where: { id } },
     );
 
     if (!updated) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
-    success(res, null, 'Todo 내용 업데이트 완료');
+
+    for (const content of contents) {
+      const { id: contentId, content: text, state } = content;
+
+      if (contentId) {
+        await TodoContent.update(
+          { content: text, state },
+          { where: { id: contentId, todo_id: id } },
+        );
+      } else {
+        await TodoContent.create({
+          todo_id: id,
+          content: text,
+          state,
+        });
+      }
+    }
+
+    success(res, null, 'Todo 업데이트 완료');
   } catch (err) {
     serverError(res, err);
   }
@@ -126,15 +144,21 @@ exports.deleteTodo = async (req, res) => {
 exports.searchTodo = async (req, res) => {
   try {
     const { query } = req.query;
+
     const todos = await Todo.findAll({
       where: {
         deleted: false,
         [Op.or]: [
           { title: { [Op.like]: `%${query}%` } },
-          { '$TodoContents.content$': { [Op.like]: `%${query}%` } },
+          { '$todo_contents.content$': { [Op.like]: `%${query}%` } },
         ],
       },
-      include: [TodoContent],
+      include: [
+        {
+          model: TodoContent,
+          as: 'todo_contents',
+        },
+      ],
     });
 
     res.render('search', {

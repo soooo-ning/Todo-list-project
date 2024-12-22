@@ -1,12 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>키워드 조회 페이지</title>
+    <title>휴지통</title>
     <style>
+      /*font 설정*/
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+      @font-face {
+        font-family: 'yg-jalnan';
+        src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
+          format('woff');
+        font-weight: normal;
+        font-style: normal;
+      }
+
       body {
-        font-family: 'Arial', sans-serif;
+        font-family: 'Noto Sans KR', Arial, Helvetica, sans-serif;
         background-color: #f4f4f9;
         margin: 0;
         padding: 0;
@@ -34,7 +45,7 @@
       }
 
       .card {
-        flex: 1 1 calc(33.333% - 20px); /* 한 줄에 세 개씩 배치 */
+        flex: 1 1 calc(33.333% - 20px);
         background: #fff;
         padding: 20px;
         border-radius: 8px;
@@ -69,22 +80,39 @@
         color: #888;
       }
 
+      .recover-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        background-color: #b8c0ff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .recover-button:hover {
+        background-color: #bbd0ff;
+      }
+
       @media (max-width: 768px) {
         .card {
-          flex: 1 1 calc(50% - 20px); /* 중간 화면에서는 두 개씩 */
+          flex: 1 1 calc(50% - 20px);
         }
       }
 
       @media (max-width: 480px) {
         .card {
-          flex: 1 1 100%; /* 작은 화면에서는 한 개씩 */
+          flex: 1 1 100%;
         }
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1 class="title">키워드</h1>
+      <h1 class="title">휴지통</h1>
       <div class="card-container">
         <div class="card" id="sampleCard">
           <div class="card-title"></div>
@@ -93,16 +121,17 @@
             <li class="completed"></li>
             <li></li>
           </ul>
-          <!-- <form method="" action="">
-            <input type="hidden" name="title" value="" />
-          </form> -->
+          <form method="POST" action="/recover">
+            <input type="hidden" name="title" value="공부" />
+            <button type="submit" class="recover-button">복구</button>
+          </form>
         </div>
       </div>
     </div>
 
     <script>
-      // 예시 데이터
-      const data = [
+      // 데이터 예시
+      const deletedTodos = [
         {
           id: 1,
           title: '공부',
@@ -142,27 +171,24 @@
         },
       ];
 
-      // DOM
+      // 데이터를 추가
       function renderData(data) {
         const container = document.querySelector('.card-container');
+        const sampleCard = document.getElementById('sampleCard');
 
-        container.innerHTML = '';
+        sampleCard.style.display = 'none';
 
         data.forEach((item) => {
-          // 카드 생성
-          const card = document.createElement('div');
-          card.className = 'card';
+          const card = sampleCard.cloneNode(true);
+          card.style.display = 'block';
 
-          // 타이틀 추가
-          const title = document.createElement('div');
-          title.className = 'card-title';
+          // 제목
+          const title = card.querySelector('.card-title');
           title.textContent = item.title;
-          card.appendChild(title);
 
-          // 투두리스트 추가
-          const todoList = document.createElement('ul');
-          todoList.className = 'todo-list';
-
+          // 투두리스트
+          const todoList = card.querySelector('.todo-list');
+          todoList.innerHTML = '';
           item.todos.forEach((todo) => {
             const todoItem = document.createElement('li');
             todoItem.textContent = todo.task;
@@ -172,12 +198,27 @@
             todoList.appendChild(todoItem);
           });
 
-          card.appendChild(todoList);
+          // 폼 데이터
+          const form = card.querySelector('form');
+          form.querySelector('input[name="title"]').value = item.title;
+          form.onsubmit = function (event) {
+            event.preventDefault(); // 기본 동작 막기
+            const confirmRestore = confirm(
+              `${item.title}을(를) 복구하시겠습니까?`,
+            );
+            if (confirmRestore) {
+              alert(`${item.title}이(가) 복구되었습니다!`);
+            } else {
+              alert('복구가 취소되었습니다.');
+            }
+          };
           container.appendChild(card);
         });
       }
 
-      document.addEventListener('DOMContentLoaded', () => renderData(data));
+      document.addEventListener('DOMContentLoaded', () =>
+        renderData(deletedTodos),
+      );
     </script>
   </body>
 </html>

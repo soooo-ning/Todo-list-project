@@ -3,7 +3,14 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-
+let host;
+// if (process.env.NODE_ENV == 'production') {
+// host = process.env.PROD_HOST;
+// } else if (process.env.NODE_ENV == 'development') {
+// host = process.env.LOCAL_HOST;
+// } else {
+// host = process.env.LOCAL_HOST;
+// }
 // 로그인 페이지 요청
 exports.getSignIn = (req, res) => {
   res.render('sign-in'); // 로그인 페이지 렌더링
@@ -112,7 +119,7 @@ exports.requestPasswordReset = async (req, res) => {
     });
 
     // 비밀번호 재설정 링크
-    const resetLink = `http://localhost:8080/auth/reset-password/${token}`;
+    const resetLink = `http://${host}:8080/auth/reset-password/${token}`;
 
     const mailOptions = {
       from: 'your_email@gmail.com',
@@ -138,13 +145,13 @@ exports.signInGoogle = passport.authenticate('google', {
 
 // Google OAuth 콜백
 exports.googleCallback = (req, res) => {
-  res.redirect('/todo/write');
+  res.redirect('/todo/dashboard');
 };
 
 // Kakao OAuth 콜백
 exports.kakaoCallback = (req, res) => {
   // 로그인 후 처리
-  res.redirect('/todo/write'); // 로그인 후 리다이렉션할 경로
+  res.redirect('/todo/dashborad'); // 로그인 후 리다이렉션할 경로
 };
 
 // POST /auth/api/sign-up 회원가입

@@ -1,35 +1,39 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>캘린더 페이지</title>
-    <link rel="stylesheet" href="../static/css/calendar.css" />
-  </head>
+<html lang="en">
+  <%- include('include/header', { title: 'calendar' })%>
   <body>
-    <div class="calendar">
-      <div class="header">
-        <button id="prevMonth">&lt;</button>
-        <h2 id="monthYear"></h2>
-        <button id="nextMonth">&gt;</button>
-      </div>
-      <div class="days">
-        <div>일</div>
-        <div>월</div>
-        <div>화</div>
-        <div>수</div>
-        <div>목</div>
-        <div>금</div>
-        <div>토</div>
-      </div>
-      <div class="dates" id="dates"></div>
-    </div>
+    <!-- 네비게이션 부분 -->
+    <nav class="nav"><%- include('include/navi') %></nav>
 
-    <div class="todo-list">
-      <h2>스케줄:</h2>
-      <h3 id="selected-date"></h3>
-      <ul id="todo-items"></ul>
-    </div>
+    <main class="container">
+      <div class="content">
+        <div class="calendar">
+          <div class="header">
+            <button id="prevMonth">&lt;</button>
+            <h2 id="monthYear"></h2>
+            <button id="nextMonth">&gt;</button>
+          </div>
+          <div class="days">
+            <div>일</div>
+            <div>월</div>
+            <div>화</div>
+            <div>수</div>
+            <div>목</div>
+            <div>금</div>
+            <div>토</div>
+          </div>
+          <div class="dates" id="dates"></div>
+        </div>
+
+        <div class="todo-list">
+          <h2>스케줄:</h2>
+          <h3 id="selected-date"></h3>
+          <ul id="todo-items"></ul>
+        </div>
+      </div>
+    </main>
+
+    <%- include('include/popup') %>
 
     <script>
       const monthYear = document.getElementById('monthYear');

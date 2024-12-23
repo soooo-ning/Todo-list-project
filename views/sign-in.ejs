@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <%- include('include/header', { title: 'signin' })%>
+<html lang="en">
+  <%- include('include/header', { title: 'sign-in' })%>
   <body>
     <div class="main_wrap">
       <div class="main_img">
@@ -8,7 +8,8 @@
       </div>
       <div class="main_con">
         <h3 class="sub_title">
-          <span>로그인</span>
+          <span>LogIn</span>
+          <span></span>
         </h3>
         <form name="form-login" method="post">
           <label>
@@ -36,18 +37,24 @@
           <div class="btn_wrap">
             <ul class="sns_login">
               <li class="kakao">
-                <button>
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/kakao'"
+                >
                   <img src="../static/img/kakao_sq_s.png" alt="카카오버튼" />
                 </button>
               </li>
               <li class="google">
-                <button>
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/google'"
+                >
                   <img src="../static/img/google_sq.png" alt="구글버튼" />
                 </button>
               </li>
             </ul>
 
-            <button onclick="login()">로그인</button>
+            <button>로그인</button>
           </div>
         </form>
 
@@ -57,37 +64,48 @@
         </div>
       </div>
     </div>
-
     <script>
-      // 로그인
-      function login() {
-        const form_login = document.forms['form-login'];
+      document.forms['form-login'].addEventListener('submit', function (event) {
+        event.preventDefault();
 
-        if (!form_login.checkValidity()) {
-          form_login.reportValidity();
+        const email = document.querySelector('[name="userEmail"]').value;
+        const password = document.querySelector('[name="userPw"]').value;
+
+        //클라이언트 유효성 검사
+        if (!email || !password) {
+          alert('이메일과 비밀번호를 모두 입력해주세요.');
           return;
         }
 
-        axios({
-          method: 'post',
-          url: '/auth/api/sign-in',
-          data: {
-            id: form_login.userEmail.value,
-            pw: form_login.userPw.value,
-          },
-        }).then((res) => {
-          console.log(res);
-          const { data } = res;
-          console.log(data); //true of false
-          if (data) {
-            alert('로그인 성공');
-            // document.location.href = '/user/profile';
-          } else {
-            alert('로그인 실패');
-            form_login.reset();
-          }
-        });
-      }
+        //서버로 전송 준비
+        const formData = {
+          userEmail: email,
+          userPw: password,
+        };
+
+        // 데이터 POST 요청
+        fetch('/auth/api/sign-in', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // 로그인 성공
+              window.location.href = '/dashboard';
+            } else {
+              //로그인 실페
+              alert(
+                data.message || '로그인에 실패했습니다. 다시 시도해주세요.',
+              );
+            }
+          })
+          .catch((error) => {
+            console.error('오류:', error);
+            alert('ERRORㅠㅠ');
+          });
+      });
     </script>
   </body>
 </html>

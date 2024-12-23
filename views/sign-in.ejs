@@ -42,12 +42,18 @@
           <div class="btn_wrap">
             <ul class="sns_login">
               <li class="kakao">
-                <button>
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/kakao'"
+                >
                   <img src="../static/img/kakao_sq_s.png" alt="카카오버튼" />
                 </button>
               </li>
               <li class="google">
-                <button>
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/google'"
+                >
                   <img src="../static/img/google_sq.png" alt="구글버튼" />
                 </button>
               </li>
@@ -63,5 +69,48 @@
         </div>
       </div>
     </div>
+    <script>
+      document.forms['form-login'].addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const email = document.querySelector('[name="userEmail"]').value;
+        const password = document.querySelector('[name="userPw"]').value;
+
+        //클라이언트 유효성 검사
+        if (!email || !password) {
+          alert('이메일과 비밀번호를 모두 입력해주세요.');
+          return;
+        }
+
+        //서버로 전송 준비
+        const formData = {
+          userEmail: email,
+          userPw: password,
+        };
+
+        // 데이터 POST 요청
+        fetch('/auth/api/sign-in', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.success) {
+              // 로그인 성공
+              window.location.href = '/dashboard';
+            } else {
+              //로그인 실페
+              alert(
+                data.message || '로그인에 실패했습니다. 다시 시도해주세요.',
+              );
+            }
+          })
+          .catch((error) => {
+            console.error('오류:', error);
+            alert('ERRORㅠㅠ');
+          });
+      });
+    </script>
   </body>
 </html>

@@ -11,10 +11,10 @@ VALUES
 ('tester2', '12345', 'tester2@example.com', NULL, NOW());
 
 -- 투두 테이블 추가
-INSERT INTO todo (user_id, keyword_id, title, priority, write_date, update_date) VALUES 
-(1, 1, 'Finish project', 'high', NOW(), NULL),
-(1, 2, 'Read a book', 'medium', NOW(), NULL),
-(2, 1, NULL, NULL, NOW(), NULL);
+INSERT INTO todo (user_id, keyword_id, title, priority, date, write_date, update_date) VALUES 
+(1, 1, 'Finish project', 'high', '2024-12-22', NOW(), NULL),
+(1, 2, 'Read a book', 'medium', '2024-12-20', NOW(), NULL),
+(2, 1, NULL, NULL, NOW(), '2024-12-24', NULL);
 
 -- 투두 내용 추가
 INSERT INTO todo_content (todo_id, content, state) VALUES 

@@ -1,47 +1,52 @@
 const express = require('express');
 const router = express.Router();
+const passport = require('passport');
 
-// 컨트롤러를 각각 선언
 const authController = require('../controllers/AuthController');
 const todoController = require('../controllers/TodoController');
-// const userController = require('../controllers/UserController');
+const userController = require('../controllers/UserController');
 
 // Auth signin
-router.get('/', authController.getSignIn);
-router.post('/auth/api/sign-in', authController.signIn);
-// router.post('/auth/api/sign-in/token', authController.jwtToken);
-// router.post('/auth/api/sign-in/google', authController.signInGoogle);
-// router.post('/auth/api/sign-in/kakao', authController.signInKakao);
+router.get('/', authController.getSignIn); // 로그인 페이지
+router.post('/auth/api/sign-in', authController.signIn); // 로그인 api
+router.post('/auth/api/sign-in/token', authController.jwtToken); // jwt 토큰 api
+router.post('/auth/api/sign-in/google', authController.signInGoogle); // oauth 구글
+router.post('/auth/api/sign-in/kakao', authController.signInKakao); // oauth 카카오
+router.get('/kakao', passport.authenticate('kakao'));
+router.get('/kakao/callback', authController.kakaoCallback);
 
 // Auth signup
-router.get('/auth/sign-up', authController.getSignUp);
-router.post('/auth/api/sign-up', authController.signUp);
-// router.get('/auth/api/sign-up/check', authController.duplicatedEmail);
+router.get('/auth/sign-up', authController.getSignUp); // 회원가입 페이지
+router.post('/auth/api/sign-up', authController.signUp); // 회원가입 api
+router.get('/auth/api/sign-up/check', authController.duplicatedEmail); // 이메일 중복 검사
 
 // Auth search pw
-router.get('/auth/search-pw', authController.getSearchPw);
-// router.get('/auth/api/search-pw', authController.searchPw);
+router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페이지
+router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
-// // User
-// router.get('/user/profile', userController.getProfile);
-// router.patch('/user/api/profile', userController.editProfile);
-// router.get('/user/reset-pw', userController.getResetPw);
-// router.patch('/user/api/reset-pw', userController.resetPw);
-// router.get('/user/delete-account', userController.getDeleteAccount);
-// router.delete('/user/api/delete-account', userController.deleteAccount);
+// User
+router.get('/user/profile', userController.getProfile); // 프로필 페이지
+router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
+router.post('/user/api/photo-upload', userController.uploadPhoto); // 프로필 사진 업로드 api
+router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설정 페이지
+router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
+router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지
+router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
 
 // Todo CRUD
-router.get('/todo/api/write', todoController.getWriteTodo);
-// router.post('/todo/api/write', todoController.writeTodo);
-// router.get('/todo/api/get', todoController.getTodo);
-// router.patch('/todo/api/content', todoController.editTodo);
-// router.patch('/todo/api/state', todoController.updateState);
-// router.delete('/todo/api/delete', todoController.deleteTodo);
+router.get('/todo/write', todoController.getWriteTodo); // 투두 작성 페이지
+router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api
+router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
+router.get('/todo/api/edit/:id', todoController.getEditTodo); // 투두 수정 페이지 조회
+router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
+router.patch('/todo/api/state', todoController.updateState); // 투두 상태 업데이트 api
+router.delete('/todo/api/delete/:id', todoController.deleteTodo); // 투두 삭제 api
 
-// router.get('/todo/api/search', todoController.searchTodo);
-// router.get('/todo/api/calander', todoController.calendarList);
-// router.get('/todo/api/list/priority', todoController.priorityList);
-// router.get('/todo/api/list/keyword', todoController.keywordList);
-// router.get('/todo/api/deleted-todo', todoController.deleteList);
+// Todo list
+router.get('/todo/api/search', todoController.searchTodo); // 투두 검색 페이지
+router.get('/todo/api/calendar', todoController.calendarList); // 투두 캘린더형 조회
+router.get('/todo/api/list/priority/:priority', todoController.priorityList); // 투두 우선순위 조회
+router.get('/todo/api/list/keyword/:id', todoController.keywordList); // 투두 키워드 조회
+router.get('/todo/api/deleted-todo', todoController.deleteList); // 투두 휴지통 조회
 
 module.exports = router;

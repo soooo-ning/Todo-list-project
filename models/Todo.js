@@ -37,6 +37,11 @@ const Todo = (sequelize, DataTypes) => {
         allowNull: true,
         comment: '우선순위',
       },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        comment: '투두 날짜',
+      },
       write_date: {
         type: DataTypes.DATE,
         allowNull: false,

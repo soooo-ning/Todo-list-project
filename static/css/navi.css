@@ -1,3 +1,14 @@
+/*font 설정*/
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap');
+
+@font-face {
+  font-family: 'yg-jalnan';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_four@1.2/JalnanOTF00.woff')
+    format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
 * {
   /* border: 1px solid #000; */
 }
@@ -11,88 +22,112 @@ body {
   margin: 0; /* 기본 마진 제거 */
 }
 
-.sidebar {
-  position: fixed; /* fixed 대신 relative 사용 */
-  height: 100%; /* 화면 높이 */
-  width: 300px;
-  background-color: rgb(255, 249, 228);
-  overflow-y: auto;
-}
-
-.sidebar::-webkit-scrollbar {
-  display: none; /* 크롬, 사파리 등에서 스크롤바 숨김 */
-}
-
+/* 프로필 설정, 비번변경, 회원탈퇴 페이지 우측 이동함함 */
 .main-container {
-  /* padding: 300px; */
+  padding-top: 20px;
   margin-left: 320px;
 }
 
-#profileImg {
-  border-radius: 50%;
-  border: 3px solid #dddddd;
-  background-color: #fff;
-}
-
-a {
-  text-decoration: none;
-  color: var(--text-color);
-}
-
-.naviBar {
-  margin: 30px 50px;
-}
-
-.displaybox {
-  margin-top: 30px;
-}
-.setbox {
-  display: none;
-  border: 1px solid black;
-  background-color: white;
-  width: 180px;
-  border-radius: 10px;
-  margin: 10px 0px;
-  cursor: pointer;
-}
-.mode-set {
-  cursor: pointer;
-}
-
-.box {
-  /* width: 128px; */
-  border: 1px solid black;
-  border-radius: 8px;
-  margin: 5px;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.keyBar {
-  margin: 30px 50px;
-}
-
-#keyul {
-  list-style: none;
-  /* margin: 20px; */
-}
-
-.container1 {
+/* ----- 네비바 설정 ------ */
+body > .side-bar {
   position: fixed;
   height: 100%;
   width: 300px;
-  background-color: rgb(255, 249, 228);
+  background: linear-gradient(45deg, #ffd6ff, 75%, #e7c6ff);
+  overflow-y: auto;
 }
 
-.profile {
+body > .side-bar::-webkit-scrollbar {
+  display: none; /* 크롬, 사파리 등에서 스크롤바 숨김 */
+}
+
+body > .side-bar > .profile {
   text-align: center;
   padding-top: 30px;
 }
 
-.logoutBtn {
+/* navi바의 프로필사진 */
+.profile-img {
+  border-radius: 50%;
+  border: 3px solid rgba(128, 37, 170, 0.87);
+  background-color: #fff;
+}
+
+body > .side-bar > .profile > .logout-btn {
   display: flex;
   margin: 0px 50px;
   justify-content: space-between;
+}
+
+body > .side-bar > .navi-bar > #search-form {
+  margin: 30px 0px;
+}
+
+body a {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--text-color);
+  margin: 5px 0px;
+}
+
+body > .side-bar > .navi-bar {
+  margin: 30px 50px;
+}
+
+body > .side-bar > .navi-bar > .display-set {
+  margin-top: 30px;
+}
+
+body > .side-bar > .key-bar {
+  margin: 30px 50px;
+}
+
+body > .side-bar > .key-bar > #key-ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+body > .side-bar > .key-bar > #key-ul > li {
+  margin: 5px 14px;
+}
+
+/* -------profile_setting.ejs----- */
+.allBox {
+  width: 40rem;
+  max-width: 100%;
+  box-shadow: 0 0 10px #0003;
+  border-radius: 10px;
+  padding: 20px 30px;
+  padding-bottom: 30px;
+  margin-bottom: 10px;
+  /* text-align: start; */
+}
+
+/* profile의 프로필사진 */
+body > .main-container > .allBox > .profile-img-div {
+  display: flex;
+  justify-content: center;
+}
+
+body > .main-container > .allBox > .dynamic {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+body > .main-container > .allBox > #nicknameForm {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+body > .main-container > .allBox > #nicknameForm > .set-profile-btn {
+  display: inline-flex;
+  justify-content: center;
+  align-self: center;
 }
 
 .btn {
@@ -104,55 +139,25 @@ a {
   cursor: pointer;
 }
 
-.allBox {
-  width: 40rem;
-  max-width: 100%;
-  box-shadow: 0 0 10px #0003;
-  border-radius: 10px;
-  padding: 10px 30px;
-  padding-bottom: 30px;
-  margin-bottom: 10px;
-  /* text-align: start; */
-}
-
-.profileImg {
-  display: flex;
-  justify-content: center;
-}
-
-.dynamic {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  margin: 10px;
-}
-
 input {
-  /* width: 20rem; */
   max-width: 100%;
   border: 1px solid darkgray;
   border-radius: 30px;
   padding: 5px 10px;
+  box-sizing: border-box;
 }
 
-.pwbox {
+body > .main-container > .allBox > .turn-page-box {
   display: flex;
-  /* flex-direction: column; */
   justify-content: space-between;
   cursor: pointer;
 }
 
-.deletebox {
-  display: flex;
-  /* flex-direction: column; */
-  justify-content: space-between;
-  cursor: pointer;
-}
-
+/* change_pw.ejs */
 label {
   display: flex;
   margin: 10px 0px;
+  align-items: center;
   justify-content: center;
 }
 
@@ -160,27 +165,31 @@ span {
   width: 150px;
 }
 
-.changePwbox {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+body > .main-container > .allBox > .small-size-font {
+  font-size: 14px;
 }
 
-button.changePw {
-  margin-top: 30px;
-  align-self: center; /* 버튼을 중앙에 정렬 */
+body > .main-container > .allBox > .change-pw-box {
+}
+
+body > .main-container > .allBox > .change-pw-box > .change-pw {
+}
+
+/* delete_account */
+textarea {
+  border-radius: 10px;
 }
 
 /* 다크모드 설정 */
 :root {
-  --background-color: #ffffff; /* 기본 배경색 (라이트 모드) */
+  --background: #ffffff; /* 기본 배경색 (라이트 모드) */
   --text-color: #000000; /* 기본 글자색 (라이트 모드) */
   --button-bg: rgba(233, 195, 251, 0.87); /* 버튼 배경색 (라이트 모드) */
   --button-color: rgba(128, 37, 170, 0.87); /* 버튼 텍스트 색상 (라이트 모드) */
 }
 
 body {
-  background-color: var(--background-color);
+  background: var(--background);
   color: var(--text-color);
 }
 
@@ -206,16 +215,16 @@ body {
   opacity: 0.8;
 }
 
-.sidebar.dark-mode {
+.side-bar.dark-mode {
   position: fixed; /* fixed 대신 relative 사용 */
   height: 100vh; /* 화면 높이 */
   width: 300px;
-  background-color: rgba(128, 37, 170, 0.87);
+  background: linear-gradient(45deg, #876fce, 75%, #727dd1);
   color: white;
   overflow-y: auto;
 }
 
 body.dark-mode {
-  --background-color: rgba(128, 37, 170, 0.87);
+  --background: linear-gradient(45deg, #9a83de, 75%, #8e98e6);
   --text-color: white;
 }

@@ -1,0 +1,127 @@
+<head>
+  <link rel="stylesheet" href="../static/css/navi.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script
+    defer
+    src="https://kit.fontawesome.com/1a37f47d3b.js"
+    crossorigin="anonymous"
+  ></script>
+  <!-- axios CDN -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+<div class="side-bar">
+  <div class="profile">
+    <img
+      src="/static/img/26139_img.png"
+      alt="프로필사진"
+      class="profile-img"
+      width="100"
+    />
+    <p><%#name%>~~님 환영합니다!</p>
+    <div class="logout-btn">
+      <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
+      <a
+        href="/logout"
+        onclick="return confirm('Are you sure you want to log out?')"
+        ><i class="fa-solid fa-right-from-bracket"></i> logout</a
+      >
+      <!-- <a
+        href="/logout"
+        onclick="return confirm('Are you sure you want to log out?')"
+        ><i class="fa-solid fa-right-from-bracket"></i> logout</a
+      > -->
+    </div>
+  </div>
+  <div class="navi-bar">
+    <form name="search-form" id="search-form">
+      <input type="search" id="search-content" placeholder="search.." />
+    </form>
+    <p><i class="fa-solid fa-list-check"></i> TODO리스트</p>
+
+    <i class="fa-regular fa-pen-to-square"></i
+    ><a href="/todo/api/write"> 새 작성</a><br />
+
+    <i class="fa-regular fa-calendar-check"></i
+    ><a href="/todo/api/calander"> 캘린더</a><br />
+
+    <i class="fa-solid fa-trash"></i
+    ><a href="/todo/api/deleted-todo"> 휴지통</a>
+
+    <div class="display-set">
+      <button class="btn btn-light" id="theme-toggle">
+        <i class="fa-regular fa-moon"></i> 다크모드
+      </button>
+    </div>
+  </div>
+  <div class="key-bar">
+    <i class="fa-solid fa-hashtag"></i
+    ><a href="/todo/api/list/keyword"> 키워드</a>
+    <ul id="key-ul">
+      <% for (let i = 0; i < keywords.length; i++) { %>
+      <li>
+        <i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword') %>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
+<script>
+  // 디스플레이 모드 설정
+  const themeToggle = document.getElementById('theme-toggle');
+  const sideBar = document.querySelector('.side-bar');
+  const body = document.body;
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const isDarkMode = localStorage.getItem('dark-mode') === 'true';
+    sideBar.classList.toggle('dark-mode', isDarkMode);
+    if (isDarkMode) {
+      body.classList.add('dark-mode');
+      themeToggle.innerHTML = `<i class="fa-regular fa-sun"></i> 라이트모드`;
+      themeToggle.classList.remove('btn-light');
+      themeToggle.classList.add('btn-dark');
+    }
+  });
+
+  themeToggle.addEventListener('click', () => {
+    // body의 dark-mode 클래스를 토글
+    const isDarkMode = document.body.classList.toggle('dark-mode');
+    // 사이드바의 dark-mode 클래스를 토글
+    sideBar.classList.toggle('dark-mode', isDarkMode); // 다크 모드일 때 사이드바에 dark-mode 클래스를 추가
+    // 버튼의 아이콘과 텍스트를 바꿈
+    localStorage.setItem('dark-mode', isDarkMode);
+    if (isDarkMode) {
+      themeToggle.innerHTML = `<i class="fa-regular fa-sun"></i> 라이트모드`; // 다크모드일 때
+      themeToggle.classList.remove('btn-light');
+      themeToggle.classList.add('btn-dark');
+    } else {
+      themeToggle.innerHTML = `<i class="fa-regular fa-moon"></i> 다크모드`; // 라이트모드일 때
+      themeToggle.classList.remove('btn-dark');
+      themeToggle.classList.add('btn-light');
+    }
+  });
+
+  // 네비바의 검색으로 검색했을 때  - get
+  const searchContent = document.querySelector("input[type='search']");
+
+  searchContent.addEventListener('keydown', function (e) {
+    if (e.code === 'Enter') {
+      e.preventDefault();
+
+      const searchFormQuery = e.target.value.trim();
+
+      axios
+        .get('/todo/api/search', {
+          params: searchFormQuery,
+        })
+        .then((response) => {
+          console.log('서버 응답:', response.data);
+          console.log('searchFormQuery:', searchFormQuery);
+        })
+        .catch((err) => {
+          console.log('서버에러: ', err);
+        });
+    }
+  });
+</script>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <%- include('include/header', { title: 'signup' })%>
+  <body>
+    <div class="main_wrap">
+      <div class="main_img">
+        <h1 class="main_title">Todo Checkk</h1>
+        <p class="main_txt">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis
+          quaerat quas, ipsum minus minima odit, necessitatibus fuga quisquam
+          doloremque quibusdam explicabo, suscipit magni sed! Itaque distinctio
+          nobis eveniet recusandae ab.
+        </p>
+      </div>
+      <div class="main_con">
+        <h3 class="sub_title">
+          <span>회원가입</span>
+        </h3>
+        <form name="form-signup" method="post">
+          <label>
+            <span>NICK NAME</span>
+            <input
+              type="text"
+              placeholder="닉네임을 입력하세요"
+              name="userName"
+              required
+            />
+          </label>
+          <label>
+            <span>EMAIL</span>
+            <input
+              type="email"
+              placeholder="이메일을 입력하세요"
+              name="userEmail"
+              required
+            />
+          </label>
+          <label>
+            <span>PW</span>
+            <input
+              type="password"
+              placeholder="4글자에서 18글자 사이"
+              name="userPw"
+              required
+              minlength="4"
+              maxlength="18"
+            />
+          </label>
+
+          <button onclick="register();">회원가입</button>
+        </form>
+
+        <div class="link">
+          <a href="/auth/search-pw">아이디 / 비밀번호 찾기</a>
+          <a href="/">로그인</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const fields = [
+        {
+          name: 'userName',
+          maxLength: 20,
+          errorMsg: '닉네임은 20글자 미만으로 작성해주세요.',
+        },
+        {
+          name: 'userPw',
+          minLength: 4,
+          maxLength: 18,
+          errorMsg: '비밀번호는 4글자에서 18글자 사이로 작성해주세요.',
+        },
+      ];
+
+      // 회원가입
+      function register() {
+        const form = document.forms['form-signup'];
+
+        for (let field of fields) {
+          const value = form[field.name].value;
+          if (!value) {
+            alert('항목을 모두 기입해주세요.');
+            return;
+          }
+          if (value.length > field.maxLength) {
+            alert(field.errorMsg);
+            return;
+          }
+        }
+
+        axios({
+          method: 'post',
+          url: '/auth/api/sign-up',
+          data: {
+            nickname: form.userName.value,
+            pw: form.userPw.value,
+            email: form.userEmail.value,
+          },
+        })
+          .then((res) => {
+            console.log(res.data);
+            alert('회원가입 성공!');
+            document.location.href = '/';
+          })
+          .catch((err) => console.error(err));
+      }
+    </script>
+  </body>
+</html>

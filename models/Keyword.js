@@ -1,32 +1,27 @@
-const TodoContent = (sequelize, DataTypes) => {
+const Keyword = (sequelize, DataTypes) => {
   return sequelize.define(
-    'todo_content',
+    'keyword',
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
-        comment: '고유 콘텐츠 id',
+        comment: '고유 키워드 id',
       },
-      todo_id: {
+      user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: '투두 id',
+        comment: '사용자 id',
         references: {
-          model: 'todo',
+          model: 'user',
           key: 'id',
         },
         onDelete: 'CASCADE',
       },
-      content: {
-        type: DataTypes.STRING(255),
+      keyword: {
+        type: DataTypes.STRING(50),
         allowNull: false,
-        comment: '내용',
-      },
-      state: {
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        comment: '진행상태',
+        comment: '키워드 명',
       },
     },
     {
@@ -36,4 +31,4 @@ const TodoContent = (sequelize, DataTypes) => {
   );
 };
 
-module.exports = TodoContent;
+module.exports = Keyword;

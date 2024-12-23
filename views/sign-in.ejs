@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <%- include('include/header', { title: 'signin' })%>
+  <body>
+    <div class="main_wrap">
+      <div class="main_img">
+        <h1 class="main_title">Todo Checkk</h1>
+      </div>
+      <div class="main_con">
+        <h3 class="sub_title">
+          <span>로그인</span>
+        </h3>
+        <form name="form-login" method="post">
+          <label>
+            <span>EMAIL</span>
+            <input
+              type="email"
+              placeholder="EMAIL을 입력하세요"
+              name="userEmail"
+              required
+            />
+          </label>
+          <label>
+            <span>PW</span>
+            <input
+              type="password"
+              placeholder="PW를 입력하세요"
+              name="userPw"
+              required
+              minlength="4"
+              maxlength="18"
+            />
+          </label>
+
+          <!-- sns 로그인 -->
+          <div class="btn_wrap">
+            <ul class="sns_login">
+              <li class="kakao">
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/kakao'"
+                >
+                  <img src="../static/img/kakao_sq_s.png" alt="카카오버튼" />
+                </button>
+              </li>
+              <li class="google">
+                <button
+                  type="button"
+                  onclick="window.location.href='/auth/api/sign-in/google'"
+                >
+                  <img src="../static/img/google_sq.png" alt="구글버튼" />
+                </button>
+              </li>
+            </ul>
+
+            <button onclick="login()">로그인</button>
+          </div>
+        </form>
+
+        <div class="link">
+          <a href="/auth/search-pw">아이디 / 비밀번호 찾기</a>
+          <a href="/auth/sign-up">회원가입</a>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // 로그인
+      function login() {
+        const form_login = document.forms['form-login'];
+
+        if (!form_login.checkValidity()) {
+          form_login.reportValidity();
+          return;
+        }
+
+        axios({
+          method: 'post',
+          url: '/auth/api/sign-in',
+          data: {
+            id: form_login.userEmail.value,
+            pw: form_login.userPw.value,
+          },
+        }).then((res) => {
+          console.log(res);
+          const { data } = res;
+          console.log(data); //true of false
+          if (data) {
+            alert('로그인 성공');
+            // document.location.href = '/user/profile';
+          } else {
+            alert('로그인 실패');
+            form_login.reset();
+          }
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -2,6 +2,7 @@ const passport = require('passport');
 const KakaoStrategy = require('passport-kakao').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User } = require('../models');
+require('dotenv').config();
 
 // let host;
 // if (process.env.NODE_ENV == 'production') {

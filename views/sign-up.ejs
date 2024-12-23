@@ -1,27 +1,36 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>signup</title>
-    <link rel="stylesheet" href="../static/css/style.css" />
-  </head>
+  <%- include('include/header', { title: 'signup' })%>
   <body>
     <div class="main_wrap">
       <div class="main_img">
         <h1 class="main_title">Todo Checkk</h1>
+        <p class="main_txt">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis
+          quaerat quas, ipsum minus minima odit, necessitatibus fuga quisquam
+          doloremque quibusdam explicabo, suscipit magni sed! Itaque distinctio
+          nobis eveniet recusandae ab.
+        </p>
       </div>
       <div class="main_con">
         <h3 class="sub_title">
-          <span>SignUp</span>
-          <span></span>
+          <span>회원가입</span>
         </h3>
         <form name="form-signup" method="post">
+          <label>
+            <span>NICK NAME</span>
+            <input
+              type="text"
+              placeholder="닉네임을 입력하세요"
+              name="userName"
+              required
+            />
+          </label>
           <label>
             <span>EMAIL</span>
             <input
               type="email"
-              placeholder="email을 입력하세요"
+              placeholder="이메일을 입력하세요"
               name="userEmail"
               required
             />
@@ -38,7 +47,7 @@
             />
           </label>
 
-          <button>회원가입</button>
+          <button onclick="register();">회원가입</button>
         </form>
 
         <div class="link">

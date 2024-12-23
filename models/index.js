@@ -2,7 +2,7 @@
 
 const Sequelize = require('sequelize');
 const env = process.env.NODE_ENV || 'development';
-let config = require(__dirname + '/../config/config.js')[env];
+const config = require(__dirname + '/../config/config.js')[env];
 const db = {};
 
 const sequelize = new Sequelize(
@@ -25,12 +25,37 @@ Keyword.hasMany(Todo, {
   sourceKey: 'id',
 });
 
+Keyword.belongsTo(User, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
 User.hasMany(Todo, {
   foreignKey: 'user_id',
   sourceKey: 'id',
 });
 
+User.hasMany(Keyword, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
+Todo.belongsTo(Keyword, {
+  foreignKey: 'keyword_id',
+  sourceKey: 'id',
+});
+
+Todo.belongsTo(User, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
 Todo.hasMany(TodoContent, {
+  foreignKey: 'todo_id',
+  sourceKey: 'id',
+});
+
+TodoContent.belongsTo(Todo, {
   foreignKey: 'todo_id',
   sourceKey: 'id',
 });

@@ -11,7 +11,7 @@ const Todo = (sequelize, DataTypes) => {
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: '게시글 유저',
+        comment: '사용자 id',
         references: {
           model: 'user',
           key: 'id',
@@ -20,7 +20,7 @@ const Todo = (sequelize, DataTypes) => {
       },
       keyword_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         comment: '키워드 id',
         references: {
           model: 'keyword',
@@ -36,6 +36,11 @@ const Todo = (sequelize, DataTypes) => {
         type: DataTypes.ENUM('low', 'medium', 'high'),
         allowNull: true,
         comment: '우선순위',
+      },
+      date: {
+        type: DataTypes.DATE,
+        allowNull: false,
+        comment: '투두 날짜',
       },
       write_date: {
         type: DataTypes.DATE,

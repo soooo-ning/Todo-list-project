@@ -25,12 +25,11 @@ exports.signIn = async (req, res) => {
   try {
     const user = await User.findOne({ where: { email } });
     if (!user || user.pw !== pw) {
-      // 비밀번호 검증 로직
       return res.status(401).json({ message: '로그인 실패' });
     }
 
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
-      expiresIn: '124h',
+      expiresIn: '24h',
     });
     res.json({ token });
   } catch (err) {
@@ -46,7 +45,6 @@ exports.jwtToken = (req, res) => {
     return res.status(400).json({ message: '토큰이 제공되지 않았습니다.' });
   }
 
-  // 단순히 요청받은 토큰을 응답으로 반환
   res.json({ token });
 };
 
@@ -62,7 +60,7 @@ exports.signUp = async (req, res) => {
 
     const newUser = await User.create({
       nickname,
-      pw,
+      pw, // 비밀번호는 해시화하여 저장하는 것이 좋습니다.
       email,
       profile_image: null,
     });
@@ -100,8 +98,6 @@ exports.requestPasswordReset = async (req, res) => {
 
     // 비밀번호 재설정 토큰 생성
     const token = crypto.randomBytes(32).toString('hex');
-
-    // 토큰을 데이터베이스에 저장 (예: User 테이블에 resetToken, resetTokenExpiry 추가)
     user.resetToken = token;
     user.resetTokenExpiry = Date.now() + 3600000; // 1시간 유효
     await user.save();
@@ -110,7 +106,7 @@ exports.requestPasswordReset = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'maxbeny666@gmail.com', // 발신 이메일
+        user: 'your_email@gmail.com', // 발신 이메일
         pass: 'your_email_password', // 발신 이메일 비밀번호
       },
     });
@@ -142,28 +138,11 @@ exports.signInGoogle = passport.authenticate('google', {
 
 // Google OAuth 콜백
 exports.googleCallback = (req, res) => {
-  res.redirect('/');
+  res.redirect('/todo/write');
 };
 
-exports.signInKakao = passport.authenticate('kakao'); // Kakao 인증 설정
-
-exports.kakaoCallback = (req, res, next) => {
-  passport.authenticate('kakao', (err, user, info) => {
-    console.log('Error:', err);
-    console.log('User:', user);
-    console.log('Info:', info);
-
-    if (err) {
-      return next(err);
-    }
-    if (!user) {
-      return res.redirect('/auth/sign-in');
-    }
-    req.logIn(user, (err) => {
-      if (err) {
-        return next(err);
-      }
-      return res.redirect('/');
-    });
-  })(req, res, next);
+// Kakao OAuth 콜백
+exports.kakaoCallback = (req, res) => {
+  // 로그인 후 처리
+  res.redirect('/todo/write'); // 로그인 후 리다이렉션할 경로
 };

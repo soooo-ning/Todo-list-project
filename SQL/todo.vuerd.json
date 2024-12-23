@@ -4,13 +4,13 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -300.8728,
-    "scrollLeft": -308.4164,
-    "zoomLevel": 0.73,
+    "scrollTop": 0,
+    "scrollLeft": -100.4878,
+    "zoomLevel": 0.94,
     "show": 431,
     "database": 4,
     "databaseName": "",
-    "canvasType": "ERD",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
     "language": 1,
     "tableNameCase": 4,
     "columnNameCase": 2,
@@ -72,15 +72,15 @@
           "QOEZmqhrtx6md6ts1a_hC"
         ],
         "ui": {
-          "x": 319.3836,
-          "y": 113.0244,
+          "x": 342.6713,
+          "y": 115.7641,
           "zIndex": 2,
           "widthName": 60,
           "widthComment": 77,
           "color": ""
         },
         "meta": {
-          "updateAt": 1734859348807,
+          "updateAt": 1734883531354,
           "createAt": 1734328958185
         }
       },
@@ -930,7 +930,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1734858606146,
+          "updateAt": 1734883547847,
           "createAt": 1734858510835
         }
       },
@@ -966,9 +966,9 @@
           "columnIds": [
             "-Y9HHVyf8r5-a8EZF1atH"
           ],
-          "x": 559.8836,
-          "y": 361.0244,
-          "direction": 8
+          "x": 342.6713,
+          "y": 239.76409999999998,
+          "direction": 1
         },
         "end": {
           "tableId": "YF8Pyzb1_k6dOH8uQmE1P",
@@ -1493,7 +1493,8 @@
       {
         "name": 1734858584665,
         "dataType": 1734858597302,
-        "comment": 1734858606145
+        "comment": 1734858606145,
+        "options(notNull)": 1734883547846
       }
     ],
     "G5WNmUmkG7XPbpVs4XK5v": [

@@ -10,10 +10,15 @@ const userController = require('../controllers/UserController');
 router.get('/', authController.getSignIn); // 로그인 페이지
 router.post('/auth/api/sign-in', authController.signIn); // 로그인 api
 router.post('/auth/api/sign-in/token', authController.jwtToken); // jwt 토큰 api
-router.post('/auth/api/sign-in/google', authController.signInGoogle); // oauth 구글
-router.post('/auth/api/sign-in/kakao', authController.signInKakao); // oauth 카카오
-router.get('/kakao', passport.authenticate('kakao'));
-router.get('/kakao/callback', authController.kakaoCallback);
+router.get(
+  '/auth/api/sign-in/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'], // 요청할 권한
+  }),
+); // oauth 구글
+router.get('/auth/google/callback', authController.googleCallback);
+router.get('/auth/api/sign-in/kakao', passport.authenticate('kakao')); // oauth 카카오
+router.get('/auth/kakao/callback', authController.kakaoCallback);
 
 // Auth signup
 router.get('/auth/sign-up', authController.getSignUp); // 회원가입 페이지
@@ -22,7 +27,7 @@ router.get('/auth/api/sign-up/check', authController.duplicatedEmail); // 이메
 
 // Auth search pw
 router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페이지
-router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
+// router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
 // User
 router.get('/user/profile', userController.getProfile); // 프로필 페이지

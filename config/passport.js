@@ -3,14 +3,14 @@ const KakaoStrategy = require('passport-kakao').Strategy;
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User } = require('../models');
 
-let host;
-if (process.env.NODE_ENV == 'production') {
-  host = process.env.PROD_HOST;
-} else if (process.env.NODE_ENV == 'development') {
-  host = process.env.LOCAL_HOST;
-} else {
-  host = process.env.LOCAL_HOST;
-}
+// let host;
+// if (process.env.NODE_ENV == 'production') {
+// host = process.env.PROD_HOST;
+// } else if (process.env.NODE_ENV == 'development') {
+// host = process.env.LOCAL_HOST;
+// } else {
+// host = process.env.LOCAL_HOST;
+// }
 
 const passportConfig = (app) => {
   // Passport 초기화
@@ -23,7 +23,7 @@ const passportConfig = (app) => {
       {
         clientID: process.env.KAKAO_APP_KEY,
         clientSecret: process.env.KAKAO_APP_SECRET,
-        callbackURL: `http://${host}:8080/auth/kakao/callback`,
+        callbackURL: 'http://todosesac.r-e.kr:8080/auth/kakao/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         try {
@@ -53,7 +53,7 @@ const passportConfig = (app) => {
       {
         clientID: process.env.GOOGLE_CLIENT_ID, // Google에서 발급받은 클라이언트 ID
         clientSecret: process.env.GOOGLE_CLIENT_SECRET, // Google에서 발급받은 클라이언트 비밀
-        callbackURL: `http://${host}:8080/auth/google/callback`,
+        callbackURL: 'http://todosesac.r-e.kr:8080/auth/google/callback',
       },
       async (accessToken, refreshToken, profile, done) => {
         try {

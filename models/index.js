@@ -25,7 +25,17 @@ Keyword.hasMany(Todo, {
   sourceKey: 'id',
 });
 
+Keyword.belongsTo(User, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
 User.hasMany(Todo, {
+  foreignKey: 'user_id',
+  sourceKey: 'id',
+});
+
+User.hasMany(Keyword, {
   foreignKey: 'user_id',
   sourceKey: 'id',
 });

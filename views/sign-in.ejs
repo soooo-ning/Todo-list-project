@@ -1,11 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>login</title>
-    <link rel="stylesheet" href="../static/css/style.css" />
-  </head>
+  <%- include('include/header', { title: 'signin' })%>
   <body>
     <div class="main_wrap">
       <div class="main_img">
@@ -13,8 +8,7 @@
       </div>
       <div class="main_con">
         <h3 class="sub_title">
-          <span>LogIn</span>
-          <span></span>
+          <span>로그인</span>
         </h3>
         <form name="form-login" method="post">
           <label>
@@ -59,7 +53,7 @@
               </li>
             </ul>
 
-            <button>로그인</button>
+            <button onclick="login()">로그인</button>
           </div>
         </form>
 
@@ -69,5 +63,37 @@
         </div>
       </div>
     </div>
+
+    <script>
+      // 로그인
+      function login() {
+        const form_login = document.forms['form-login'];
+
+        if (!form_login.checkValidity()) {
+          form_login.reportValidity();
+          return;
+        }
+
+        axios({
+          method: 'post',
+          url: '/auth/api/sign-in',
+          data: {
+            id: form_login.userEmail.value,
+            pw: form_login.userPw.value,
+          },
+        }).then((res) => {
+          console.log(res);
+          const { data } = res;
+          console.log(data); //true of false
+          if (data) {
+            alert('로그인 성공');
+            // document.location.href = '/user/profile';
+          } else {
+            alert('로그인 실패');
+            form_login.reset();
+          }
+        });
+      }
+    </script>
   </body>
 </html>

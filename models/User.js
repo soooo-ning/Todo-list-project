@@ -8,11 +8,17 @@ const User = (sequelize, DataTypes) => {
         autoIncrement: true,
         comment: '고유 사용자 id',
       },
-      kakaoId: {
+      kakao_id: {
         type: DataTypes.STRING,
         allowNull: true,
         unique: false,
-        comment: '카카오 고유 ID',
+        comment: '카카오 고유 id',
+      },
+      google_id: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: false,
+        comment: '카카오 고유 id',
       },
       nickname: {
         type: DataTypes.STRING(20),
@@ -24,7 +30,7 @@ const User = (sequelize, DataTypes) => {
         allowNull: false,
         comment: '비밀번호',
       },
-      resetToken: {
+      reset_token: {
         type: DataTypes.STRING(255),
         allowNull: true,
         comment: '비밀번호 재설정 토큰',

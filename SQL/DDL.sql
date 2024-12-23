@@ -4,7 +4,9 @@ USE todo;
 
 CREATE TABLE keyword (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 키워드 id',
-  keyword VARCHAR(50) NOT NULL COMMENT '키워드 명'
+  user_id INT NOT NULL COMMENT '사용자 id',
+  keyword VARCHAR(50) NOT NULL COMMENT '키워드 명',
+  CONSTRAINT fk_todo_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 ) COMMENT '키워드 테이블';
 
 CREATE TABLE user (
@@ -20,8 +22,8 @@ CREATE TABLE user (
 
 CREATE TABLE todo (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 투두 id',
-  user_id INT NOT NULL COMMENT '게시글 유저',
-  keyword_id INT NOT NULL COMMENT '키워드 id',
+  user_id INT NOT NULL COMMENT '사용자 id',
+  keyword_id INT COMMENT '키워드 id',
   title VARCHAR(50) COMMENT '제목',
   priority ENUM('low', 'medium', 'high') COMMENT '우선순위',
   date DATETIME NOT NULL COMMENT '투두 날짜',

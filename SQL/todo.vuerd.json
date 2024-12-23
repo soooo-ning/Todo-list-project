@@ -10,7 +10,7 @@
     "show": 431,
     "database": 4,
     "databaseName": "",
-    "canvasType": "ERD",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
     "language": 1,
     "tableNameCase": 4,
     "columnNameCase": 2,
@@ -1055,7 +1055,6 @@
           ],
           "x": 618.7877,
           "y": 324.7504,
-          "direction": 8
         },
         "end": {
           "tableId": "YF8Pyzb1_k6dOH8uQmE1P",
@@ -1608,7 +1607,8 @@
       {
         "name": 1734925086872,
         "dataType": 1734858597302,
-        "comment": 1734858606145
+        "comment": 1734858606145,
+        "options(notNull)": 1734883547846
       }
     ],
     "G5WNmUmkG7XPbpVs4XK5v": [

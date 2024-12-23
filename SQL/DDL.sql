@@ -2,18 +2,16 @@ CREATE DATABASE todo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE todo;
 
-CREATE TABLE keyword
-(
+CREATE TABLE keyword (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 키워드 id',
   user_id INT NOT NULL COMMENT '사용자 id',
   keyword VARCHAR(50) NOT NULL COMMENT '키워드 명',
   CONSTRAINT fk_todo_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 ) COMMENT '키워드 테이블';
 
-CREATE TABLE user
-(
+CREATE TABLE user (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 사용자 id',
-  kakaoId VARCHAR(255) UNIQUE COMMENT '카카오 고유 ID',
+  kakaoId VARCHAR(255) NULL COMMENT '카카오 고유 ID',  -- NULL 허용
   nickname VARCHAR(20) NOT NULL COMMENT '닉네임',
   pw VARCHAR(20) NOT NULL COMMENT '비밀번호',
   resetToken VARCHAR(255) COMMENT '비밀번호 재설정 토큰',
@@ -22,8 +20,7 @@ CREATE TABLE user
   update_date DATETIME NOT NULL COMMENT '사용자 계정 수정일'
 ) COMMENT '사용자 테이블';
 
-CREATE TABLE todo
-(
+CREATE TABLE todo (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 투두 id',
   user_id INT NOT NULL COMMENT '사용자 id',
   keyword_id INT COMMENT '키워드 id',
@@ -38,8 +35,7 @@ CREATE TABLE todo
   CONSTRAINT fk_todo_user FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
 ) COMMENT '투두 테이블';
 
-CREATE TABLE todo_content
-(
+CREATE TABLE todo_content (
   id INT AUTO_INCREMENT PRIMARY KEY COMMENT '고유 콘텐츠 id',
   todo_id INT NOT NULL COMMENT '투두 id',
   content VARCHAR(255) NOT NULL COMMENT '내용',
@@ -47,3 +43,21 @@ CREATE TABLE todo_content
   CONSTRAINT fk_todo_content_todo FOREIGN KEY (todo_id) REFERENCES todo(id) ON DELETE CASCADE
 ) COMMENT '투두 콘텐츠 테이블';
 
+-- 개발 계정
+CREATE USER 'developer'@'localhost' IDENTIFIED BY 'todo';
+
+GRANT ALL PRIVILEGES ON todo.* TO 'developer'@'localhost';
+
+-- 사용자 계정
+CREATE USER 'user'@'localhost' IDENTIFIED BY 'user';
+
+GRANT ALL PRIVILEGES ON todo.* TO 'developer'@'localhost';
+
+-- 권한 확인
+FLUSH PRIVILEGES;
+
+select * from mysql.user;
+
+SHOW GRANTS for 'developer'@'localhost';
+
+SHOW GRANTS for 'user'@'localhost';

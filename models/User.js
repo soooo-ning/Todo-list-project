@@ -10,7 +10,7 @@ const User = (sequelize, DataTypes) => {
       },
       kakao_id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
         comment: '카카오 고유 id',
       },

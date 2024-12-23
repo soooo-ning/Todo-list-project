@@ -16,7 +16,6 @@ app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-
 // 세션 미들웨어 설정
 app.use(
   session({

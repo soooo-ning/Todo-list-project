@@ -25,6 +25,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-evenly;
+  text-align: center;
 }
 html,
 body {
@@ -139,6 +140,7 @@ table {
   display: flex;
   flex-wrap: wrap;
   gap: 6vh 0;
+  text-align: left;
 }
 .container form {
   max-width: 80%;
@@ -251,6 +253,7 @@ table {
   min-height: 100%;
   height: auto;
   padding: 50px 30px;
+  width: 100%;
 }
 .container .main_title {
   color: #c8b6ff;
@@ -344,6 +347,7 @@ body.pop_open {
   max-width: unset;
   width: 100%;
   height: calc(100% - 106px);
+  align-items: center;
   overflow-y: auto;
   padding: 30px 20px;
   border: 1px solid #999;

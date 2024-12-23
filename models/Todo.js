@@ -11,7 +11,7 @@ const Todo = (sequelize, DataTypes) => {
       user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: '게시글 유저',
+        comment: '사용자 id',
         references: {
           model: 'user',
           key: 'id',
@@ -20,7 +20,7 @@ const Todo = (sequelize, DataTypes) => {
       },
       keyword_id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         comment: '키워드 id',
         references: {
           model: 'keyword',

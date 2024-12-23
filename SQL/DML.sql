@@ -1,8 +1,8 @@
 -- 키워드 추가
-INSERT INTO keyword (keyword) VALUES 
-('work'), 
-('study'), 
-('exercise');
+INSERT INTO keyword (user_id, keyword) VALUES 
+(1, 'work'), 
+(1, 'study'), 
+(2, 'exercise');
 
 -- 사용자 추가
 INSERT INTO user (nickname, pw, email, profile_image, update_date) 

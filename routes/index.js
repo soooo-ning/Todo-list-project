@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
+const uploadDetail = require('../middlewares/multer');
 
 const authController = require('../controllers/AuthController');
 const todoController = require('../controllers/TodoController');
@@ -33,7 +34,11 @@ router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페�
 // User
 router.get('/user/profile', userController.getProfile); // 프로필 페이지
 router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
-router.post('/user/api/photo-upload', userController.uploadPhoto); // 프로필 사진 업로드 api
+router.post(
+  '/user/api/photo-upload',
+  uploadDetail.single('dynamic-file'),
+  userController.uploadPhoto,
+); // 프로필 사진 업로드 api
 router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설정 페이지
 router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
 router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지

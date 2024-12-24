@@ -1,23 +1,19 @@
-<!-- <head>
-  <link rel="stylesheet" href="../static/css/navi.css" />
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
   <script
     defer
     src="https://kit.fontawesome.com/1a37f47d3b.js"
     crossorigin="anonymous"
   ></script>
-</head> -->
+
+  <!-- axios CDN -->
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+</head>
+
 <div class="sidebar">
   <div class="profile">
-    <img
-      src="/static/img/26139_img.png"
-      alt="프로필사진"
-      id="profileImg"
-      width="100"
-      height="100"
-    />
-    <p><%#name%>~~님 환영합니다!</p>
+    <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
+    class="profile-img" width="100" height="100"/>
+    <p><%=nickname%>님 환영합니다!</p>
     <div class="navi logoutBtn">
       <a href="/user/profile" class="navi">프로필 설정</a>
       <a
@@ -48,10 +44,18 @@
     </div>
   </div>
   <div class="keyBar">
-    <a href="/todo/api/list/keyword" class="navi">키워드</a>
+    <h4>키워드</h4>
     <ul id="keyul">
-      <li>키워드1</li>
-      <li>키워드2</li>
+      <% for (let i = 0; i < keywords.length; i++) { %>
+      <li>
+        <a
+          href="/todo/api/list/keyword?leyword={<%= keywords[i].get('keyword')
+          %>}"
+          ><i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword')
+          %></a
+        >
+      </li>
+      <% } %>
     </ul>
   </div>
   <button type="button" class="pop_btn">할일 등록하기</button>

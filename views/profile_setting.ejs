@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <%- include('include/header', { title: 'profile_setting' })%>
+
   <body>
     <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
@@ -16,46 +17,61 @@
             <hr />
             <h4>프로필 사진</h4>
             <div class="profileImg">
-              <img
-                src="/static/img/26139_img.png"
-                alt="기본 프로필 이미지"
-                width="200"
-                height="200"
-              />
+              <img id="profile-img" src="<%= "/uploads/"+ profile_img ||
+              "/static/img/26139_img.png"%>" alt="기본 프로필 이미지"
+              class="profile-img" width="200" height="200" />
             </div>
             <div class="dynamic">
-              <input type="file" name="dynamicFile" id="dynamicFile" />
-              <button
-                type="button"
-                onclick="fileUpload()"
-                style="margin-top: 10px"
+              <form
+                id="upload-form"
+                enctype="multipart/form-data"
+                method="POST"
               >
-                프로필 업로드
-              </button>
+                <input
+                  type="file"
+                  name="dynamic-file"
+                  id="dynamic-file"
+                  style="display: none"
+                  onchange="uploadPhoto()"
+                />
+                <button
+                  type="button"
+                  onclick="fileUpload(event)"
+                  id="upload-btn"
+                  class="btn"
+                  style="margin-top: 10px"
+                >
+                  파일 업로드
+                </button>
+              </form>
             </div>
 
             <hr />
 
             <h4>닉네임</h4>
-            <input
-              type="text"
-              id="nickname"
-              value="<%#name%>"
-              style="width: calc(100% - 87px)"
-            />
-            <button>변경</button>
+            <form name="nicknameForm" id="nicknameForm">
+              <input
+                type="text"
+                id="nickname"
+                value="<%=nickname%>"
+                style="width: calc(100% - 87px)"
+              /><br />
+              <button
+                type="button"
+                onclick="profileUpdate(event)"
+                id="update-btn"
+                class="btn set-profile-btn"
+              >
+                프로필 변경
+              </button>
+            </form>
           </div>
           <div class="accountbox">
             <div class="allBox add">
               <h3>내 계정</h3>
               <hr />
               <h4>이메일</h4>
-              <input
-                type="email"
-                id="email"
-                value="<%#email@email.com%>"
-                readonly
-              />
+              <input type="email" id="email" value="<%= email%>" readonly />
 
               <hr />
               <!-- <h4>비밀번호 변경</h4>
@@ -92,5 +108,74 @@
         document.location.href = '/user/delete-account';
       }
     </script> -->
+    <script>
+      /* 지원 ------------------------ */
+
+      // profile-setting의 js
+
+      function fileUpload(event) {
+        event.preventDefault();
+        const fileInput = document.getElementById('dynamic-file');
+        fileInput.click();
+      }
+
+      let uploadedFile = null;
+      // 파일 선택 후 미리보기
+      function uploadPhoto() {
+        const fileInput = document.getElementById('dynamic-file');
+        const formData = new FormData();
+        formData.append('dynamic-file', fileInput.files[0]); // "key",value
+
+        axios({
+          method: 'post',
+          url: '/user/api/photo-upload',
+          data: formData,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+          .then((res) => {
+            console.log(res.data.photo);
+            console.log(fileInput);
+            uploadedFile = res.data.photo;
+            console.log(uploadedFile);
+            const imgFile = document.getElementById('profile-img');
+            imgFile.src = `/uploads/${uploadedFile}`;
+            alert('프로필 사진이 업로드 되었습니다!');
+          })
+          .catch((err) => {
+            console.error('파일업로드 error!: ', err);
+            alert('사진 업로드 실패');
+          });
+      }
+
+      // '프로필변경'버튼을 통해 닉네임과 파일을 서버로 전송
+      async function profileUpdate(event) {
+        event.preventDefault();
+
+        const nickname = document.getElementById('nickname').value;
+        console.log(uploadedFile);
+        // axios 데이터 전송
+        await axios({
+          method: 'patch',
+          url: '/user/api/profile',
+          data: {
+            nickname,
+            photo: uploadedFile,
+          },
+        })
+          .then((response) => {
+            // 성공적인 업데이트 후 처리
+            alert('프로필이 업데이트되었습니다.');
+            location.reload();
+          })
+          .catch((error) => {
+            console.error(error);
+            alert('프로필 업데이트 실패');
+          });
+      }
+
+      /* ------------------------ 지원 */
+    </script>
   </body>
 </html>

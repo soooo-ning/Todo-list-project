@@ -10,6 +10,7 @@
   padding: 10vh 4vw;
   background: url(../img/calendar-op.png) no-repeat bottom -78px left -50px;
   background-size: auto 68%;
+  transition: all, 0.3s;
 }
 .main_con {
   width: 60%;
@@ -20,6 +21,7 @@
   justify-content: space-evenly;
   padding: 10vh 4vw;
   background: #f9f9f9;
+  transition: all, 0.3s;
 }
 .main_con > .sub_title {
   width: 100%;
@@ -229,6 +231,7 @@ body.pop_open {
 }
 .container.popup.on {
   display: flex;
+  z-index: 3;
 }
 .container.popup {
   display: none;
@@ -445,4 +448,19 @@ a:hover:after,
 .tit_404 ~ a:hover:after {
   width: calc(100% + 6px);
   transition: all, 0.3s;
+}
+
+@media (max-width: 720px) {
+  .main_img {
+    display: none;
+  }
+  .main_con {
+    width: 100%;
+  }
+  .main_con form {
+    width: 80%;
+  }
+  .main_con form ~ .link {
+    width: 80%;
+  }
 }

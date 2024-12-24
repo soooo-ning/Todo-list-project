@@ -607,3 +607,86 @@ body.dark-mode * {
 /* 지원 ------------ */
 
 /* ------------- 지원 */
+
+/* === 반응형 === */
+@media (max-width: 1024px) {
+  /*nav 설정*/
+  body > .nav {
+    position: absolute;
+    left: -30%;
+    width: 30%;
+    transition: all, 0.1s;
+  }
+  body > .nav.on {
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    transition: all, 0.3s;
+  }
+  body > .nav + div {
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+  }
+  .sidebar {
+    width: 100%;
+    padding: 30px 15px;
+    justify-content: flex-end;
+  }
+  body > .nav .navi_close {
+    display: inline-flex;
+  }
+  body > .nav + .container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    text-align: left;
+  }
+  body > .nav.on + .container:after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  body > .nav + .container .navi_btn {
+    display: inline-block;
+  }
+  .container.popup .pop_con {
+    max-width: 80%;
+  }
+}
+
+@media (max-width: 720px) {
+  input[type='text'],
+  input[type='password'],
+  input[type='email'],
+  input[type='search'],
+  input[type='file'] {
+    padding: 10px 5px;
+  }
+  body > .nav {
+    width: 100%;
+  }
+  .sidebar > * {
+    width: 100%;
+  }
+  .main_con form > button,
+  .container form > button,
+  .pop_btn {
+    min-width: 20%;
+    max-width: 80%;
+    word-break: keep-all;
+  }
+  form[name='form-todo'].view input {
+    padding: 20px 10px;
+    font-size: 17px;
+  }
+}

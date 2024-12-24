@@ -104,12 +104,12 @@
 
           <!-- 날씨 -->
           <div class="card-body">
-            <h5 class="card-title">날씨</h5>
-            <span>흐림</span>
-            <br />
-            <span>서울</span>
-            <br />
-            <span>23도</span>
+            <h5 class="card-title"></h5>
+            <div class="weather-container">
+              <h1>서울 날씨</h1>
+              <div id="temperature">기온: 로딩 중...</div>
+              <div id="weather">날씨: 로딩 중...</div>
+            </div>
           </div>
 
           <!-- 이번주 할 일 -->
@@ -188,6 +188,44 @@
         todayTotalTodos > 0
           ? Math.round((todayCompletedTodos / todayTotalTodos) * 100)
           : 0;
+
+      //날씨 API
+      // 날씨 API URL과 인증 키
+      const apiUrl =
+        'https://apihub.kma.go.kr/api/typ01/url/fct_shrt_reg.php?tmfc=0&authKey=cjr5zSZPQBi6-c0mT6AYAg';
+
+      function getWeather() {
+        fetch(apiUrl)
+          .then((response) => response.json())
+          .then((data) => {
+            const weatherInfo = data.response.body.items.item.find(
+              (item) => item.city === '서울',
+            );
+
+            if (weatherInfo) {
+              const temperature = weatherInfo.temp;
+              const weatherStatus = weatherInfo.weather;
+
+              document.getElementById(
+                'temperature',
+              ).textContent = `기온: ${temperature}°C`;
+              document.getElementById(
+                'weather',
+              ).textContent = `날씨: ${weatherStatus}`;
+            } else {
+              alert('서울의 날씨 정보를 찾을 수 없습니다.');
+            }
+          })
+          .catch((error) => {
+            console.error(
+              '날씨 데이터를 가져오는 중 오류가 발생했습니다:',
+              error,
+            );
+            alert('날씨 데이터를 가져오는 중 오류가 발생했습니다.');
+          });
+      }
+
+      window.onload = getWeather;
 
       // DB에서 가져온 데이터 예시
       const weeklyTodos = [

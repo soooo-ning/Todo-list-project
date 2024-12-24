@@ -4,9 +4,10 @@ const { success, serverError, notFound } = require('../utils/common');
 
 // 투두 작성 페이지 렌더링
 // GET /todo/write
-exports.getWriteTodo = (req, res) => {
-  res.render('write');
-};
+// exports.getWriteTodo = (req, res) => {
+//   res.render('write');
+// };
+// 팝업 변경으로 사용안함
 
 // 투두 작성 API
 // POST /todo/api/write
@@ -26,8 +27,8 @@ exports.writeTodo = async (req, res) => {
       await TodoContent.bulkCreate(
         contentArray.map((c) => ({
           todo_id: todo.id,
-          content: c,
-          state: false,
+          content: c.content,
+          state: c.state === 'true',
         })),
       );
     }
@@ -57,20 +58,21 @@ exports.getTodo = async (req, res) => {
 
 // 투두 수정 페이지 렌더링
 // GET /todo/api/edit/:id
-exports.getEditTodo = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const todo = await Todo.findOne({
-      where: { id },
-      include: [TodoContent, Keyword],
-    });
+// exports.getEditTodo = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const todo = await Todo.findOne({
+//       where: { id },
+//       include: [TodoContent, Keyword],
+//     });
 
-    if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
-    success(res, todo, 'Todo ㄱ존내용 조회 완료');
-  } catch (err) {
-    serverError(res, err);
-  }
-};
+//     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+//     success(res, todo, 'Todo 기존내용 조회 완료');
+//   } catch (err) {
+//     serverError(res, err);
+//   }
+// };
+// 팝업 변경으로 사용안함
 
 // 투두 수정 API
 // PATCH /todo/api/edit

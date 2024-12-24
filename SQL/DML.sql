@@ -5,10 +5,10 @@ INSERT INTO keyword (user_id, keyword) VALUES
 (2, 'exercise');
 
 -- 사용자 추가
-INSERT INTO user (nickname, pw, email, profile_image, update_date) 
+INSERT INTO user (nickname, pw, email, update_date) 
 VALUES 
-('tester1', '12345', 'tester1@example.com', NULL, NOW()),
-('tester2', '12345', 'tester2@example.com', NULL, NOW());
+('tester1', '12345', 'tester1@example.com', NOW()),
+('tester2', '12345', 'tester2@example.com', NOW());
 
 -- 투두 테이블 추가
 INSERT INTO todo (user_id, keyword_id, title, priority, date, write_date, update_date) VALUES 

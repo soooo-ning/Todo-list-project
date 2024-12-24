@@ -12,9 +12,9 @@
         <form name="changePw" class="main-container">
           <h4 class="mb20">현재 비밀번호가 일치하는 경우 새 비밀번호로 변경할 수 있습니다.</h4>
         <div class="allBox">
-          <span>비밀번호 작성규칙:</span>
+          <span style="font-weight: 700;">비밀번호 작성규칙:</span>
           <span>· 비밀번호는 최소 4자 이상, 최대 18자 이하로 설정해야 합니다.</span>
-          <span></span>
+          <span>· 비밀번호는 영어 대/소문자, 숫자, 특수문자 .!@#*?만 사용가능합니다.</span>
           <hr />
           <div class="changePwbox">
             <label
@@ -23,21 +23,21 @@
               <input type="password" id="currentPw" required
             />
           </label>
-            <div class="pw-result"></div>
+            <div class="pw-result" id="currentPwConfirm"></div>
             <label
               >
               <span>새 비밀번호</span>
-              <input type="password" id="newPw" required
+              <input type="password" id="newPw1" required
             />
           </label>
             <label
               >
               <span>새 비밀번호 확인</span>
-              <input type="password" id="newPw" required
+              <input type="password" id="newPw2" required
             />
           </label>
-          <div class="pw-result"></div>
-            <button type="button" class="changePw" onclick="changePwBtn()">저장</button>
+          <div class="pw-result" id="newPwConfirm"></div>
+            <button type="button" class="changePw" onclick="changePwBtn(event)">저장</button>
         </div>
       </form>
       </div>
@@ -45,5 +45,30 @@
 
     <%- include('include/popup') %>
 
+    <script>
+      function changePwBtn(event){
+        event.preventDefault();
+
+        const correntPw = document.getElementById("currentPw").value;
+        const newPw = document.getElementById("newPw1").value;
+        const newPwCheck = document.getElementById("newPw2").value;
+
+        const currentResult = document.getElementById("currentPwConfirm")
+        const newPwConfirm = document.getElementById("newPwConfirm")
+
+        const password = "<%=password%>"
+        // console.log(correntPw)
+        if(correntPw === password){
+          if(newPw !== newPwCheck){
+            // newPwConfirm.innerHTML = `<h4 style="color: red">새 비밀번호가 일치하지 않습니다!</h4>`
+            alert("새 비밀번호가 일치하지 않습니다!")
+            location.reload();
+            return 
+          }
+        }
+
+
+      }
+    </script>
   </body>
 </html>

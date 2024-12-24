@@ -4,24 +4,28 @@ const { where } = require('sequelize');
 
 exports.getProfile = async (req, res) => {
   try {
-    // User모델에서 닉네임 불러오기
-    // const userId = req.body
+    // // User모델에서 닉네임 불러오기
+    // // const userId = req.body
+    // const user = await User.findOne({
+    //   where: { id: 1 }, //추후 id불러오기
+    //   attributes: ['nickname', 'email', 'profile_image'],
+    // });
+
+    // // Keyword 모델에서 키워드 불러오기
+    // const keywords = await Keyword.findAll({
+    //   // where: { id: userid },
+    //   attributes: ['keyword'],
+    // });
+    // console.log(keywords, user);
+    const { nickname, profile_img, keywords } = res.locals;
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image'],
+      attributes: ['email'],
     });
-
-    // Keyword 모델에서 키워드 불러오기
-    const keywords = await Keyword.findAll({
-      // where: { id: userid },
-      attributes: ['keyword'],
-    });
-    console.log(keywords, user);
-
     res.render('profile_setting', {
-      nickname: user.nickname,
+      nickname,
       email: user.email,
-      profile_img: user.profile_image,
+      profile_img,
       keywords,
     });
   } catch (error) {
@@ -80,7 +84,7 @@ exports.getResetPw = async (req, res) => {
     // const userId = req.body
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image'],
+      attributes: ['nickname', 'email', 'profile_image', 'pw'],
     });
 
     // Keyword 모델에서 키워드 불러오기
@@ -94,6 +98,7 @@ exports.getResetPw = async (req, res) => {
       nickname: user.nickname,
       email: user.email,
       profile_img: user.profile_image,
+      password: user.pw,
       keywords,
     });
   } catch (error) {

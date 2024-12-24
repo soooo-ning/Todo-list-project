@@ -1,0 +1,594 @@
+/* * {
+  /* border: 1px solid #000; 
+}
+
+p {
+  margin: 10px 0px;
+}
+
+body {
+  display: flex;
+  margin: 0; /* 기본 마진 제거 
+} */
+
+/* navi */
+
+.sidebar {
+  height: 100%; /* 화면 높이 */
+  width: 300px;
+  background: linear-gradient(230deg, #c8b6ff, #e7c6ff, #b8c0ff);
+  overflow-y: auto;
+  padding: 50px 30px 30px;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: space-evenly;
+  gap: 30px 0;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none; /* 크롬, 사파리 등에서 스크롤바 숨김 */
+}
+
+.main-container {
+  /* padding: 300px; */
+  margin-left: 0;
+  width: auto;
+}
+
+#profileImg {
+  display: inline-block;
+  border-radius: 50%;
+  border: 3px solid #dddddd;
+  background-color: #fff;
+}
+
+/* a {
+              text-decoration: none;
+              color: var(--text-color);
+            } */
+
+.naviBar {
+  text-align: left;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+}
+.naviBar > p {
+  font-weight: 600;
+  margin-top: 15px;
+}
+.naviBar > * {
+  width: 100%;
+}
+.displaybox {
+  margin-top: 10px;
+}
+.setbox {
+  display: none;
+  border: 1px solid black;
+  background-color: white;
+  width: 180px;
+  border-radius: 10px;
+  margin: 10px 0px;
+  cursor: pointer;
+}
+.mode-set {
+  cursor: pointer;
+}
+
+.box {
+  /* width: 128px; */
+  border: 1px solid black;
+  border-radius: 8px;
+  margin: 5px;
+  padding: 5px;
+  cursor: pointer;
+}
+
+.keyBar {
+  text-align: left;
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 0;
+}
+.keyBar > * {
+  width: 100%;
+}
+
+#keyul {
+  list-style: none;
+}
+
+.container1 {
+  position: fixed;
+  height: 100%;
+  width: 300px;
+  background-color: rgb(255, 249, 228);
+}
+
+.profile {
+  width: 100%;
+  text-align: center;
+}
+
+.logoutBtn {
+  width: 80%;
+  display: flex;
+  justify-content: space-between;
+  margin: 20px auto 0;
+}
+
+.btn {
+  background-color: var(--button-bg);
+  color: var(--button-text);
+  border-radius: 13px;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  width: auto !important;
+}
+
+.allBox {
+  width: auto;
+  display: flex;
+  max-width: 100%;
+  box-shadow: 0 0 10px #0003;
+  border-radius: 20px;
+  padding: 30px;
+  padding-bottom: 30px;
+  margin-bottom: 10px;
+  /* text-align: start; */
+  flex-wrap: wrap;
+  gap: 20px;
+  align-content: space-between;
+  justify-content: flex-start;
+  background: #fff;
+}
+.allBox > * {
+  width: 100%;
+  text-align: left;
+}
+.allBox > a {
+  width: auto;
+}
+.allBox.add h3,
+.allBox.add h4 {
+  font-size: 16px;
+}
+.allBox.add button {
+  width: auto;
+  border: 1px solid #777;
+  border-radius: 15px;
+  padding: 15px 20px;
+  background: #fff;
+  font-weight: 600;
+  transition: all, 0.3s;
+  box-sizing: border-box;
+}
+.profileImg {
+  display: flex;
+  justify-content: center;
+}
+
+.dynamic {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+}
+
+/* input {
+              /* width: 20rem; 
+              max-width: 100%;
+              border: 1px solid darkgray;
+              border-radius: 30px;
+              padding: 5px 10px;
+            } */
+
+.pwbox {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.deletebox {
+  display: flex;
+  /* flex-direction: column; */
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+/* label {
+              display: flex;
+              margin: 10px 0px;
+              justify-content: center;
+            }
+            
+            span {
+              width: 150px;
+            } */
+
+.changePwbox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+button.changePw {
+  margin-top: 30px;
+  align-self: center; /* 버튼을 중앙에 정렬 */
+  width: auto;
+  border: 1px solid #777;
+  border-radius: 15px;
+  padding: 15px 20px;
+  background: #fff;
+  font-weight: 600;
+  transition: all, 0.3s;
+  box-sizing: border-box;
+}
+
+/* 다크모드 설정 */
+:root {
+  --background-color: #ffffff; /* 기본 배경색 (라이트 모드) */
+  --text-color: #000000; /* 기본 글자색 (라이트 모드) */
+  --button-bg: rgba(233, 195, 251, 0.87); /* 버튼 배경색 (라이트 모드) */
+  --button-color: rgba(128, 37, 170, 0.87); /* 버튼 텍스트 색상 (라이트 모드) */
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+.btn-dark {
+  background-color: rgba(233, 195, 251, 0.87);
+  border-radius: 13px;
+  color: rgba(115, 29, 144, 0.87);
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.btn-light {
+  background-color: rgba(128, 37, 170, 0.87);
+  border-radius: 13px;
+  color: rgba(233, 195, 251, 0.87);
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.btn:hover {
+  opacity: 0.8;
+}
+
+.sidebar.dark-mode {
+  position: fixed; /* fixed 대신 relative 사용 */
+  height: 100vh; /* 화면 높이 */
+  width: 300px;
+  background: #444 !important;
+  color: white;
+  overflow-y: auto;
+}
+.sidebar.dark-mode * {
+  background-color: #444 !important;
+}
+body.dark-mode {
+  --background-color: rgba(128, 37, 170, 0.87);
+  --text-color: white;
+}
+
+body.dark-mode * {
+  background: #333 !important;
+  color: #fff !important;
+  border-color: #777 !important;
+}
+
+/*search,keyword, deleted*/
+.title {
+  text-align: center;
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #b8c0ff;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.card {
+  flex: 1 1 calc(33.333% - 20px);
+  background: #fff;
+  /* padding: 20px; */
+  border-radius: 15px;
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
+  box-sizing: border-box;
+}
+.card-container.add .card {
+  padding: 20px;
+}
+
+.card-title {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+  color: #c8b6ff;
+  font-weight: 500;
+}
+
+.card-container.add .card .todo-list {
+  border: 1px solid #eee;
+  border-radius: 0;
+}
+
+.todo-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.todo-list li {
+  background: #f9f9f9;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.todo-list li.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+
+.recover-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: #b8c0ff;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* .recover-button:hover {
+  background-color: #bbd0ff;
+} */
+
+/* @media (max-width: 768px) {
+              .card {
+                flex: 1 1 calc(50% - 20px);
+              }
+            }
+            
+            @media (max-width: 480px) {
+              .card {
+                flex: 1 1 100%;
+              }
+            } */
+
+/*dash*/
+.container-fluid {
+  flex: 1;
+  height: auto;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-content: flex-start;
+  gap: 20px;
+}
+.container-fluid > * {
+  min-width: calc(50% - 15px);
+  width: auto;
+  flex-grow: 1;
+  border-radius: 20px;
+  box-shadow: 1px 3px 7px 2px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background: #fff;
+}
+.container-fluid > header {
+  width: 100%;
+  box-shadow: none;
+  padding: 0;
+  position: sticky;
+  top: -6px;
+  background: linear-gradient(180deg, #f5f5f5, rgba(245, 245, 245, 0.1));
+}
+.card {
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
+
+.card h5 {
+  font-size: 1.25rem;
+}
+
+.custom-progress {
+  /* background-color: #ebf8f667; */
+}
+
+.progress-container {
+  margin-top: 20px;
+}
+
+.summary,
+.today-todos {
+  /* margin: 20px 0; */
+}
+
+.progress-bar {
+  height: 100%;
+  line-height: 30px;
+  transition: width 0.5s ease;
+  color: #fff;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.progress {
+  height: 30px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #e0e0e0;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.progress-bar-custom {
+  background: linear-gradient(90deg, #29d6b6, #1e90ff);
+  color: white;
+  font-weight: bold;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+}
+
+.progress-bar-animated {
+  animation: progressBarAnimation 2s ease-in-out infinite;
+}
+
+@keyframes progressBarAnimation {
+  0% {
+    background-color: #29d6b6;
+  }
+  50% {
+    background-color: #1e90ff;
+  }
+  100% {
+    background-color: #29d6b6;
+  }
+}
+
+.progress-bar-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  line-height: 30px;
+}
+
+/*calendar*/
+.calendar {
+  width: auto;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #c8b6ff;
+  color: white;
+}
+
+.calendar-header h2 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.days,
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  text-align: center;
+  gap: 15px;
+}
+
+.day {
+  font-weight: bold;
+  font-size: 18px;
+  color: #555;
+}
+
+.day:nth-child(1),
+.date:nth-child(7n + 1) {
+  color: red;
+}
+
+.day:nth-child(7),
+.date:nth-child(7n) {
+  color: blue;
+}
+
+.date {
+  padding: 20px;
+  font-size: 18px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  position: relative;
+}
+
+.date:hover {
+  background-color: #f0f0f0;
+}
+
+.today {
+  background-color: black;
+  color: white;
+}
+
+.todo-list {
+  margin-top: 20px;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: auto;
+}
+
+.todo-list h3 {
+  margin: 0;
+  margin-bottom: 15px;
+  font-size: 24px;
+}
+
+.todo-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todo-list ul li {
+  background: #f0f0f0;
+  margin: 8px 0;
+  padding: 12px;
+  font-size: 18px;
+  border-radius: 5px;
+}
+
+.flex_wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px;
+}
+.mt20 {
+  margin-top: 20px;
+}
+.mb20 {
+  margin-bottom: 20px;
+}
+.mb0 {
+  margin-bottom: 0;
+}
+.w100 {
+  width: 100%;
+}
+.flex_wrap.sb {
+  justify-content: space-between;
+}

@@ -11,26 +11,38 @@
         <h3 class="sub_title"><span>회원탈퇴</span></h3>
         <form name="deleteContainer" class="main-container">
           <div class="allBox">
-            <h3><%= nickname%>님</p>
+            <h2><%= nickname%> 님</h2>
             <h3>정말 탈퇴하시겠어요?</h3>
             <p>
-                ◎ 지금 탈퇴하시면 진행 예정이나 현재 진행 중인 투두리스트 알림을 더 이상
-                이용하실 수 없습니다.
+              ◎ 지금 탈퇴하시면 진행 예정이나 현재 진행 중인 투두리스트 알림을
+              더 이상 이용하실 수 없습니다.
             </p>
             <p>
-                ◎ 탈퇴후에는 작성하신 모든 투두리스트가 삭제됩니다. 추후에 동일계정으로
-                재가입하셔도 복구되지 않으니, 탈퇴 신청 전에 꼭 확인해 주세요!
+              ◎ 탈퇴후에는 작성하신 모든 투두리스트가 삭제됩니다. 추후에
+              동일계정으로 재가입하셔도 복구되지 않으니, 탈퇴 신청 전에 꼭
+              확인해 주세요!
             </p>
             <label>
-              <input type="checkbox" id="deleteCheck" required/> 회원 탈퇴 유의사항을
-            확인하였으며 이에 동의합니다.
-            </label>       
+              <input type="checkbox" id="deleteCheck" required /> 회원 탈퇴
+              유의사항을 확인하였으며 이에 동의합니다.
+            </label>
 
-            <h3>떠나시는 이유를 알려주세요...</h3>
-            <textarea id="reasonText" cols="80" rows="10" placeholder="서비스 탈퇴 사유에 대해 알려주세요. 
-    회원님의 소중한 피드백을 담아 더 나은 서비스로 보답드리도록 하겠습니다."></textarea>
-            <button type="button" class="btn" name="deleteBtn" onclick="deleteAccount()" style="background-color: red; color: #fff;">
-                회원탈퇴
+            <h4>떠나시는 이유를 알려주세요...</h4>
+            <textarea
+              id="reasonText"
+              cols="80"
+              rows="10"
+              placeholder="서비스 탈퇴 사유에 대해 알려주세요. 
+    회원님의 소중한 피드백을 담아 더 나은 서비스로 보답드리도록 하겠습니다."
+            ></textarea>
+            <button
+              type="button"
+              class="btn"
+              name="deleteBtn"
+              onclick="deleteAccount()"
+              style="background-color: red; color: #fff"
+            >
+              회원탈퇴
             </button>
           </div>
         </form>
@@ -38,6 +50,5 @@
     </main>
 
     <%- include('include/popup') %>
-
   </body>
 </html>

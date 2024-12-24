@@ -13,23 +13,27 @@
   <div class="profile">
     <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
     class="profile-img" width="100" height="100"/>
-    <p><%=nickname%>님 환영합니다!</p>
+    <p><b><%=nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
-      <a href="/user/profile" class="navi">프로필 설정</a>
+      <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
       <a
         href="/logout"
         onclick="return confirm('Are you sure you want to log out?')"
-        >logout</a
+        ><i class="fa-solid fa-right-from-bracket"></i> logout</a
       >
     </div>
   </div>
   <div class="naviBar">
     <input type="search" id="search-comment" placeholder="search.." />
     <p>TODO리스트</p>
-    <a href="/todo/api/write" class="navi">새 작성</a><br />
-    <!-- <a href="/todo/api/search" class="navi">검색</a><br /> -->
-    <a href="/todo/api/calander" class="navi">캘린더</a><br />
-    <a href="/todo/api/deleted-todo" class="navi">휴지통</a>
+    <a href="/todo/api/write">새 작성</a><br />
+    <!-- <a href="/todo/api/search" >검색</a><br /> -->
+    <a href="/todo/api/calander"
+      ><i class="fa-regular fa-calendar-check"></i> 캘린더</a
+    ><br />
+    <a href="/todo/api/deleted-todo"
+      ><i class="fa-solid fa-trash"></i> 휴지통</a
+    >
 
     <div class="displaybox">
       <!-- <p>디스플레이 설정</p>
@@ -49,7 +53,7 @@
       <% for (let i = 0; i < keywords.length; i++) { %>
       <li>
         <a
-          href="/todo/api/list/keyword?leyword={<%= keywords[i].get('keyword')
+          href="/todo/api/list/keyword?keyword={<%= keywords[i].get('keyword')
           %>}"
           ><i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword')
           %></a

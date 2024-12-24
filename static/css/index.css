@@ -153,8 +153,15 @@ body {
 .allBox > a {
   width: auto;
 }
+.allBox h2 {
+  font-size: 24px;
+}
 .allBox.add h3,
-.allBox.add h4 {
+.allBox h3 {
+  font-size: 20px;
+}
+.allBox.add h4,
+.allBox h4 {
   font-size: 16px;
 }
 .allBox.add button {
@@ -200,6 +207,10 @@ body {
   /* flex-direction: column; */
   justify-content: space-between;
   cursor: pointer;
+}
+.deletebox:hover {
+  opacity: 0.7;
+  color: #b8c0ff;
 }
 
 /* label {

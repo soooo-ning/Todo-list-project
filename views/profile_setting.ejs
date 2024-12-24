@@ -74,23 +74,17 @@
               <input type="email" id="email" value="<%= email%>" readonly />
 
               <hr />
-              <!-- <h4>비밀번호 변경</h4>
-              <h5>현재 비밀번호 일치 확인 후 변경페이지로 넘어갑니다.</h5>
-              <label
-                ><span>현재 비밀번호</span><input type="password" id="currentPw" />
-                <button type="button" onclick="changePwBtn">확인</button></label
-              >  -->
-              <a href="/user/reset-pw">비밀번호 변경</a>
-              <!-- <div class="deletebox" onclick="getChangePwPage()">
-                <p>비밀번호 변경</p>
+              <div class="deletebox" onclick="getChangePwPage()">
+                <h4>비밀번호 변경</h4>
                 <p><i class="fa-solid fa-arrow-right"></i></p>
-              </div> -->
-
-              <a href="/user/delete-account">회원 탈퇴</a>
-              <!-- <div class="deletebox" onclick="getDeletePage()">
-                <p>회원 탈퇴</p>
+              </div>
+              <hr />
+              <div class="deletebox" onclick="getDeletePage()">
+                <h4>회원 탈퇴</h4>
                 <p><i class="fa-solid fa-arrow-right"></i></p>
-              </div> -->
+              </div>
+              <!-- <a href="/user/reset-pw">비밀번호 변경</a>
+              <a href="/user/delete-account">회원 탈퇴</a> -->
             </div>
           </div>
         </div>
@@ -99,7 +93,10 @@
 
     <%- include('include/popup') %>
 
-    <!-- <script>
+    <script>
+      /* 지원 ------------------------ */
+
+      // profile-setting의 js
       function getChangePwPage() {
         document.location.href = '/user/reset-pw';
       }
@@ -107,11 +104,6 @@
       function getDeletePage() {
         document.location.href = '/user/delete-account';
       }
-    </script> -->
-    <script>
-      /* 지원 ------------------------ */
-
-      // profile-setting의 js
 
       function fileUpload(event) {
         event.preventDefault();
@@ -135,10 +127,10 @@
           },
         })
           .then((res) => {
-            console.log(res.data.photo);
-            console.log(fileInput);
+            // console.log(res.data.photo);
+            // console.log(fileInput);
             uploadedFile = res.data.photo;
-            console.log(uploadedFile);
+            // console.log(uploadedFile);
             const imgFile = document.getElementById('profile-img');
             imgFile.src = `/uploads/${uploadedFile}`;
             alert('프로필 사진이 업로드 되었습니다!');

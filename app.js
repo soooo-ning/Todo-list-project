@@ -41,7 +41,7 @@ db.sequelize.sync({ force: false }).then(() => {
   console.log('DB connected!');
 
   app.listen(PORT, () => {
-    console.log(`Server running on port http://lacalhost:${PORT}`);
+    console.log(`Server running on port http://localhost:${PORT}`);
     console.log(`Current environment: ${process.env.NODE_ENV}`);
   });
 });

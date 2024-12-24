@@ -38,7 +38,9 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
       expiresIn: '24h',
     });
-    res.json({ token });
+
+    // 닉네임과 함께 토큰을 반환
+    res.json({ token, nickname: user.nickname });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

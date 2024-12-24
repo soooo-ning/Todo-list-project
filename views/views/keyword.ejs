@@ -1,28 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>키워드 조회 페이지</title>
-    <link rel="stylesheet" href="../static/css/keyword.css" />
-  </head>
+  <%- include('include/header', { title: 'keyword' })%>
   <body>
-    <div class="container">
-      <h1 class="title">키워드</h1>
-      <div class="card-container">
-        <div class="card" id="sampleCard">
-          <div class="card-title"></div>
-          <ul class="todo-list">
-            <li></li>
-            <li class="completed"></li>
-            <li></li>
-          </ul>
-          <!-- <form method="" action="">
-            <input type="hidden" name="title" value="" />
-          </form> -->
+    <!-- 네비게이션 부분 -->
+    <nav class="nav"><%- include('include/navi') %></nav>
+
+    <main class="container keyword_wrap">
+      <div class="content">
+        <h3 class="sub_title"><span>키워드</span></h3>
+        <div class="card-container add">
+          <div class="card" id="sampleCard">
+            <div class="card-title"></div>
+            <ul class="todo-list">
+              <li></li>
+              <li class="completed"></li>
+              <li></li>
+            </ul>
+            <!-- <form method="" action="">
+              <input type="hidden" name="title" value="" />
+            </form> -->
+          </div>
         </div>
       </div>
-    </div>
+    </main>
+
+    <%- include('include/popup') %>
 
     <script>
       // 예시 데이터

@@ -39,10 +39,10 @@ router.get('/user/delete-account', userController.getDeleteAccount); // 회원 �
 router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
 
 // Todo CRUD
-router.get('/todo/write', todoController.getWriteTodo); // 투두 작성 페이지
+// router.get('/todo/write', todoController.getWriteTodo); // 투두 작성 페이지 // 팝업으로 변경
 router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api
 router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
-router.get('/todo/api/edit/:id', todoController.getEditTodo); // 투두 수정 페이지 조회
+// router.get('/todo/api/edit/:id', todoController.getEditTodo); // 투두 수정 페이지 조회 // 팝업으로 변경
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
 router.patch('/todo/api/state', todoController.updateState); // 투두 상태 업데이트 api
 router.delete('/todo/api/delete/:id', todoController.deleteTodo); // 투두 삭제 api

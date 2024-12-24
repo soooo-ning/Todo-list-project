@@ -4,12 +4,10 @@
     src="https://kit.fontawesome.com/1a37f47d3b.js"
     crossorigin="anonymous"
   ></script>
-
-  <!-- axios CDN -->
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <div class="sidebar">
+  <button type="button" class="navi_close">네비</button>
   <div class="profile">
     <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
     class="profile-img" width="100" height="100"/>
@@ -98,5 +96,26 @@
       themeToggle.classList.remove('btn-dark');
       themeToggle.classList.add('btn-light');
     }
+  });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    /*네비메뉴 버튼 추가*/
+    const naviBtn = document.createElement('button');
+    const naviContainer = document.querySelector('main.container');
+    naviBtn.classList.add('navi_btn');
+    naviBtn.innerText = 'MENU';
+    naviContainer.prepend(naviBtn);
+    /* //네비메뉴 버튼 추가*/
+
+    const nav = document.querySelector('.nav');
+    const naviClose = document.querySelector('.navi_close');
+    naviBtn.addEventListener('click', () => {
+      nav.classList.add('on');
+      document.querySelector('body').classList.add('pop_open');
+    });
+    naviClose.addEventListener('click', () => {
+      nav.classList.remove('on');
+      document.querySelector('body').classList.remove('pop_open');
+    });
   });
 </script>

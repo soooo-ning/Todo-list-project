@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <%- include('include/header', { title: 'signup' })%>
+  <body>
+    <div class="main_wrap">
+      <div class="main_img">
+        <h1 class="main_title">Todo Checkk</h1>
+        <p class="main_txt">
+          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis
+          quaerat quas, ipsum minus minima odit, necessitatibus fuga quisquam
+          doloremque quibusdam explicabo, suscipit magni sed! Itaque distinctio
+          nobis eveniet recusandae ab.
+        </p>
+      </div>
+      <div class="main_con">
+        <h3 class="sub_title">
+          <span>회원가입</span>
+        </h3>
+        <form name="form-signup" method="post">
+          <label>
+            <span>NICK NAME</span>
+            <input
+              type="text"
+              placeholder="닉네임을 입력하세요"
+              name="userName"
+              required
+            />
+          </label>
+          <label>
+            <span>EMAIL</span>
+            <input
+              type="email"
+              placeholder="이메일을 입력하세요"
+              name="userEmail"
+              required
+            />
+          </label>
+          <label>
+            <span>PW</span>
+            <input
+              type="password"
+              placeholder="4글자에서 18글자 사이"
+              name="userPw"
+              required
+              minlength="4"
+              maxlength="18"
+            />
+          </label>
+
+          <button onclick="register();">회원가입</button>
+        </form>
+
+        <div class="link">
+          <a href="/auth/search-pw">아이디 / 비밀번호 찾기</a>
+          <a href="/">로그인</a>
+        </div>
+      </div>
+    </div>
+    <script>
+      document.forms['form-signup'].addEventListener(
+        'submit',
+        async function (event) {
+          event.preventDefault();
+
+          const email = document.querySelector('[name="userEmail"]').value;
+          const password = document.querySelector('[name="userPw"]').value;
+
+          //유효성 검사
+          if (!email || !password) {
+            alert('이메일과 비밀번호를 모두 입력해주세요!');
+            return;
+          }
+
+          // 이메일 중복
+          const emailCheckResponse = await fetch('/auth/api/check-email', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userEmail: email }),
+          });
+
+          const emailCheckData = await emailCheckResponse.json();
+          if (!emailCheckData.success) {
+            alert('이미 등록된 이메일입니다.');
+            return;
+          }
+
+          //회원가입 POST 요청
+          const formData = {
+            userEmail: email,
+            userPw: password,
+          };
+
+          fetch('/auth/api/sign-up', {
+            method: 'POST',
+            headers: {
+              'Content-type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                window.location.href = '/dashboard';
+              } else {
+                alert(
+                  data.message || '회원가입 실패했습니다. 다시 시도해주세요!',
+                );
+              }
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              alert('ERRORㅠㅠ');
+            });
+        },
+      );
+    </script>
+  </body>
+</html>

@@ -1,29 +1,31 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>휴지통</title>
-    <link rel="stylesheet" href="../static/css/deleted.css" />
-  </head>
+<html lang="en">
+  <%- include('include/header', { title: 'deleted' })%>
   <body>
-    <div class="container">
-      <h1 class="title">휴지통</h1>
-      <div class="card-container">
-        <div class="card" id="sampleCard">
-          <div class="card-title"></div>
-          <ul class="todo-list">
-            <li></li>
-            <li class="completed"></li>
-            <li></li>
-          </ul>
-          <form method="POST" action="/recover">
-            <input type="hidden" name="title" value="공부" />
-            <button type="submit" class="recover-button">복구</button>
-          </form>
+    <!-- 네비게이션 부분 -->
+    <nav class="nav"><%- include('include/navi') %></nav>
+
+    <main class="container deleted_wrap">
+      <div class="content">
+        <h3 class="sub_title"><span>휴지통</span></h3>
+        <div class="card-container add">
+          <div class="card" id="sampleCard">
+            <div class="card-title"></div>
+            <ul class="todo-list">
+              <li></li>
+              <li class="completed"></li>
+              <li></li>
+            </ul>
+            <form method="POST" action="/recover">
+              <input type="hidden" name="title" value="공부" />
+              <button type="submit" class="recover-button">복구</button>
+            </form>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
+
+    <%- include('include/popup') %>
 
     <script>
       // 데이터 예시

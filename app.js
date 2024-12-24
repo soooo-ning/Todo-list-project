@@ -30,18 +30,6 @@ passportConfig(app); // passport 초기화
 app.use(passport.initialize());
 app.use(passport.session());
 
-// const uploadDetail = multer({
-//   storage: multer.diskStorage({
-//     destination: function (req, file, done) {
-//       done(null, 'uploads/');
-//     },
-//     filename: function (req, file, cb) {
-//       cb(null, Date.now() + path.extname(file.originalname)); // 파일 이름을 날짜 + 확장자 형태로 저장
-//     },
-//   }),
-//   limits: { fieldSize: 5 * 1024 * 1024 }, // 5MB
-// });
-
 const indexRouter = require('./routes/index');
 app.use('/', indexRouter);
 
@@ -53,8 +41,7 @@ db.sequelize.sync({ force: false }).then(() => {
   console.log('DB connected!');
 
   app.listen(PORT, () => {
-    console.log(
-      `Current environment: ${process.env.NODE_ENV || 'development'}`,
-    );
+    console.log(`Server running on port http://lacalhost:${PORT}`);
+    console.log(`Current environment: ${process.env.NODE_ENV}`);
   });
 });

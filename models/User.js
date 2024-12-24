@@ -16,9 +16,9 @@ const User = (sequelize, DataTypes) => {
       },
       google_id: {
         type: DataTypes.STRING,
-        allowNull: false,
+        allowNull: true,
         unique: false,
-        comment: '카카오 고유 id',
+        comment: '구글 고유 id',
       },
       nickname: {
         type: DataTypes.STRING(20),

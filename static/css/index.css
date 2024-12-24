@@ -36,7 +36,7 @@ body {
   width: auto;
 }
 
-#profileImg {
+.profile-img {
   display: inline-block;
   border-radius: 50%;
   border: 3px solid #dddddd;
@@ -592,3 +592,7 @@ body.dark-mode * {
 .flex_wrap.sb {
   justify-content: space-between;
 }
+
+/* 지원 ------------ */
+
+/* ------------- 지원 */

@@ -33,24 +33,20 @@ router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페�
 // router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
 // User
-router.get('/user/profile', loadUserData, userController.getProfile); // 프로필 페이지
+router.get('/user/profile', userController.getProfile); // 프로필 페이지
 router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
 router.post(
   '/user/api/photo-upload',
   uploadDetail.single('dynamic-file'),
   userController.uploadPhoto,
 ); // 프로필 사진 업로드 api
-router.get('/user/reset-pw', loadUserData, userController.getResetPw); // 비밀번호 재설정 페이지
+router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설정 페이지
 router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
-router.get(
-  '/user/delete-account',
-  loadUserData,
-  userController.getDeleteAccount,
-); // 회원 탈퇴 페이지
+router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지
 router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
 
 // Todo CRUD
-router.get('/todo/dashboard', loadUserData, todoController.getDashboard); // 대시보드 페이지
+router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페이지
 router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api
 router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api

@@ -9,9 +9,9 @@
 <div class="sidebar">
   <button type="button" class="navi_close">네비</button>
   <div class="profile">
-    <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
-    class="profile-img" width="100" height="100"/>
-    <p><b><%=nickname%></b> 님 환영합니다!</p>
+    <img src="<%= "/uploads/"+ locals.profile_img || "/static/img/26139_img.png"
+    %>" class="profile-img" width="100" height="100"/>
+    <p><b><%=locals.nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
       <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
       <a
@@ -47,13 +47,13 @@
       </button>
     </div>
     <ul id="keyul">
-      <% for (let i = 0; i < keywords.length; i++) { %>
+      <% for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
         <a
-          href="/todo/api/list/keyword?keyword={<%= keywords[i].get('keyword')
+          href="/todo/api/list/keyword?keyword={<%= locals.keywords[i].get('keyword')
           %>}"
-          ><i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword')
-          %></a
+          ><i class="fa-solid fa-hashtag"></i> <%=
+          locals.keywords[i].get('keyword') %></a
         >
       </li>
       <% } %>

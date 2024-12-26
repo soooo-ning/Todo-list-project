@@ -46,29 +46,50 @@
     <%- include('include/popup') %>
 
     <script>
-      function changePwBtn(event){
-        event.preventDefault();
+      function changePwBtn(event) {
+  event.preventDefault();
 
-        const correntPw = document.getElementById("currentPw").value;
-        const newPw = document.getElementById("newPw1").value;
-        const newPwCheck = document.getElementById("newPw2").value;
+  const currentPw = document.getElementById("currentPw").value;
+  const newPw = document.getElementById("newPw1").value;
+  const newPwCheck = document.getElementById("newPw2").value;
 
-        const currentResult = document.getElementById("currentPwConfirm")
-        const newPwConfirm = document.getElementById("newPwConfirm")
+  const currentResult = document.getElementById("currentPwConfirm");
+  const newPwConfirm = document.getElementById("newPwConfirm");
 
-        const password = "<%=password%>"
-        // console.log(correntPw)
-        if(correntPw === password){
-          if(newPw !== newPwCheck){
-            // newPwConfirm.innerHTML = `<h4 style="color: red">새 비밀번호가 일치하지 않습니다!</h4>`
-            alert("새 비밀번호가 일치하지 않습니다!")
-            location.reload();
-            return 
-          }
-        }
+  const password = "<%=password%>"; // 서버에서 받은 현재 비밀번호
 
+  // 현재 비밀번호 확인
+  if (currentPw !== password) {
+      alert("현재 비밀번호가 일치하지 않습니다!");
+      location.reload();
+      return;
+    }
 
+    // 새 비밀번호 확인
+    if (newPw !== newPwCheck) {
+      alert("새 비밀번호가 일치하지 않습니다!");
+      location.reload();
+      return;
+    }
+
+    // 비밀번호 변경 요청
+    axios.patch('/user/api/reset-pw', {
+      currentPw: currentPw,
+      newPw: newPw
+    })
+    .then((response) => {
+      if (response.data.success) {
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        window.location.reload();
+      } else {
+        alert("비밀번호 변경에 실패했습니다.");
       }
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("서버 오류가 발생했습니다.");
+    });
+  }
     </script>
   </body>
 </html>

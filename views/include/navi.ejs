@@ -9,9 +9,9 @@
 <div class="sidebar">
   <button type="button" class="navi_close">네비</button>
   <div class="profile">
-    <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
-    class="profile-img" width="100" height="100"/>
-    <p><b><%=nickname%></b> 님 환영합니다!</p>
+    <img src="<%= "/uploads/"+ locals.profile_img || "/static/img/26139_img.png"
+    %>" class="profile-img" width="100" height="100"/>
+    <p><b><%=locals.nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
       <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
       <a
@@ -34,27 +34,26 @@
     >
 
     <div class="displaybox">
-      <!-- <p>디스플레이 설정</p>
-      <span class="mode-set">모드설정 ▼</span>
-      <div class="setbox">
-        <div class="box light">Light mode</div>
-        <div class="box dark">Dark mode</div>
-      </div> -->
       <button class="btn btn-dark" id="theme-toggle">
         <i class="fa-regular fa-moon"></i> 다크모드
       </button>
     </div>
   </div>
   <div class="keyBar">
-    <h4>키워드</h4>
+    <div class="keybarTitle">
+      <h3>키워드</h3>
+      <button type="button" class="plusKeywordBtn">
+        <img src="/static/img/plus.png" alt="키워드추가" />
+      </button>
+    </div>
     <ul id="keyul">
-      <% for (let i = 0; i < keywords.length; i++) { %>
+      <% for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
         <a
-          href="/todo/api/list/keyword?keyword={<%= keywords[i].get('keyword')
+          href="/todo/api/list/keyword?keyword={<%= locals.keywords[i].get('keyword')
           %>}"
-          ><i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword')
-          %></a
+          ><i class="fa-solid fa-hashtag"></i> <%=
+          locals.keywords[i].get('keyword') %></a
         >
       </li>
       <% } %>
@@ -118,4 +117,61 @@
       document.querySelector('body').classList.remove('pop_open');
     });
   });
+
+  document
+    .querySelector('.plusKeywordBtn')
+    .addEventListener('click', function () {
+      // keybarTitle 요소 선택
+      const keybarTitle = document.querySelector('.keybarTitle');
+
+      // 이미 input이 생성되어 있는지 확인
+      if (document.querySelector('.newKeywordInput')) {
+        alert('이미 입력창이 생성되었습니다.');
+        return;
+      }
+
+      // 새로운 input 요소 생성
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = '키워드를 입력하세요';
+      input.className = 'newKeywordInput';
+
+      // keybarTitle의 형제로 input 추가
+      keybarTitle.parentNode.insertBefore(input, keybarTitle.nextSibling);
+
+      // 엔터 키 입력 시 키워드 추가
+      input.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter' && input.value.trim()) {
+          const ul = document.getElementById('keyul');
+          const inputValue = input.value.trim(); // 사용자 입력 값
+
+          // 기존 키워드 텍스트만 추출 (앞뒤 공백 제거 후 소문자로 통일)
+          const existingKeywords = Array.from(ul.querySelectorAll('a')).map(
+            (a) => a.textContent.trim(),
+          );
+          console.log(existingKeywords);
+          // 중복 여부 확인
+          for (let i = 0; i < existingKeywords.length; i++) {
+            if (existingKeywords[i] === inputValue) {
+              alert('이미 존재하는 키워드입니다.');
+              input.remove();
+              return;
+            }
+          }
+
+          // 새 키워드 추가
+          const li = document.createElement('li');
+          const a = document.createElement('a');
+          a.href = `/todo/api/list/keyword?keyword=${encodeURIComponent(
+            inputValue,
+          )}`;
+          a.innerHTML = `<i class="fa-solid fa-hashtag"></i> ${inputValue}`;
+          li.appendChild(a);
+          ul.appendChild(li);
+
+          // 입력창 제거
+          input.remove();
+        }
+      });
+    });
 </script>

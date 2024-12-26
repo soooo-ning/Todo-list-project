@@ -33,7 +33,7 @@ router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페�
 // router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
 // User
-router.get('/user/profile', loadUserData, userController.getProfile); // 프로필 페이지
+router.get('/user/profile', userController.getProfile); // 프로필 페이지
 router.patch('/user/api/profile', userController.editProfile); // 프로필 수정 api
 router.post(
   '/user/api/photo-upload',

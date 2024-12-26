@@ -4,29 +4,12 @@ const { where } = require('sequelize');
 
 exports.getProfile = async (req, res) => {
   try {
-    // // User모델에서 닉네임 불러오기
-    // // const userId = req.body
-    // const user = await User.findOne({
-    //   where: { id: 1 }, //추후 id불러오기
-    //   attributes: ['nickname', 'email', 'profile_image'],
-    // });
-
-    // // Keyword 모델에서 키워드 불러오기
-    // const keywords = await Keyword.findAll({
-    //   // where: { id: userid },
-    //   attributes: ['keyword'],
-    // });
-    // console.log(keywords, user);
-    const { nickname, profile_img, keywords } = res.locals;
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
       attributes: ['email'],
     });
     res.render('profile_setting', {
-      nickname,
       email: user.email,
-      profile_img,
-      keywords,
     });
   } catch (error) {
     console.log('keywords error', error);
@@ -80,26 +63,12 @@ exports.uploadPhoto = async (req, res) => {
 
 exports.getResetPw = async (req, res) => {
   try {
-    // User모델에서 닉네임 불러오기
-    // const userId = req.body
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image', 'pw'],
+      attributes: ['pw'],
     });
-
-    // Keyword 모델에서 키워드 불러오기
-    const keywords = await Keyword.findAll({
-      // where: { id: userid },
-      attributes: ['keyword'],
-    });
-    console.log(keywords, user);
-
     res.render('change_pw', {
-      nickname: user.nickname,
-      email: user.email,
-      profile_img: user.profile_image,
       password: user.pw,
-      keywords,
     });
   } catch (error) {
     console.log('keywords error', error);
@@ -108,7 +77,37 @@ exports.getResetPw = async (req, res) => {
   // res.render('change_pw');
 };
 
-exports.resetPw = (req, res) => {};
+exports.resetPw = async (req, res) => {
+  try {
+    const { currentPw, newPw } = req.body;
+    const userId = 1; // 현재는 하드코딩된 ID, 추후 로그인한 사용자의 ID로 변경
+
+    // 사용자 정보 가져오기
+    const user = await User.findOne({ where: { id: userId } });
+
+    // 현재 비밀번호 확인
+    if (user.pw !== currentPw) {
+      return res.status(400).json({
+        success: false,
+        message: '현재 비밀번호가 일치하지 않습니다.',
+      });
+    }
+
+    // 새 비밀번호로 업데이트
+    await User.update({ pw: newPw }, { where: { id: userId } });
+
+    // 성공적으로 비밀번호 변경 완료
+    res.json({
+      success: true,
+      message: '비밀번호가 성공적으로 변경되었습니다.',
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: '서버 오류가 발생했습니다.' });
+  }
+};
 
 exports.getDeleteAccount = async (req, res) => {
   try {
@@ -116,21 +115,10 @@ exports.getDeleteAccount = async (req, res) => {
     // const userId = req.body
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image'],
+      attributes: ['pw'],
     });
-
-    // Keyword 모델에서 키워드 불러오기
-    const keywords = await Keyword.findAll({
-      // where: { id: userid },
-      attributes: ['keyword'],
-    });
-    console.log(keywords, user);
-
     res.render('delete_account', {
-      nickname: user.nickname,
-      email: user.email,
-      profile_img: user.profile_image,
-      keywords,
+      password: user.pw,
     });
   } catch (error) {
     console.log('keywords error', error);

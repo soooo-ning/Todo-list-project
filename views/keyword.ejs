@@ -27,83 +27,48 @@
     <%- include('include/popup') %>
 
     <script>
-      // 예시 데이터
-      const data = [
-        {
-          id: 1,
-          title: '공부',
-          todos: [
-            { id: 101, task: '과제', completed: false },
-            { id: 102, task: 'Velog', completed: true },
-            { id: 103, task: '조별 과제', completed: false },
-          ],
-        },
-        {
-          id: 2,
-          title: '운동',
-          todos: [
-            { id: 201, task: 'Squat 20번', completed: true },
-            { id: 202, task: '30분 전국의 계단', completed: true },
-            { id: 203, task: '스트레칭', completed: false },
-          ],
-        },
-        {
-          id: 3,
-          title: '장보기',
-          todos: [
-            { id: 301, task: '당근', completed: false },
-            { id: 302, task: '고구마', completed: true },
-            { id: 303, task: '버섯', completed: false },
-            { id: 304, task: '호추', completed: false },
-          ],
-        },
-        {
-          id: 4,
-          title: '여행',
-          todos: [
-            { id: 401, task: '숙소', completed: true },
-            { id: 402, task: '비행기', completed: false },
-            { id: 403, task: '짐', completed: false },
-          ],
-        },
-      ];
+      document.addEventListener('DOMContentLoaded', () => {
+        const userId = 1; // ID 동적 설정
+        const keywordContainer = document.querySelector('.card-container.add');
 
-      // DOM
-      function renderData(data) {
-        const container = document.querySelector('.card-container');
+        const fetchKeywords = async () => {
+          keywordContainer.innerHTML = '<div>로딩 중...</div>';
 
-        container.innerHTML = '';
+          try {
+            const response = await fetch(`/todo/api/list/keyword/${userId}`);
+            if (!response.ok) throw new Error('네트워크 응답 실패');
+            const keywords = await response.json();
 
-        data.forEach((item) => {
-          // 카드 생성
-          const card = document.createElement('div');
-          card.className = 'card';
+            keywordContainer.innerHTML = '';
 
-          // 타이틀 추가
-          const title = document.createElement('div');
-          title.className = 'card-title';
-          title.textContent = item.title;
-          card.appendChild(title);
-
-          // 투두리스트 추가
-          const todoList = document.createElement('ul');
-          todoList.className = 'todo-list';
-
-          item.todos.forEach((todo) => {
-            const todoItem = document.createElement('li');
-            todoItem.textContent = todo.task;
-            if (todo.completed) {
-              todoItem.classList.add('completed');
+            if (keywords.length === 0) {
+              keywordContainer.innerHTML =
+                '<div>표시할 키워드가 없습니다.</div>';
+              return;
             }
-            todoList.appendChild(todoItem);
-          });
 
-          card.appendChild(todoList);
-          container.appendChild(card);
-        });
-      }
+            keywords.forEach((keyword) => {
+              const card = document.createElement('div');
+              card.className = 'card';
 
-      document.addEventListener('DOMContentLoaded', () => renderData(data));
+              const cardTitle = document.createElement('div');
+              cardTitle.className = 'card-title';
+              cardTitle.textContent = keyword.keyword;
+
+              card.appendChild(cardTitle);
+              keywordContainer.appendChild(card);
+            });
+          } catch (error) {
+            keywordContainer.innerHTML = '';
+            alert(
+              '키워드를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
+            );
+            console.error('키워드 데이터를 가져오는 중 오류 발생:', error);
+          }
+        };
+
+        fetchKeywords();
+      });
     </script>
   </body>
 </html>

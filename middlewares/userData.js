@@ -8,6 +8,7 @@ const loadUserData = async (req, res, next) => {
     });
 
     const keywords = await Keyword.findAll({
+      where: { user_id: 1 },
       attributes: ['keyword'],
     });
 

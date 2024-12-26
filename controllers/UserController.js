@@ -80,24 +80,14 @@ exports.uploadPhoto = async (req, res) => {
 
 exports.getResetPw = async (req, res) => {
   try {
-    // User모델에서 닉네임 불러오기
-    // const userId = req.body
+    const { nickname, profile_img, keywords } = res.locals;
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image', 'pw'],
+      attributes: ['pw'],
     });
-
-    // Keyword 모델에서 키워드 불러오기
-    const keywords = await Keyword.findAll({
-      // where: { id: userid },
-      attributes: ['keyword'],
-    });
-    console.log(keywords, user);
-
     res.render('change_pw', {
-      nickname: user.nickname,
-      email: user.email,
-      profile_img: user.profile_image,
+      nickname,
+      profile_img,
       password: user.pw,
       keywords,
     });
@@ -114,22 +104,15 @@ exports.getDeleteAccount = async (req, res) => {
   try {
     // User모델에서 닉네임 불러오기
     // const userId = req.body
+    const { nickname, profile_img, keywords } = res.locals;
     const user = await User.findOne({
       where: { id: 1 }, //추후 id불러오기
-      attributes: ['nickname', 'email', 'profile_image'],
+      attributes: ['pw'],
     });
-
-    // Keyword 모델에서 키워드 불러오기
-    const keywords = await Keyword.findAll({
-      // where: { id: userid },
-      attributes: ['keyword'],
-    });
-    console.log(keywords, user);
-
     res.render('delete_account', {
-      nickname: user.nickname,
-      email: user.email,
-      profile_img: user.profile_image,
+      nickname,
+      profile_img,
+      password: user.pw,
       keywords,
     });
   } catch (error) {

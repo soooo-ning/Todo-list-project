@@ -5,7 +5,13 @@ const { success, serverError, notFound } = require('../utils/common');
 // 대시보드 페이지 렌더링
 // GET /todo/dashboard
 exports.getDashboard = (req, res) => {
-  res.render('dashboard');
+  const { nickname, profile_img, keywords } = res.locals;
+  res.render('dashboard', {
+    nickname,
+    profile_img,
+    keywords,
+  });
+  // res.render('dashboard');
 };
 
 // 투두 작성 API

@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('include/header', { title: 'calendar' })%>
+  <%- include('include/header', { title: 'calendar' }) %>
   <body>
-    <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
     <main class="container calendar_wrap">
@@ -43,31 +42,6 @@
 
       let currentDate = new Date();
 
-      // 날짜에 투두리스트 데이터를 API에서 가져오기
-      async function fetchTodoData(dateKey) {
-        // try {
-        //   const response = await fetch(`/todo/api/calendar?date=${dateKey}`);
-        //   if (!response.ok) {
-        //     throw new Error('Failed to fetch todo data');
-        //   }
-        //   const data = await response.json();
-        //   return data.todoItems || [];
-        // } catch (error) {
-        //   console.error(error);
-        //   return [];
-        // }
-
-        // 투두리스트 DB 예시
-        const mockApiResponse = {
-          '2024-12-10': ['회의 준비', '서류 정리'],
-          '2024-12-11': ['프로젝트 발표 준비', '코드 리뷰'],
-          '2024-12-15': ['팀 회의', '미팅'],
-          '2024-12-21': ['발표'],
-        };
-        return mockApiResponse[dateKey] || [];
-      }
-
-      // 달력 렌더링
       async function renderCalendar() {
         const year = currentDate.getFullYear();
         const month = currentDate.getMonth();
@@ -93,13 +67,14 @@
           dateDiv.addEventListener('click', () =>
             selectDate(year, month + 1, i),
           );
-          const dateKey = `${year}-${month + 1}-${i}`;
-          const items = await fetchTodoData(dateKey); // 날짜의 투두리스트 데이터 가져오기
 
-          // 투두리스트가 있으면 날짜 색 변경
-          if (items.length > 0) {
+          const dateKey = `${year}-${month + 1}-${i}`;
+          const titles = await fetchTodoTitles(dateKey);
+
+          if (titles.length > 0) {
             dateDiv.style.backgroundColor = '#e7c6ff';
           }
+
           datesContainer.appendChild(dateDiv);
         }
       }
@@ -114,7 +89,6 @@
         renderCalendar();
       });
 
-      // 날짜 클릭 시 해당 날짜의 투두리스트 보여주기
       async function selectDate(year, month, day) {
         const selectedDate = `${year}년 ${month}월 ${day}일`;
         document.getElementById('selected-date').textContent = selectedDate;
@@ -123,25 +97,32 @@
         todoItems.innerHTML = '';
 
         const dateKey = `${year}-${month}-${day}`;
-        const items = await fetchTodoData(dateKey); // 선택된 날짜의 투두리스트 가져오기
+        const titles = await fetchTodoTitles(dateKey);
 
-        const dateDivs = document.querySelectorAll('.date');
-        dateDivs.forEach((dateDiv) => {
-          const dateText = dateDiv.textContent;
-          if (parseInt(dateText) === day) {
-            if (items.length > 0) {
-              dateDiv.style.backgroundColor = '#e7c6ff';
-            } else {
-              dateDiv.style.backgroundColor = ''; // 투두가 없으면 원래 색상으로 되돌리기
-            }
-          }
-        });
-
-        items.forEach((item) => {
+        titles.forEach((title) => {
           const li = document.createElement('li');
-          li.textContent = item;
+          const link = document.createElement('a');
+          link.href = `/todo/api/search?query=${encodeURIComponent(title)}`;
+          link.textContent = title;
+          li.appendChild(link);
           todoItems.appendChild(li);
         });
+      }
+
+      async function fetchTodoTitles(dateKey) {
+        try {
+          const response = await fetch(`/todo/api/calendar?date=${dateKey}`);
+          const data = await response.json();
+          if (response.ok && data.success) {
+            return data.todos.map((todo) => todo.title);
+          } else {
+            console.error('Error fetching todo titles:', data.message);
+            return [];
+          }
+        } catch (error) {
+          console.error('Error fetching todo titles:', error);
+          return [];
+        }
       }
 
       renderCalendar();

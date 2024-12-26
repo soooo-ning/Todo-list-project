@@ -85,7 +85,7 @@
 
         // 이메일 중복 확인
         axios
-          .get(`/auth/api/sign-up/check?email=${userEmail}`)
+          .get(`/auth/api/sign-up/check=${userEmail}`)
           .then((emailCheckResponse) => {
             const emailCheckData = emailCheckResponse.data;
             console.log(emailCheckData.message);
@@ -107,7 +107,7 @@
                 const signUpData = signUpResponse.data;
                 if (signUpResponse.status === 201) {
                   alert('회원가입 성공!');
-                  window.location.href = '/dashboard';
+                  window.location.href = '/todo/dashboard';
                 } else {
                   alert(
                     signUpData.message || '회원가입 중 문제가 발생했습니다.',

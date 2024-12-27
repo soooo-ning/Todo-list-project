@@ -167,6 +167,59 @@ exports.searchTodo = async (req, res) => {
   }
 };
 
+// 오늘 투두 조회 API
+// GET /todo/api/list/today
+exports.todayList = async (req, res) => {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const todos = await Todo.findAll({
+      where: {
+        deleted: false,
+        date: today,
+      },
+      attributes: ['title'],
+    });
+
+    success(res, todos, '오늘의 Todo 타이틀 조회 완료');
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
+// 이번주 투두 조회 API
+// GET /todo/api/list/week
+exports.weekList = async (req, res) => {
+  try {
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    const endOfWeek = new Date(now);
+
+    // 주의 시작일 (월요일)
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    // 주의 종료일 (일요일)
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+
+    const todos = await Todo.findAll({
+      where: {
+        deleted: false,
+        date: {
+          [Op.between]: [startOfWeek, endOfWeek],
+        },
+      },
+      attributes: ['title'],
+    });
+
+    success(res, todos, '이번 주의 Todo 타이틀 조회 완료');
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
 // 투두 캘린더형 조회 및 렌더링
 // GET /todo/api/calendar
 exports.calendarList = async (req, res) => {
@@ -231,18 +284,6 @@ exports.priorityList = async (req, res) => {
 };
 
 // 투두 키워드 조회 및 뷰 렌더링
-// GET /todo/list/keyword/:id
-// exports.renderKeywordList = (req, res) => {
-//   try {
-//     const { id } = req.params;
-
-//     res.render({
-//       keywordId: id,
-//     });
-//   } catch (err) {
-//     serverError(res, err);
-//   }
-// };
 // GET /todo/api/list/keyword/:id
 exports.keywordList = async (req, res) => {
   try {
@@ -259,10 +300,6 @@ exports.keywordList = async (req, res) => {
       todos,
       keywordId: id,
     });
-    // res.json({
-    //   todos,
-    //   keywordId: id,
-    // });
   } catch (err) {
     serverError(res, err);
   }

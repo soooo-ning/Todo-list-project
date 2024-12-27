@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('include/header', { title: 'keyword' })%>
+  <%- include('include/header', { title: 'keyword' }) %>
   <body>
     <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
@@ -9,17 +9,14 @@
       <div class="content">
         <h3 class="sub_title"><span>키워드</span></h3>
         <div class="card-container add">
-          <div class="card" id="sampleCard">
-            <div class="card-title"></div>
-            <ul class="todo-list">
-              <li></li>
-              <li class="completed"></li>
-              <li></li>
-            </ul>
-            <!-- <form method="" action="">
-              <input type="hidden" name="title" value="" />
-            </form> -->
+          <% if (keywords && keywords.length > 0) { %>
+          <%keywords.forEach((keyword) => { %>
+          <div class="card">
+            <div class="card-title"><%= keyword.keyword %></div>
           </div>
+          <% }) %> <% } else { %>
+          <div>표시할 키워드가 없습니다.</div>
+          <% } %>
         </div>
       </div>
     </main>
@@ -28,7 +25,7 @@
 
     <script>
       document.addEventListener('DOMContentLoaded', () => {
-        const userId = 1; // ID 동적 설정
+        const userId = 1;
         const keywordContainer = document.querySelector('.card-container.add');
 
         const fetchKeywords = async () => {
@@ -37,17 +34,19 @@
           try {
             const response = await fetch(`/todo/api/list/keyword/${userId}`);
             if (!response.ok) throw new Error('네트워크 응답 실패');
-            const keywords = await response.json();
+            console.log(response);
+            const data = await response.json();
 
+            console.log(data);
             keywordContainer.innerHTML = '';
 
-            if (keywords.length === 0) {
+            if (!data.keywords || data.keywords.length === 0) {
               keywordContainer.innerHTML =
                 '<div>표시할 키워드가 없습니다.</div>';
               return;
             }
 
-            keywords.forEach((keyword) => {
+            data.keywords.forEach((keyword) => {
               const card = document.createElement('div');
               card.className = 'card';
 

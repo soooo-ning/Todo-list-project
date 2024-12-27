@@ -39,10 +39,10 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Pretendard', Arial, Helvetica, sans-serif;
-
   letter-spacing: -0.05em;
   font-size: 15px;
   color: #333;
+  word-break: keep-all;
 }
 body {
   width: 100%;
@@ -174,4 +174,20 @@ body > .nav + .container > .content::-webkit-scrollbar-button {
 body > .nav + .container > .content::-webkit-scrollbar-track,
 body > .nav + .container > .content::-webkit-scrollbar-thumb {
   border-radius: 5px;
+}
+body > .nav + .container .navi_btn {
+  display: none;
+  text-indent: -9999px;
+  width: 30px;
+  height: 50px;
+  background: url('../../static/img/menu.png') no-repeat center;
+  background-size: 30px auto;
+}
+body > .nav .navi_close {
+  display: none;
+  text-indent: -9999px;
+  width: 30px;
+  height: 30px;
+  background: url('../../static/img/close.png') no-repeat center;
+  background-size: 30px auto;
 }

@@ -38,7 +38,9 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
       expiresIn: '24h',
     });
-    res.json({ token });
+
+    // 닉네임과 함께 토큰을 반환
+    res.json({ token, nickname: user.nickname });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -94,8 +96,8 @@ exports.duplicatedEmail = async (req, res) => {
 };
 
 // 비밀번호 찾기 요청 메서드
-exports.requestPasswordReset = async (req, res) => {
-  const { email } = req.body;
+exports.searchPw = async (req, res) => {
+  const { email } = req.query;
 
   try {
     const user = await User.findOne({ where: { email } });
@@ -144,12 +146,44 @@ exports.signInGoogle = passport.authenticate('google', {
 });
 
 // Google OAuth 콜백
-exports.googleCallback = (req, res) => {
-  res.redirect('/todo/dashboard');
+exports.googleCallback = (req, res, next) => {
+  passport.authenticate('google', (err, user, info) => {
+    if (err) {
+      console.error('Authentication Error:', err);
+      return res.redirect('/login'); // 로그인 페이지로 리다이렉트
+    }
+    if (!user) {
+      console.log('No user found');
+      return res.redirect('/login'); // 사용자 없을 경우 로그인 페이지로 리다이렉트
+    }
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error('Login Error:', loginErr);
+        return res.redirect('/login'); // 로그인 실패 시 리다이렉트
+      }
+      return res.redirect('/todo/write'); // 성공 시 리다이렉트
+    });
+  })(req, res, next);
 };
 
 // Kakao OAuth 콜백
-exports.kakaoCallback = (req, res) => {
-  // 로그인 후 처리
-  res.redirect('/todo/dashborad'); // 로그인 후 리다이렉션할 경로
+exports.kakaoCallback = (req, res, next) => {
+  passport.authenticate('kakao', (err, user, info) => {
+    if (err) {
+      console.error('Error during authentication:', err);
+      return res.redirect('/login'); // 에러 발생 시 로그인 페이지로 리다이렉트
+    }
+    if (!user) {
+      console.log('No user found, redirecting to login');
+      return res.redirect('/login'); // 사용자 없음
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        console.error('Error during login:', err);
+        return res.redirect('/login'); // 로그인 실패 시 로그인 페이지로 리다이렉트
+      }
+      console.log('User logged in:', user); // 로그인 성공 로그
+      return res.redirect('/todo/write'); // 원하는 페이지로 리다이렉트
+    });
+  })(req, res, next);
 };

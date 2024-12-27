@@ -4,56 +4,84 @@
     src="https://kit.fontawesome.com/1a37f47d3b.js"
     crossorigin="anonymous"
   ></script>
-
-  <!-- axios CDN -->
-  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 </head>
 
 <div class="sidebar">
+  <a href="/" class="home"
+    ><img
+      src="/static/img/home.png"
+      alt="홈으로 가기"
+      width="18px"
+      height="18px"
+  /></a>
+  <button type="button" class="navi_close">네비</button>
   <div class="profile">
-    <img src="<%= "/uploads/"+ profile_img || "/static/img/26139_img.png" %>"
-    class="profile-img" width="100" height="100"/>
-    <p><%=nickname%>님 환영합니다!</p>
+    <img
+      src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+      class="profile-img"
+      width="100"
+      height="100"
+    />
+    <p><b><%=locals.nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
-      <a href="/user/profile" class="navi">프로필 설정</a>
+      <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
       <a
         href="/logout"
         onclick="return confirm('Are you sure you want to log out?')"
-        >logout</a
+        ><i class="fa-solid fa-right-from-bracket"></i> logout</a
       >
     </div>
   </div>
   <div class="naviBar">
     <input type="search" id="search-comment" placeholder="search.." />
     <p>TODO리스트</p>
-    <a href="/todo/api/write" class="navi">새 작성</a><br />
-    <!-- <a href="/todo/api/search" class="navi">검색</a><br /> -->
-    <a href="/todo/api/calander" class="navi">캘린더</a><br />
-    <a href="/todo/api/deleted-todo" class="navi">휴지통</a>
+    <a href="/todo/api/write">새 작성</a><br />
+    <!-- <a href="/todo/api/search" >검색</a><br /> -->
+    <a href="/todo/api/calendar"
+      ><i class="fa-regular fa-calendar-check"></i> 캘린더</a
+    ><br />
+    <a href="/todo/api/deleted-todo"
+      ><i class="fa-solid fa-trash"></i> 휴지통</a
+    >
 
     <div class="displaybox">
-      <!-- <p>디스플레이 설정</p>
-      <span class="mode-set">모드설정 ▼</span>
-      <div class="setbox">
-        <div class="box light">Light mode</div>
-        <div class="box dark">Dark mode</div>
-      </div> -->
       <button class="btn btn-dark" id="theme-toggle">
         <i class="fa-regular fa-moon"></i> 다크모드
       </button>
     </div>
   </div>
   <div class="keyBar">
-    <h4>키워드</h4>
-    <ul id="keyul">
-      <% for (let i = 0; i < keywords.length; i++) { %>
+    <div class="keybarTitle">
+      <h3>키워드</h3>
+      <button type="button" class="plusKeywordBtn">
+        <img src="/static/img/plus.png" alt="키워드추가" />
+      </button>
+    </div>
+    <!-- <ul id="keyul">
+      <%# for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
-        <a
-          href="/todo/api/list/keyword?leyword={<%= keywords[i].get('keyword')
-          %>}"
-          ><i class="fa-solid fa-hashtag"></i> <%= keywords[i].get('keyword')
-          %></a
-        >
+        <a href="/todo/list/keyword/<%#= locals.keywords[i].id %>">
+          <i class="fa-solid fa-hashtag"></i> <%#= locals.keywords[i].keyword %>
+        </a>
+      </li>
+      <%# } %>
+    </ul> -->
+    <ul id="keyul">
+      <% for (let i = 0; i < locals.keywords.length; i++) { %>
+      <li>
+        <div class="keybarDiv">
+          <a href="/todo/api/list/keyword/<%= locals.keywords[i].id %>">
+            <i class="fa-solid fa-hashtag"></i> <%= locals.keywords[i].keyword
+            %>
+          </a>
+          <button type="button" class="minusKeywordBtn">
+            <img
+              src="/static/img/minus.png"
+              alt="키워드삭제"
+              id="deleteKeywordBtn"
+            />
+          </button>
+        </div>
       </li>
       <% } %>
     </ul>
@@ -95,4 +123,237 @@
       themeToggle.classList.add('btn-light');
     }
   });
+
+  document.addEventListener('DOMContentLoaded', function () {
+    /*네비메뉴 버튼 추가*/
+    const naviBtn = document.createElement('button');
+    const naviContainer = document.querySelector('main.container');
+    naviBtn.classList.add('navi_btn');
+    naviBtn.innerText = 'MENU';
+    naviContainer.prepend(naviBtn);
+    /* //네비메뉴 버튼 추가*/
+
+    const nav = document.querySelector('.nav');
+    const naviClose = document.querySelector('.navi_close');
+    naviBtn.addEventListener('click', () => {
+      nav.classList.add('on');
+      document.querySelector('body').classList.add('pop_open');
+    });
+    naviClose.addEventListener('click', () => {
+      nav.classList.remove('on');
+      document.querySelector('body').classList.remove('pop_open');
+    });
+  });
+
+  document
+    .querySelector('.plusKeywordBtn')
+    .addEventListener('click', function () {
+      // keybarTitle 요소 선택
+      const keybarTitle = document.querySelector('.keybarTitle');
+
+      // 이미 input이 생성되어 있는지 확인
+      if (document.querySelector('.newKeywordInput')) {
+        alert('이미 입력창이 생성되었습니다.');
+        return;
+      }
+
+      // 새로운 input 요소 생성
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.placeholder = '키워드를 입력하세요';
+      input.className = 'newKeywordInput';
+
+      // keybarTitle의 형제로 input 추가
+      keybarTitle.parentNode.insertBefore(input, keybarTitle.nextSibling);
+
+      // 엔터 키 입력 시 키워드 추가
+      input.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter' && input.value.trim()) {
+          const ul = document.getElementById('keyul');
+          const inputValue = input.value.trim(); // 사용자 입력 값
+
+          // 기존 키워드 텍스트만 추출 (앞뒤 공백 제거 후 소문자로 통일)
+          const existingKeywords = Array.from(ul.querySelectorAll('a')).map(
+            (a) => a.textContent.trim(),
+          );
+          console.log(existingKeywords);
+          // 중복 여부 확인
+          for (let i = 0; i < existingKeywords.length; i++) {
+            if (existingKeywords[i] === inputValue) {
+              alert('이미 존재하는 키워드입니다.');
+              input.remove();
+              return;
+            }
+          }
+
+          // `user_id`는 로컬 변수로 받아와야 합니다. (예: locals.userId)
+          const userId = `<%= locals.userId %>`; // 이 값은 서버에서 제공해야 합니다.
+
+          // Axios를 사용하여 POST 요청 보내기
+          axios
+            .post('/keyword/api/create', {
+              user_id: userId,
+              keyword: inputValue,
+            })
+            .then((response) => {
+              // 성공적으로 추가되면 새 키워드를 리스트에 추가
+              const li = document.createElement('li');
+              const a = document.createElement('a');
+              a.href = `/todo/api/list/keyword?keyword=${encodeURIComponent(
+                inputValue,
+              )}`;
+              a.innerHTML = `<i class="fa-solid fa-hashtag"></i> ${inputValue}`;
+              li.appendChild(a);
+              ul.appendChild(li);
+
+              // 입력창 제거
+              input.remove();
+              alert('키워드가 성공적으로 추가되었습니다!');
+              window.location.reload();
+            })
+            .catch((error) => {
+              console.error('키워드 추가 오류:', error);
+              alert('키워드 추가에 실패했습니다. 다시 시도해주세요.');
+            });
+        }
+      });
+    });
+
+  // document.getElementById("deleteKeywordBtn").addEventListener("")
+  document.querySelectorAll('.minusKeywordBtn').forEach((button) => {
+    button.addEventListener('click', function () {
+      // 부모 div(.keybarDiv) 요소 찾기
+      const keybarDiv = this.closest('.keybarDiv');
+
+      // 키워드 ID 추출 (a 태그의 href 속성에서 ID를 추출)
+      const keywordId = keybarDiv.querySelector('a').href.split('/').pop();
+
+      if (!keywordId) {
+        alert('키워드 ID를 찾을 수 없습니다.');
+        return;
+      }
+      const confirmDelete = confirm('정말 이 키워드를 삭제하시겠습니까?');
+      if (!confirmDelete) return;
+      // API 호출
+      axios({
+        method: 'delete',
+        url: '/keyword/api/delete',
+        data: { id: keywordId }, // ID 전달
+      })
+        .then((response) => {
+          console.log(response.data.message); // 성공 메시지 확인
+          alert('키워드가 삭제되었습니다.');
+
+          // 삭제 완료 후 해당 div 제거
+          keybarDiv.remove();
+        })
+        .catch((error) => {
+          console.error('키워드 삭제 오류:', error);
+          alert('키워드 삭제에 실패했습니다.');
+        });
+    });
+  });
+
+  // 키워드 페이지 이동
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const keyul = document.getElementById('keyul');
+
+  //   if (keyul) {
+  //     const links = keyul.querySelectorAll('a');
+
+  //     links.forEach((link) => {
+  //       link.addEventListener('click', async (event) => {
+  //         event.preventDefault();
+
+  //         const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
+  //         try {
+  //           const response = await axios.get(href); // 수정된 라우트 경로로 요청
+
+  //           // 서버에서 받은 HTML을 그대로 렌더링
+  //           if (response.status === 200) {
+  //             document.body.innerHTML = response.data;
+  //           } else {
+  //             alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
+  //           }
+  //         } catch (error) {
+  //           console.error('API 요청 중 오류 발생:', error);
+  //           alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
+  //         }
+  //       });
+  //     });
+  //   }
+  // });
+  /*페이지는 성공적으로 보인 코드드*/
+  document.addEventListener('DOMContentLoaded', () => {
+    const keyul = document.getElementById('keyul');
+
+    if (keyul) {
+      const links = keyul.querySelectorAll('a');
+
+      links.forEach((link) => {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+
+          const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
+
+          // 페이지 이동
+          window.location.href = href; // 이 코드가 페이지 전환을 처리
+        });
+      });
+    }
+  });
+
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const keyul = document.getElementById('keyul');
+
+  //   if (keyul) {
+  //     const links = keyul.querySelectorAll('a');
+
+  //     links.forEach((link) => {
+  //       link.addEventListener('click', (event) => {
+  //         event.preventDefault();
+
+  //         const href = event.currentTarget.getAttribute('href'); // 수정된 부분
+
+  //         // 페이지 이동 (단, 동적 콘텐츠 로딩 처리도 고려)
+  //         window.location.href = href; // 페이지 전환
+  //       });
+  //     });
+  //   }
+  //});
+  // document.addEventListener('DOMContentLoaded', () => {
+  //   const keyul = document.getElementById('keyul');
+
+  //   if (keyul) {
+  //     const links = keyul.querySelectorAll('a');
+
+  //     links.forEach((link) => {
+  //       link.addEventListener('click', async (event) => {
+  //         event.preventDefault();
+
+  //         const keywordId = event.currentTarget.getAttribute('data-id');
+  //         if (keywordId) {
+  //           try {
+  //             // axios를 사용하여 동적으로 데이터를 가져옴
+  //             const response = await axios.get(
+  //               `/todo/api/list/keyword/${keywordId}`,
+  //             );
+  //             const todos = response.data.todos;
+
+  //             // 키워드 목록을 동적으로 업데이트하는 로직
+  //             const todoListContainer = document.getElementById('todo-list'); // 예시로 빈 div에 표시한다고 가정
+  //             todoListContainer.innerHTML = ''; // 기존 내용 지우기
+  //             todos.forEach((todo) => {
+  //               const todoItem = document.createElement('div');
+  //               todoItem.textContent = todo.content; // 예시로 투두 내용만 출력
+  //               todoListContainer.appendChild(todoItem);
+  //             });
+  //           } catch (error) {
+  //             console.error('Error loading keyword todos:', error);
+  //           }
+  //         }
+  //       });
+  //     });
+  //   }
+  // });
 </script>

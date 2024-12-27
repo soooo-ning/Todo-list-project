@@ -231,6 +231,18 @@ exports.priorityList = async (req, res) => {
 };
 
 // 투두 키워드 조회 및 뷰 렌더링
+// GET /todo/list/keyword/:id
+// exports.renderKeywordList = (req, res) => {
+//   try {
+//     const { id } = req.params;
+
+//     res.render({
+//       keywordId: id,
+//     });
+//   } catch (err) {
+//     serverError(res, err);
+//   }
+// };
 // GET /todo/api/list/keyword/:id
 exports.keywordList = async (req, res) => {
   try {
@@ -247,6 +259,10 @@ exports.keywordList = async (req, res) => {
       todos,
       keywordId: id,
     });
+    // res.json({
+    //   todos,
+    //   keywordId: id,
+    // });
   } catch (err) {
     serverError(res, err);
   }

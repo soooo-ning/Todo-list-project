@@ -8,6 +8,7 @@ const passportConfig = require('./config/passport');
 const session = require('express-session'); // express-session 미들웨어 가져오기
 require('dotenv').config();
 const PORT = process.env.PORT;
+const loadUserData = require('./middlewares/userData');
 
 app.set('view engine', 'ejs');
 app.set('views', './views');
@@ -15,6 +16,7 @@ app.use('/static', express.static(__dirname + '/static'));
 app.use('/uploads', express.static(__dirname + '/uploads'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(loadUserData);
 
 // 세션 미들웨어 설정
 app.use(
@@ -41,7 +43,7 @@ db.sequelize.sync({ force: false }).then(() => {
   console.log('DB connected!');
 
   app.listen(PORT, () => {
-    console.log(`Server running on port http://lacalhost:${PORT}`);
+    console.log(`Server running on port http://localhost:${PORT}`);
     console.log(`Current environment: ${process.env.NODE_ENV}`);
   });
 });

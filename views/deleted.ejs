@@ -61,9 +61,9 @@
           item.todos.forEach((todo) => {
             const todoItem = document.createElement('li');
             todoItem.innerHTML = `
-                  <input type="checkbox" class="select-checkbox" value="${todo.id}" />
-                  <span>${todo.task}</span>
-                `;
+              <input type="checkbox" class="select-checkbox" value="${todo.id}" />
+              <span>${todo.task}</span>
+            `;
             if (todo.completed) {
               todoItem.classList.add('completed');
             }
@@ -102,48 +102,42 @@
 
       // 선택 복구
       document
-        .querySelector('.card-container')
-        .addEventListener('click', async (event) => {
-          if (event.target && event.target.id === 'restoreSelectedButton') {
-            const selectedCheckboxes = document.querySelectorAll(
-              '.select-checkbox:checked',
-            );
-            const selectedIds = Array.from(selectedCheckboxes).map(
-              (checkbox) => checkbox.value,
-            );
+        .getElementById('restoreSelectedButton')
+        .addEventListener('click', async () => {
+          const selectedCheckboxes = document.querySelectorAll(
+            '.select-checkbox:checked',
+          );
+          const selectedIds = Array.from(selectedCheckboxes).map(
+            (checkbox) => checkbox.value,
+          );
 
-            if (selectedIds.length === 0) {
-              alert('선택된 항목이 없습니다.');
-              return;
-            }
+          if (selectedIds.length === 0) {
+            alert('선택된 항목이 없습니다.');
+            return;
+          }
 
-            const confirmRestore = confirm('선택된 항목들을 복구하시겠습니까?');
-            if (confirmRestore) {
-              try {
-                const response = await fetch('/todo/api/restore/multiple', {
-                  method: 'PATCH',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ ids: selectedIds }),
-                });
-                if (response.ok) {
-                  alert('선택된 항목들이 복구되었습니다!');
-                  selectedCheckboxes.forEach((checkbox) =>
-                    checkbox.closest('.card').remove(),
-                  );
-                } else {
-                  alert('선택 복구에 실패했습니다.');
-                }
-              } catch (error) {
-                console.error(error);
-                alert('선택 복구 중 오류가 발생했습니다.');
+          const confirmRestore = confirm('선택된 항목들을 복구하시겠습니까?');
+          if (confirmRestore) {
+            try {
+              const response = await fetch('/todo/api/restore/multiple', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ids: selectedIds }),
+              });
+              if (response.ok) {
+                alert('선택된 항목들이 복구되었습니다!');
+                selectedCheckboxes.forEach((checkbox) =>
+                  checkbox.closest('.card').remove(),
+                );
+              } else {
+                alert('선택 복구에 실패했습니다.');
               }
+            } catch (error) {
+              console.error(error);
+              alert('선택 복구 중 오류가 발생했습니다.');
             }
           }
         });
-
-      document.addEventListener('DOMContentLoaded', () =>
-        renderData(deletedTodos),
-      );
     </script>
   </body>
 </html>

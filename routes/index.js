@@ -68,4 +68,6 @@ router.patch('/todo/api/restore/multiple', todoController.restoreTodos); // 삭�
 router.post('/keyword/api/create', keywordController.createKeyword); // 키워드 생성 api
 router.delete('/keyword/api/delete', keywordController.deleteKeyword); // 키워드 삭제 api
 
+router.get('/auth/api/session', authController.getSessionInfo); // 세션 정보 확인 API
+
 module.exports = router;

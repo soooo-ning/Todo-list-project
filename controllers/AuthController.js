@@ -208,3 +208,12 @@ exports.kakaoCallback = (req, res, next) => {
     });
   })(req, res, next);
 };
+
+// 세션 정보 확인 API
+exports.getSessionInfo = (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.status(401).json({ message: '로그인하지 않았습니다.' });
+  }
+};

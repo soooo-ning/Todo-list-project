@@ -1,8 +1,8 @@
 const { User } = require('../models'); // User 모델 가져오기
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const bcrypt = require('bcrypt'); // bcrypt 모듈 가져오기
 
 // 로그인 페이지 요청
 exports.getSignIn = (req, res) => {
@@ -24,7 +24,13 @@ exports.signIn = async (req, res) => {
   const { email, pw } = req.body;
   try {
     const user = await User.findOne({ where: { email } });
-    if (!user || user.pw !== pw) {
+    if (!user) {
+      return res.status(401).json({ message: '로그인 실패' });
+    }
+
+    // 해시된 비밀번호와 입력한 비밀번호 비교
+    const isMatch = await bcrypt.compare(pw, user.pw);
+    if (!isMatch) {
       return res.status(401).json({ message: '로그인 실패' });
     }
 
@@ -100,46 +106,53 @@ exports.duplicatedEmail = async (req, res) => {
 
 // 비밀번호 찾기 요청 메서드
 exports.searchPw = async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.query; // req.body 대신 req.query 사용
+
+  console.log('이메일:', email); // 이메일 값 로그
 
   try {
+    // 입력한 이메일로 사용자 찾기
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: '등록되지 않은 이메일입니다.' });
     }
 
-    // 비밀번호 재설정 토큰 생성
-    const token = crypto.randomBytes(32).toString('hex');
-    user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 3600000; // 1시간 유효
+    // 임시 비밀번호 생성 (4자리)
+    const tempPassword = crypto.randomBytes(2).toString('hex'); // 4자리 임시 비밀번호 생성
+
+    // 임시 비밀번호를 해시화하여 저장
+    const hashedPassword = await bcrypt.hash(tempPassword, 10);
+    user.pw = hashedPassword; // 해시화된 임시 비밀번호로 업데이트
     await user.save();
 
-    // 이메일 전송 설정
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'your_email@gmail.com', // 발신 이메일
-        pass: 'your_email_password', // 발신 이메일 비밀번호
-      },
-    });
+    // 결과 반환 (임시 비밀번호를 클라이언트에 반환)
+    res.status(200).json({ success: true, tempPassword });
+  } catch (err) {
+    console.error(err); // 오류 로그
+    return res.status(500).json({ error: err.message });
+  }
+};
 
-    // 비밀번호 재설정 링크
-    const resetLink = `http://todosesac.r-e.kr:8080/auth/reset-password/${token}`;
+// 비밀번호 재설정 API 메서드
+exports.resetPw = async (req, res) => {
+  const { newPassword } = req.body;
 
-    const mailOptions = {
-      from: 'your_email@gmail.com',
-      to: email,
-      subject: '비밀번호 재설정 요청',
-      text: `비밀번호 재설정을 원하시면 아래 링크를 클릭하세요:\n${resetLink}`,
-    };
+  try {
+    const user = await User.findByPk(req.user.id); // 사용자 ID로 사용자 조회
+    if (!user) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
 
-    await transporter.sendMail(mailOptions);
+    // 새 비밀번호 직접 저장 (암호화 없이)
+    user.pw = newPassword; // 새 비밀번호로 업데이트
+    await user.save();
 
     res
       .status(200)
-      .json({ message: '비밀번호 재설정 링크를 이메일로 전송했습니다.' });
+      .json({ message: '비밀번호가 성공적으로 재설정되었습니다.' });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error(err);
+    return res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 };
 

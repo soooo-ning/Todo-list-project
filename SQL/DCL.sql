@@ -1,5 +1,4 @@
 -- Active: 1732688616928@@127.0.0.1@3306@todo
--- 개발 계정
 CREATE USER 'developer'@'localhost' IDENTIFIED BY 'todo';
 
 GRANT ALL PRIVILEGES ON todo.* TO 'developer'@'localhost';

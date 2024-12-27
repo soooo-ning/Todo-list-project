@@ -605,19 +605,38 @@ body.dark-mode * {
 }
 
 /* 지원 ------------ */
-.plusKeywordBtn {
+.plusKeywordBtn,
+.minusKeywordBtn {
   width: 18px;
   height: 18px;
 }
-.keybarTitle {
+.keybarTitle,
+.keybarDiv {
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
+}
+.sidebar > .keyBar > .keybarTitle > .plusKeywordBtn,
+.keybarDiv {
+  transition: box-shadow 0.3s ease;
+}
+.keybarDiv:hover {
+  box-shadow: 0 4px 10px rgba(249, 241, 255, 0.926); /* 그림자 효과 */
 }
 .plusKeywordBtn:hover {
   transition: all, 0.3s;
   box-shadow: 2px 3px 8px 2px rgba(231, 198, 255, 0.7);
   border-color: transparent;
   border: none !important;
+}
+.minusKeywordBtn {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0s, opacity 0.3s;
+}
+.keybarDiv:hover .minusKeywordBtn {
+  visibility: visible;
+  opacity: 1;
 }
 /* ------------- 지원 */
 
@@ -702,4 +721,7 @@ body.dark-mode * {
     padding: 20px 10px;
     font-size: 17px;
   }
+  /* .minusKeywordBtn {
+    visibility: visible;
+  } */
 }

@@ -22,15 +22,15 @@ exports.getSearchPw = (req, res) => {
 // 로그인 메서드
 exports.signIn = async (req, res) => {
   const { email, pw } = req.body;
+
   try {
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(401).json({ message: '로그인 실패' });
     }
 
-    // 해시된 비밀번호와 입력한 비밀번호 비교
-    const isMatch = await bcrypt.compare(pw, user.pw);
-    if (!isMatch) {
+    // 입력한 비밀번호와 저장된 비밀번호 비교
+    if (pw !== user.pw) {
       return res.status(401).json({ message: '로그인 실패' });
     }
 
@@ -44,9 +44,6 @@ exports.signIn = async (req, res) => {
       nickname: user.nickname,
       email: user.email,
     };
-
-    // 세션 내용 로그 출력
-    console.log('Session after login:', req.session);
 
     // 닉네임과 함께 토큰을 반환
     res.json({ token, nickname: user.nickname });
@@ -78,7 +75,7 @@ exports.signUp = async (req, res) => {
 
     const newUser = await User.create({
       nickname,
-      pw, // 비밀번호는 해시화하여 저장하는 것이 좋습니다.
+      pw, // 비밀번호를 해시화하지 않고 그대로 저장
       email,
       profile_image: null,
     });
@@ -120,13 +117,15 @@ exports.searchPw = async (req, res) => {
     // 임시 비밀번호 생성 (4자리)
     const tempPassword = crypto.randomBytes(2).toString('hex'); // 4자리 임시 비밀번호 생성
 
-    // 임시 비밀번호를 해시화하여 저장
-    const hashedPassword = await bcrypt.hash(tempPassword, 10);
-    user.pw = hashedPassword; // 해시화된 임시 비밀번호로 업데이트
+    // 임시 비밀번호를 데이터베이스에 저장 (해시화하지 않음)
+    user.pw = tempPassword; // 임시 비밀번호로 업데이트
     await user.save();
 
+    // 임시 비밀번호를 콘솔에 출력하거나 다른 방법으로 사용자에게 제공 (예: API 응답으로 반환)
+    console.log('임시 비밀번호:', tempPassword);
+
     // 결과 반환 (임시 비밀번호를 클라이언트에 반환)
-    res.status(200).json({ success: true, tempPassword });
+    res.status(200).json({ success: true, tempPassword }); // 응답으로 임시 비밀번호 반환
   } catch (err) {
     console.error(err); // 오류 로그
     return res.status(500).json({ error: err.message });

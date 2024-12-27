@@ -67,20 +67,17 @@
           alert('새 비밀번호가 일치하지 않습니다!');
           return;
         }
-
-        // 비밀번호 변경 요청
-        axios
-          .patch('/user/api/reset-pw', {
-            newPassword: newPw, // 새 비밀번호만 서버에 전송
-          })
-          .then((response) => {
-            alert(response.data.message); // 서버에서 보낸 메시지 표시
-            window.location.reload();
-          })
-          .catch((error) => {
-            console.error(error);
-            alert('서버 오류가 발생했습니다.');
-          });
+    // 비밀번호 변경 요청
+    axios.patch('/user/api/reset-pw', {
+      currentPw: currentPw,
+      newPw: newPw
+    })
+    .then((response) => {
+      if (response.data.success) {
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        window.location.href="/todo/dashboard";
+      } else {
+        alert("비밀번호 변경에 실패했습니다.");
       }
     </script>
   </body>

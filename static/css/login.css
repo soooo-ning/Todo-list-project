@@ -58,6 +58,10 @@
   gap: 4vh 0;
   text-align: left;
 }
+.main_con form .err {
+  margin-top: 10px;
+  color: red;
+}
 .container > form {
   max-width: 80%;
   width: 80%;
@@ -226,8 +230,34 @@
 /*todo write*/
 /*popup*/
 
-body.pop_open {
+body.pop_open,
+body.load {
   overflow: hidden;
+}
+body.load::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  backdrop-filter: blur(4px);
+  z-index: 2;
+}
+body.load::after {
+  content: '';
+  display: inline-block;
+  background: url(../../static/img/loading-7528.gif) no-repeat center;
+  background-size: contain;
+  width: 60px;
+  height: 60px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
 }
 .container.popup.on {
   display: flex;

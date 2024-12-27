@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <%- include('include/header', { title: 'calendar' }) %>
+  <script
+    defer
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  ></script>
   <body>
+    <!-- Navigation -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
+    <!-- Main Content -->
     <main class="container calendar_wrap">
       <div class="content">
+        <!-- Calendar Section -->
         <div class="calendar">
           <div class="header">
             <button id="prevMonth">&lt;</button>
@@ -24,6 +31,7 @@
           <div class="dates" id="dates"></div>
         </div>
 
+        <!-- Todo List Section -->
         <div class="todo-list">
           <h2>스케줄:</h2>
           <h3 id="selected-date"></h3>
@@ -71,6 +79,7 @@
           const dateKey = `${year}-${month + 1}-${i}`;
           const titles = await fetchTodoTitles(dateKey);
 
+          console.log(titles);
           if (titles.length > 0) {
             dateDiv.style.backgroundColor = '#e7c6ff';
           }
@@ -111,10 +120,12 @@
 
       async function fetchTodoTitles(dateKey) {
         try {
-          const response = await fetch(`/todo/api/calendar=${dateKey}`);
+          const response = await fetch(`/todo/api/calendar?date=${dateKey}`);
           const data = await response.json();
-          if (response.ok && data.success) {
+          if (response.ok && data.success && data.todos.length > 0) {
             return data.todos.map((todo) => todo.title);
+          } else if (data.todos.length == 0) {
+            return [];
           } else {
             console.error('Error fetching todo titles:', data.message);
             return [];

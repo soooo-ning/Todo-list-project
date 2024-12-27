@@ -18,7 +18,7 @@
             <h4>프로필 사진</h4>
             <div class="profileImg">
               <img
-                src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+                src="<%= locals.profile_img ? '/static/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
                 class="profile-img"
                 id="profile-img"
                 width="200"

@@ -44,11 +44,13 @@
 
         // 서버로 비밀번호 재설정 요청
         axios
-          .get(`/auth/api/search-pw?email=${encodeURIComponent(email)}`)
+          .get(`/auth/api/search-pw?email=${encodeURIComponent(email)}`) // GET 요청으로 변경
           .then((response) => {
-            // 서버에서 받은 성공 메시지 출력
-            alert(response.data.message); // 성공 메시지 처리
-            window.location.href = '/'; // 로그인 페이지로 리디렉션
+            // 서버에서 받은 성공 메시지 대신 임시 비밀번호를 alert로 띄우기
+            if (response.data.success) {
+              alert(`임시 비밀번호: ${response.data.tempPassword}`); // 임시 비밀번호 alert
+              window.location.href = '/'; // 로그인 페이지로 리디렉션 (원하는 경우)
+            }
           })
           .catch((error) => {
             console.error(error); // 오류 상세 출력

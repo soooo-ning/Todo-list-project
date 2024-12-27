@@ -13,7 +13,7 @@ const loadUserData = require('./middlewares/userData');
 app.set('view engine', 'ejs');
 app.set('views', './views');
 app.use('/static', express.static(__dirname + '/static'));
-app.use('/uploads', express.static(__dirname + '/uploads'));
+app.use('/uploads', express.static(path.join(__dirname, '/static', 'uploads'))); // 'static/uploads' 폴더 서빙
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(loadUserData);

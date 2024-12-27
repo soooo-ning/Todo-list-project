@@ -7,7 +7,7 @@
 </head>
 
 <div class="sidebar">
-  <a href="/" class="home"
+  <a href="/"
     ><img
       src="/static/img/home.png"
       alt="홈으로 가기"
@@ -17,7 +17,7 @@
   <button type="button" class="navi_close">네비</button>
   <div class="profile">
     <img
-      src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+      src="<%= locals.profile_img ? '/static/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
       class="profile-img"
       width="100"
       height="100"
@@ -35,8 +35,6 @@
   <div class="naviBar">
     <input type="search" id="search-comment" placeholder="search.." />
     <p>TODO리스트</p>
-    <a href="/todo/api/write">새 작성</a><br />
-    <!-- <a href="/todo/api/search" >검색</a><br /> -->
     <a href="/todo/api/calendar"
       ><i class="fa-regular fa-calendar-check"></i> 캘린더</a
     ><br />
@@ -57,15 +55,6 @@
         <img src="/static/img/plus.png" alt="키워드추가" />
       </button>
     </div>
-    <!-- <ul id="keyul">
-      <%# for (let i = 0; i < locals.keywords.length; i++) { %>
-      <li>
-        <a href="/todo/list/keyword/<%#= locals.keywords[i].id %>">
-          <i class="fa-solid fa-hashtag"></i> <%#= locals.keywords[i].keyword %>
-        </a>
-      </li>
-      <%# } %>
-    </ul> -->
     <ul id="keyul">
       <% for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
@@ -253,107 +242,4 @@
         });
     });
   });
-
-  // 키워드 페이지 이동
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
-
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
-
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', async (event) => {
-  //         event.preventDefault();
-
-  //         const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
-  //         try {
-  //           const response = await axios.get(href); // 수정된 라우트 경로로 요청
-
-  //           // 서버에서 받은 HTML을 그대로 렌더링
-  //           if (response.status === 200) {
-  //             document.body.innerHTML = response.data;
-  //           } else {
-  //             alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
-  //           }
-  //         } catch (error) {
-  //           console.error('API 요청 중 오류 발생:', error);
-  //           alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
-  //         }
-  //       });
-  //     });
-  //   }
-  // });
-  /*페이지는 성공적으로 보인 코드드*/
-  document.addEventListener('DOMContentLoaded', () => {
-    const keyul = document.getElementById('keyul');
-
-    if (keyul) {
-      const links = keyul.querySelectorAll('a');
-
-      links.forEach((link) => {
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-
-          const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
-
-          // 페이지 이동
-          window.location.href = href; // 이 코드가 페이지 전환을 처리
-        });
-      });
-    }
-  });
-
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
-
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
-
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', (event) => {
-  //         event.preventDefault();
-
-  //         const href = event.currentTarget.getAttribute('href'); // 수정된 부분
-
-  //         // 페이지 이동 (단, 동적 콘텐츠 로딩 처리도 고려)
-  //         window.location.href = href; // 페이지 전환
-  //       });
-  //     });
-  //   }
-  //});
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
-
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
-
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', async (event) => {
-  //         event.preventDefault();
-
-  //         const keywordId = event.currentTarget.getAttribute('data-id');
-  //         if (keywordId) {
-  //           try {
-  //             // axios를 사용하여 동적으로 데이터를 가져옴
-  //             const response = await axios.get(
-  //               `/todo/api/list/keyword/${keywordId}`,
-  //             );
-  //             const todos = response.data.todos;
-
-  //             // 키워드 목록을 동적으로 업데이트하는 로직
-  //             const todoListContainer = document.getElementById('todo-list'); // 예시로 빈 div에 표시한다고 가정
-  //             todoListContainer.innerHTML = ''; // 기존 내용 지우기
-  //             todos.forEach((todo) => {
-  //               const todoItem = document.createElement('div');
-  //               todoItem.textContent = todo.content; // 예시로 투두 내용만 출력
-  //               todoListContainer.appendChild(todoItem);
-  //             });
-  //           } catch (error) {
-  //             console.error('Error loading keyword todos:', error);
-  //           }
-  //         }
-  //       });
-  //     });
-  //   }
-  // });
 </script>

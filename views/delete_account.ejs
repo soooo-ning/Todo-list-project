@@ -39,7 +39,7 @@
               type="button"
               class="btn"
               name="deleteBtn"
-              onclick="deleteAccount()"
+              onclick="deleteAccount(event)"
               style="background-color: red; color: #fff"
             >
               회원탈퇴
@@ -50,5 +50,34 @@
     </main>
 
     <%- include('include/popup') %>
+    <script>
+      const checkbox = document.getElementById('deleteCheck');
+      function deleteAccount(event) {
+        event.preventDefault();
+        console.log(checkbox.checked);
+        if (checkbox.checked) {
+          // Axios로 회원 탈퇴 API 요청 보내기
+          axios
+            .delete('/user/api/delete-account', {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`, // JWT 토큰을 헤더에 포함
+              },
+              data: {
+                userId: localStorage.getItem('userId'), // 세션에서 userId 가져오기
+              },
+            })
+            .then((response) => {
+              alert(response.data.message); // 성공 메시지 출력
+              window.location.href = '/'; // 회원 탈퇴 후 홈 페이지로 리디렉션
+            })
+            .catch((error) => {
+              alert('회원 탈퇴 중 오류가 발생했습니다.');
+              console.error(error);
+            });
+        } else {
+          alert('회원탈퇴 유의사항에 동의 해주세요!');
+        }
+      }
+    </script>
   </body>
 </html>

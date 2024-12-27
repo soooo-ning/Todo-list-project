@@ -30,7 +30,7 @@ router.get('/auth/api/sign-up/check', authController.duplicatedEmail); // 이메
 
 // Auth search pw
 router.get('/auth/search-pw', authController.getSearchPw); // 비밀번호 페이지
-// router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
+router.get('/auth/api/search-pw', authController.searchPw); // 비밀번호 찾기 api
 
 // User
 router.get('/user/profile', userController.getProfile); // 프로필 페이지

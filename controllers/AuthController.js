@@ -3,14 +3,7 @@ const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-let host;
-// if (process.env.NODE_ENV == 'production') {
-// host = process.env.PROD_HOST;
-// } else if (process.env.NODE_ENV == 'development') {
-// host = process.env.LOCAL_HOST;
-// } else {
-// host = process.env.LOCAL_HOST;
-// }
+
 // 로그인 페이지 요청
 exports.getSignIn = (req, res) => {
   res.render('sign-in'); // 로그인 페이지 렌더링
@@ -38,6 +31,16 @@ exports.signIn = async (req, res) => {
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
       expiresIn: '24h',
     });
+
+    // 세션에 사용자 정보 저장
+    req.session.user = {
+      id: user.id,
+      nickname: user.nickname,
+      email: user.email,
+    };
+
+    // 세션 내용 로그 출력
+    console.log('Session after login:', req.session);
 
     // 닉네임과 함께 토큰을 반환
     res.json({ token, nickname: user.nickname });
@@ -161,7 +164,16 @@ exports.googleCallback = (req, res, next) => {
         console.error('Login Error:', loginErr);
         return res.redirect('/login'); // 로그인 실패 시 리다이렉트
       }
-      return res.redirect('/todo/write'); // 성공 시 리다이렉트
+
+      // 로그인 성공 후 사용자 정보를 세션에 저장
+      req.session.user = {
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+      };
+
+      console.log('Session after Google login:', req.session); // 세션 로그 출력
+      return res.redirect('/todo/write');
     });
   })(req, res, next);
 };
@@ -177,13 +189,31 @@ exports.kakaoCallback = (req, res, next) => {
       console.log('No user found, redirecting to login');
       return res.redirect('/login'); // 사용자 없음
     }
-    req.logIn(user, (err) => {
-      if (err) {
-        console.error('Error during login:', err);
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error('Error during login:', loginErr);
         return res.redirect('/login'); // 로그인 실패 시 로그인 페이지로 리다이렉트
       }
+
+      // 로그인 성공 후 사용자 정보를 세션에 저장
+      req.session.user = {
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+      };
+
       console.log('User logged in:', user); // 로그인 성공 로그
-      return res.redirect('/todo/write'); // 원하는 페이지로 리다이렉트
+      console.log('Session after Kakao login:', req.session); // 세션 로그 출력
+      return res.redirect('/todo/write');
     });
   })(req, res, next);
+};
+
+// 세션 정보 확인 API
+exports.getSessionInfo = (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.status(401).json({ message: '로그인하지 않았습니다.' });
+  }
 };

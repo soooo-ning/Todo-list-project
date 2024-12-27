@@ -26,7 +26,7 @@ const User = (sequelize, DataTypes) => {
         comment: '닉네임',
       },
       pw: {
-        type: DataTypes.STRING(20),
+        type: DataTypes.STRING(255),
         allowNull: false,
         comment: '비밀번호',
       },

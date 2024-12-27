@@ -53,7 +53,7 @@
               </li>
             </ul>
 
-            <button onclick="login()">로그인</button>
+            <button type="submit">로그인</button>
           </div>
         </form>
 
@@ -64,45 +64,51 @@
       </div>
     </div>
     <script>
+      // 로그인 폼 submit 이벤트 처리
       document.forms['form-login'].addEventListener('submit', function (event) {
         event.preventDefault();
 
-        const email = document.querySelector('[name="userEmail"]').value;
-        const password = document.querySelector('[name="userPw"]').value;
+        const form = document.forms['form-login'];
+        const email = document.querySelector('[name="userEmail"]').value.trim();
+        const password = document.querySelector('[name="userPw"]').value.trim();
 
-        //클라이언트 유효성 검사
+        // 클라이언트 유효성 검사
         if (!email || !password) {
           alert('이메일과 비밀번호를 모두 입력해주세요.');
           return;
         }
+        if (password.length < 4 || password.length > 18) {
+          alert('비밀번호는 4글자에서 18글자 사이로 입력해주세요.');
+          return;
+        }
 
-        //서버로 전송 준비
+        // 서버로 전송할 데이터
         const formData = {
-          userEmail: email,
-          userPw: password,
+          email: email,
+          pw: password,
         };
 
-        // 데이터 POST 요청
-        fetch('/auth/api/sign-in', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.success) {
-              // 로그인 성공
+        // Axios를 사용한 POST 요청
+        axios
+          .post('/auth/api/sign-in', formData)
+          .then((response) => {
+            // 로그인 성공 시
+            if (response.data.token) {
+              // JWT 토큰을 로컬 스토리지에 저장
+              localStorage.setItem('token', response.data.token);
+              localStorage.setItem('nickname', response.data.nickname);
+
+              alert('로그인 완료되었습니다.');
+              // 대시보드로 리다이렉트
               window.location.href = '/todo/dashboard';
             } else {
-              //로그인 실페
-              alert(
-                data.message || '로그인에 실패했습니다. 다시 시도해주세요.',
-              );
+              // 로그인 실패 처리
+              alert('아이디 혹은 비밀번호가 다릅니다. 다시 시도해주세요.');
             }
           })
           .catch((error) => {
             console.error('오류:', error);
-            alert('ERRORㅠㅠ');
+            alert('로그인 오류가 발생했습니다. 다시 시도해주세요.');
           });
       });
     </script>

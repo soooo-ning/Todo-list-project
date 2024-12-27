@@ -96,8 +96,8 @@ exports.duplicatedEmail = async (req, res) => {
 };
 
 // 비밀번호 찾기 요청 메서드
-exports.requestPasswordReset = async (req, res) => {
-  const { email } = req.body;
+exports.searchPw = async (req, res) => {
+  const { email } = req.query;
 
   try {
     const user = await User.findOne({ where: { email } });

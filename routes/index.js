@@ -50,7 +50,7 @@ router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페�
 router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api
 router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
-router.patch('/todo/api/state', todoController.updateState); // 투두 상태 업데이트 api
+// router.patch('/todo/api/state', todoController.updateState); // 투두 상태 업데이트 api // 사용 안함
 router.delete('/todo/api/delete', todoController.deleteTodo); // 투두 삭제 api
 
 // Todo list
@@ -65,9 +65,8 @@ router.patch('/todo/api/restore', todoController.restoreTodo); // 삭제된 투�
 router.patch('/todo/api/restore/multiple', todoController.restoreTodos); // 삭제된 투두 다중 복구
 
 // Keyword
+router.get('/keyword/api/get', keywordController.getKeyword); // 키워드 목록 api
 router.post('/keyword/api/create', keywordController.createKeyword); // 키워드 생성 api
 router.delete('/keyword/api/delete', keywordController.deleteKeyword); // 키워드 삭제 api
-
-router.get('/auth/api/session', authController.getSessionInfo); // 세션 정보 확인 API
 
 module.exports = router;

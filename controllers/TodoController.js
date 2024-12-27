@@ -12,7 +12,9 @@ exports.getDashboard = (req, res) => {
 // POST /todo/api/write
 exports.writeTodo = async (req, res) => {
   try {
-    const { user_id, keyword_id, title, priority, date, content } = req.body;
+    const { keyword_id, title, priority, date, content } = req.body;
+    const user_id = req.user.id;
+
     const todo = await Todo.create({
       user_id,
       keyword_id,
@@ -43,12 +45,14 @@ exports.writeTodo = async (req, res) => {
 exports.getTodo = async (req, res) => {
   try {
     const { id } = req.params;
+
     const todo = await Todo.findOne({
       where: { id },
       include: [TodoContent, Keyword, User],
     });
 
     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+
     success(res, todo, 'Todo 내용 조회 완료');
   } catch (err) {
     serverError(res, err);
@@ -108,9 +112,11 @@ exports.editTodo = async (req, res) => {
 exports.updateState = async (req, res) => {
   try {
     const { id, state } = req.body;
+
     const [updated] = await TodoContent.update({ state }, { where: { id } });
 
     if (!updated) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+
     success(res, null, 'content 상태 업데이트 완료');
   } catch (err) {
     serverError(res, err);
@@ -122,12 +128,14 @@ exports.updateState = async (req, res) => {
 exports.deleteTodo = async (req, res) => {
   try {
     const { id } = req.body;
+
     const [deleted] = await Todo.update(
       { deleted: true, deleted_at: new Date() },
       { where: { id } },
     );
 
     if (!deleted) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+
     success(res, null, 'Todo 삭제 완료');
   } catch (err) {
     serverError(res, err);
@@ -139,9 +147,11 @@ exports.deleteTodo = async (req, res) => {
 exports.searchTodo = async (req, res) => {
   try {
     const { query } = req.query;
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
         [Op.or]: [
           { title: { [Op.like]: `%${query}%` } },
@@ -173,9 +183,11 @@ exports.todayList = async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
         date: today,
       },
@@ -195,17 +207,15 @@ exports.weekList = async (req, res) => {
     const now = new Date();
     const startOfWeek = new Date(now);
     const endOfWeek = new Date(now);
-
-    // 주의 시작일 (월요일)
     startOfWeek.setDate(now.getDate() - now.getDay() + 1);
     startOfWeek.setHours(0, 0, 0, 0);
-
-    // 주의 종료일 (일요일)
     endOfWeek.setDate(startOfWeek.getDate() + 6);
     endOfWeek.setHours(23, 59, 59, 999);
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
         date: {
           [Op.between]: [startOfWeek, endOfWeek],
@@ -241,6 +251,7 @@ exports.calendarList = async (req, res) => {
       targetDate.getMonth() + 1,
       0,
     );
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
@@ -268,9 +279,12 @@ exports.calendarList = async (req, res) => {
 // GET /todo/api/list/priority/:priority
 exports.priorityList = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { priority } = req.params;
+
     const todos = await Todo.findAll({
       where: {
+        user_id: userId,
         deleted: false,
         priority,
       },
@@ -287,9 +301,12 @@ exports.priorityList = async (req, res) => {
 // GET /todo/api/list/keyword/:id
 exports.keywordList = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { id } = req.params;
+
     const todos = await Todo.findAll({
       where: {
+        user_id: userId,
         deleted: false,
         keyword_id: id,
       },
@@ -309,7 +326,10 @@ exports.keywordList = async (req, res) => {
 // GET /todo/api/deleted-todo
 exports.deleteList = async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const todos = await Todo.findAll({
+      user_id: userId,
       where: { deleted: true },
       include: [TodoContent],
     });

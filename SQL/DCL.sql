@@ -1,4 +1,4 @@
--- Active: 1732688605158@@127.0.0.1@3306@todo
+-- Active: 1733295583465@@127.0.0.1@3306@mysql
 -- 개발 계정
 CREATE USER 'developer'@'localhost' IDENTIFIED BY 'todo';
 

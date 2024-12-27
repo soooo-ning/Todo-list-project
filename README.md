@@ -99,7 +99,7 @@ src
       <td align="center"><a href="https://github.com/maxbeny"><img src="/static/img/maxbeny.png" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 이채훈</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/lychee-55"><img src="/static/img/lychee-55.png" width="100px;" alt=""/><br /><sub><b>FS 팀원 : 이지원</b></sub></a><br /></td>
       <td align="center"><a href="https://github.com/baekdahyun"><img src="/static/img/baekdahyun.png" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 백다현</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/suvd0377"><img src="/static/img/suvd0377.jpg" height:100px; width="auto;" alt=""/><br /><sub><b>FE 팀원 : 간솝드</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/suvd0377"><img src="/static/img/suvd0377.jpg" height="100px;" width="auto;" alt=""/><br /><sub><b>FE 팀원 : 간솝드</b></sub></a><br /></td>
      <tr/>
     </tr>
   </tbody>

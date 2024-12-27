@@ -57,6 +57,7 @@ router.delete('/todo/api/delete', todoController.deleteTodo); // 투두 삭제 a
 router.get('/todo/api/search', todoController.searchTodo); // 투두 검색 페이지 조회
 router.get('/todo/api/calendar', todoController.calendarList); // 투두 캘린더형 조회
 router.get('/todo/api/list/priority/:priority', todoController.priorityList); // 투두 우선순위 조회
+// router.get('/todo/list/keyword/:id', todoController.renderKeywordList); // 투두 키워드 뷰렌더링
 router.get('/todo/api/list/keyword/:id', todoController.keywordList); // 투두 키워드 조회
 router.get('/todo/api/deleted-todo', todoController.deleteList); // 투두 휴지통 조회
 router.patch('/todo/api/restore', todoController.restoreTodo); // 삭제된 투두 복구

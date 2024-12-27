@@ -17,9 +17,13 @@
             <hr />
             <h4>프로필 사진</h4>
             <div class="profileImg">
-              <img id="profile-img" src="<%= "/uploads/"+ locals.profile_img ||
-              "/static/img/26139_img.png"%>" alt="기본 프로필 이미지"
-              class="profile-img" width="200" height="200" />
+              <img
+                src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+                class="profile-img"
+                id="profile-img"
+                width="200"
+                height="200"
+              />
             </div>
             <div class="dynamic">
               <form

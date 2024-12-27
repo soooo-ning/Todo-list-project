@@ -74,44 +74,51 @@ input[type='file'] {
   border: 1px solid #999;
   border-radius: 15px;
   padding: 15px 10px;
+  outline: none;
+}
+input:read-only,
+input:disabled {
+  background: #eee !important;
+  outline: none;
+  color: #888;
+}
+body.dark-mode input:read-only,
+body.dark-mode {
+  color: #888 !important;
 }
 input[type='checkbox'] {
   width: 20px;
   height: 20px;
   margin: 0 5px;
   vertical-align: middle;
+  outline: none;
 }
 input[type='radio'] {
   width: 20px;
   height: 20px;
   margin: 0 5px;
   vertical-align: middle;
+  outline: none;
 }
 button {
   width: auto;
-  border: 1px solid #777;
+  height: 50px;
   border-radius: 15px;
-  padding: 10px 5px;
-  background: #fff;
-  font-weight: 600;
   transition: all, 0.3s;
   box-sizing: border-box;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }
 button:hover {
   transition: all, 0.3s;
-  box-shadow: 2px 3px 8px 2px rgba(231, 198, 255, 0.7);
   border-color: transparent;
   border: none !important;
 }
 textarea,
 select {
   font: inherit;
-}
-button {
-  background: none;
-  border: none;
-  padding: 0;
-  cursor: pointer;
 }
 a {
   display: inline-block;
@@ -165,9 +172,16 @@ body > .nav + .container > .content::-webkit-scrollbar-track {
 }
 body > .nav + .container > .content::-webkit-scrollbar-thumb {
   background-color: #c8b6ff;
+  border: 1px solid #999;
 }
 body > .nav + .container > .content::-webkit-scrollbar-button {
   display: none;
+}
+body.dark-mode > .nav + .container > .content::-webkit-scrollbar-track {
+  background-color: #888;
+}
+body.dark-mode > .nav + .container > .content::-webkit-scrollbar-thumb {
+  background-color: #fff;
 }
 
 /* 코너에 라운드 효과 */
@@ -180,14 +194,14 @@ body > .nav + .container .navi_btn {
   text-indent: -9999px;
   width: 30px;
   height: 50px;
-  background: url('../../static/img/menu.png') no-repeat center;
-  background-size: 30px auto;
+  background: url('../../static/img/menu.png') no-repeat center !important;
+  background-size: 30px auto !important;
 }
 body > .nav .navi_close {
   display: none;
   text-indent: -9999px;
   width: 30px;
   height: 30px;
-  background: url('../../static/img/close.png') no-repeat center;
-  background-size: 30px auto;
+  background: url('../../static/img/close.png') no-repeat center !important;
+  background-size: 30px auto !important;
 }

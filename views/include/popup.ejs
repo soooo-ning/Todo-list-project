@@ -307,16 +307,16 @@
     // POST 요청: 새 투두 추가
     axios
       .post('/todo/api/write', {
-        user_id: 1, // 예시 user_id, 실제로는 로그인된 사용자 ID로 변경
+        user_id: 1,
         keyword_id: todoKey,
         title: todoTitle,
         priority: todoPriority,
         date: todoDate,
-        content: todoContents,
+        content: todoContents, // 배열로 전송
       })
       .then((response) => {
         alert(response.data.message);
-        window.location.reload(); // 투두 목록 갱신
+        window.location.reload();
       })
       .catch((error) => {
         console.error(error);
@@ -337,9 +337,9 @@
     const todoPriority = document.querySelector("input[name='priority']").value;
     const todoKey = document.querySelector("select[name='todoKey']").value;
 
-    const todoContents = [
-      ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
-    ].map((input) => input.value.trim());
+    const todoContents = document
+      .querySelector(".todo_content input[name='todoCon']")
+      .value.trim();
 
     if (!todoTitle || !todoDate || !todoPriority) {
       alert('모든 필드를 채워주세요.');

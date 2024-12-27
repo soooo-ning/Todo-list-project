@@ -1,10 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
-  <%- include('include/header', { title: 'dashboard' })%>
-  <!-- <link
-    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
-    rel="stylesheet"
-  /> -->
+<html lang="ko">
+  <%- include('include/header', { title: 'dashboard' }) %>
   <body>
     <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
@@ -14,7 +10,7 @@
         <section class="container-fluid">
           <header>
             <!-- 로고 -->
-            <h1 class="main_title">Todo Checkk</h1>
+            <h1 class="main_title">Todo Check</h1>
           </header>
 
           <!-- 진행 상태 -->
@@ -66,47 +62,15 @@
                     추가
                   </button>
                 </div>
-                <ul class="flex_wrap mt20">
-                  <li class="list-group-item d-flex align-items-center">
-                    <input
-                      type="checkbox"
-                      id="task1"
-                      class="form-check-input me-2"
-                    />
-                    <label for="task1" class="form-check-label w-100"
-                      >과제하기</label
-                    >
-                  </li>
-                  <li class="list-group-item d-flex align-items-center">
-                    <input
-                      type="checkbox"
-                      id="task3"
-                      class="form-check-input me-2"
-                    />
-                    <label for="task3" class="form-check-label w-100"
-                      >강아지 산책 시키기</label
-                    >
-                  </li>
-                  <li class="list-group-item d-flex align-items-center">
-                    <input
-                      type="checkbox"
-                      id="task5"
-                      class="form-check-input me-2"
-                    />
-                    <label for="task5" class="form-check-label w-100"
-                      >운동하기</label
-                    >
-                  </li>
-                </ul>
+                <ul id="todayTasks" class="flex_wrap mt20"></ul>
               </div>
             </div>
           </form>
 
           <!-- 날씨 -->
           <div class="card-body">
-            <h5 class="card-title"></h5>
+            <h5 class="card-title">서울 날씨</h5>
             <div class="weather-container">
-              <h1>서울 날씨</h1>
               <div id="temperature">기온: 로딩 중...</div>
               <div id="weather">날씨: 로딩 중...</div>
             </div>
@@ -122,15 +86,12 @@
                   <th>할 일</th>
                 </tr>
               </thead>
-              <tbody id="weeklyTodoTable">
-                <!-- JS에서 동적으로 데이터를 채울 부분 -->
-              </tbody>
+              <tbody id="weeklyTodoTable"></tbody>
             </table>
           </div>
 
           <!-- 요약 -->
           <div class="card-body">
-            <!-- 진행상태 섹션 -->
             <div>
               <h5 class="card-title">진행상태</h5>
               <p>총 투두: <span id="totalTodos">0</span></p>
@@ -138,7 +99,6 @@
               <p>%: <span id="progressPercentage">0</span>%</p>
             </div>
 
-            <!-- 오늘의 투두 상황 섹션 -->
             <div>
               <h5 class="card-title mt20">오늘의 투두 상황</h5>
               <p>오늘의 %: <span id="todayProgressPercentage">0</span>%</p>
@@ -150,129 +110,93 @@
 
     <%- include('include/popup') %>
 
-    <!-- Bootstrap JS, Popper JS -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script> -->
+    <!-- 데이터 전달 -->
+    <div id="todoData" 
+         data-todos='<%= JSON.stringify(todos || []) %>'
+         data-today-tasks='<%= JSON.stringify(todayTasks || []) %>'
+         data-completed-tasks='<%= typeof completedTasks !== 'undefined' ? completedTasks : 0 %>'
+         data-total-tasks='<%= typeof totalTasks !== 'undefined' ? totalTasks : 0 %>'>
+    </div>
+
     <script>
-      /* 대시보드*/
+      document.addEventListener('DOMContentLoaded', () => {
+        const todoData = document.getElementById('todoData');
+        
+        // 데이터 파싱
+        const todos = JSON.parse(todoData.dataset.todos || '[]');
+        const todayTasks = JSON.parse(todoData.dataset.todayTasks || '[]');
+        const completedTasks = parseInt(todoData.dataset.completedTasks || '0', 10);
+        const totalTasks = parseInt(todoData.dataset.totalTasks || '0', 10);
 
-      // DB에서 가져온 데이터
-      const todos = [
-        { id: 1, text: '과제하기', completed: true, date: '2024-12-20' },
-        { id: 2, text: '운동하기', completed: false, date: '2024-12-20' },
-        {
-          id: 3,
-          text: '밥 먹기',
-          completed: true,
-          date: '2024-12-19',
-        },
-        { id: 4, text: '자기 mom', completed: false, date: '2024-12-20' },
-      ];
+        console.log('Todos:', todos);
+        console.log('Today Tasks:', todayTasks);
+        console.log('Completed Tasks:', completedTasks);
+        console.log('Total Tasks:', totalTasks);
 
-      // 현재 날짜
-      const today = new Date().toISOString().split('T')[0];
-
-      // 전체 통계
-      const totalTodos = todos.length;
-      const completedTodos = todos.filter((todo) => todo.completed).length;
-      const progressPercentage =
-        totalTodos > 0 ? Math.round((completedTodos / totalTodos) * 100) : 0;
-
-      // 오늘의 투두 통계
-      const todayTodos = todos.filter((todo) => todo.date === today);
-      const todayTotalTodos = todayTodos.length;
-      const todayCompletedTodos = todayTodos.filter(
-        (todo) => todo.completed,
-      ).length;
-      const todayProgressPercentage =
-        todayTotalTodos > 0
-          ? Math.round((todayCompletedTodos / todayTotalTodos) * 100)
+        // 진행 상태 업데이트
+        const overallProgressPercentage = totalTasks > 0 
+          ? ((completedTasks / totalTasks) * 100).toFixed(0) 
           : 0;
 
-      //날씨 API
-      // 날씨 API URL과 인증 키
-      const apiUrl =
-        'https://apihub.kma.go.kr/api/typ01/url/fct_shrt_reg.php?tmfc=0&authKey=cjr5zSZPQBi6-c0mT6AYAg';
+        const overallProgressBar = document.getElementById('overallProgressBar');
+        overallProgressBar.style.width = `${overallProgressPercentage}%`;
+        overallProgressBar.textContent = `${overallProgressPercentage}%`;
 
-      function getWeather() {
-        fetch(apiUrl)
-          .then((response) => response.json())
-          .then((data) => {
-            const weatherInfo = data.response.body.items.item.find(
-              (item) => item.city === '서울',
-            );
+        // 오늘의 투두 현황 업데이트
+        const todayProgressPercentage = todayTasks.length > 0 
+          ? ((2 / todayTasks.length) * 100).toFixed(0) 
+          : 0;
 
-            if (weatherInfo) {
-              const temperature = weatherInfo.temp;
-              const weatherStatus = weatherInfo.weather;
+        const todayProgressBar = document.getElementById('todayProgressBar');
+        todayProgressBar.style.width = `${todayProgressPercentage}%`;
+        todayProgressBar.textContent = `${todayProgressPercentage}%`;
+        document.getElementById('todayProgressPercentage').textContent = todayProgressPercentage;
 
-              document.getElementById(
-                'temperature',
-              ).textContent = `기온: ${temperature}°C`;
-              document.getElementById(
-                'weather',
-              ).textContent = `날씨: ${weatherStatus}`;
-            } else {
-              alert('서울의 날씨 정보를 찾을 수 없습니다.');
-            }
-          })
-          .catch((error) => {
-            console.error(
-              '날씨 데이터를 가져오는 중 오류가 발생했습니다:',
-              error,
-            );
-            alert('날씨 데이터를 가져오는 중 오류가 발생했습니다.');
-          });
-      }
+        // 오늘의 할 일 렌더링
+        const todayTasksList = document.getElementById('todayTasks');
+        todayTasks.forEach((task) => {
+          const li = document.createElement('li');
+          li.className = 'list-group-item d-flex align-items-center';
+          li.innerHTML = `
+            <input type="checkbox" class="form-check-input me-2" />
+            <label class="form-check-label w-100">${task}</label>
+          `;
+          todayTasksList.appendChild(li);
+        });
 
-      window.onload = getWeather;
+        // 이번 주 할 일 렌더링
+        const weeklyTable = document.getElementById('weeklyTodoTable');
+        todos.forEach((todo) => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${todo.day}</td>
+            <td>${todo.tasks.join(', ')}</td>
+          `;
+          weeklyTable.appendChild(row);
+        });
 
-      // DB에서 가져온 데이터 예시
-      const weeklyTodos = [
-        { day: '월', tasks: ['회의 준비', '보고서 작성'] },
-        { day: '화', tasks: ['팀 미팅'] },
-        { day: '수', tasks: ['클라이언트 회의', '데이터 분석'] },
-        { day: '목', tasks: ['프로젝트 계획'] },
-        { day: '금', tasks: ['주간 보고서 작성'] },
-        { day: '토', tasks: ['개인 학습'] },
-        { day: '일', tasks: ['휴식'] },
-      ];
-
-      // 테이블에 데이터 채우기
-      const tableBody = document.getElementById('weeklyTodoTable');
-      weeklyTodos.forEach((todo) => {
-        const row = document.createElement('tr');
-
-        // 요일 열
-        const dayCell = document.createElement('td');
-        dayCell.textContent = todo.day;
-        row.appendChild(dayCell);
-
-        // 할 일 열
-        const tasksCell = document.createElement('td');
-        tasksCell.textContent = todo.tasks.join(', '); // 여러 할 일을 쉼표로 구분
-        row.appendChild(tasksCell);
-
-        tableBody.appendChild(row);
+        // 날씨 API
+        const apiKey = 'da450c832635d5d57538d8acdd43e25f';
+        const weatherContainer = document.querySelector('.weather-container');
+        
+        async function fetchWeather() {
+          const url = `https://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&lang=kr&appid=${apiKey}`;
+          try {
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('날씨 정보를 불러오지 못했습니다.');
+            const data = await response.json();
+            weatherContainer.innerHTML = `
+              <h2>${data.name}</h2>
+              <p>온도: ${data.main.temp}°C</p>
+              <p>상태: ${data.weather[0].description}</p>
+              <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" />
+            `;
+          } catch (error) {
+            weatherContainer.innerHTML = `<p>오류: ${error.message}</p>`;
+          }
+        }
+        fetchWeather();
       });
-
-      // DOM
-      document.getElementById('totalTodos').textContent = totalTodos;
-      document.getElementById('completedTodos').textContent = completedTodos;
-      document.getElementById('progressPercentage').textContent =
-        progressPercentage;
-
-      const overallProgressBar = document.getElementById('overallProgressBar');
-      overallProgressBar.style.width = progressPercentage + '%';
-      overallProgressBar.textContent = progressPercentage + '%';
-
-      // 오늘의 투두 DOM
-      document.getElementById('todayProgressPercentage').textContent =
-        todayProgressPercentage;
-
-      const todayProgressBar = document.getElementById('todayProgressBar');
-      todayProgressBar.style.width = todayProgressPercentage + '%';
-      todayProgressBar.textContent = todayProgressPercentage + '%';
     </script>
   </body>
 </html>

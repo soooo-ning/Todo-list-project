@@ -111,7 +111,7 @@
 
       async function fetchTodoTitles(dateKey) {
         try {
-          const response = await fetch(`/todo/api/calendar?date=${dateKey}`);
+          const response = await fetch(`/todo/api/calendar=${dateKey}`);
           const data = await response.json();
           if (response.ok && data.success) {
             return data.todos.map((todo) => todo.title);

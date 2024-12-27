@@ -7,7 +7,7 @@
 </head>
 
 <div class="sidebar">
-  <a href="/"
+  <a href="/todo/dashboard"
     ><img
       src="/static/img/home.png"
       alt="홈으로 가기"
@@ -25,9 +25,7 @@
     <p><b><%=locals.nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
       <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
-      <a
-        href="/logout"
-        onclick="return confirm('Are you sure you want to log out?')"
+      <a href="/" onclick="return confirm('로그아웃을 하시나요?')"
         ><i class="fa-solid fa-right-from-bracket"></i> logout</a
       >
     </div>

@@ -173,7 +173,7 @@ exports.googleCallback = (req, res, next) => {
       };
 
       console.log('Session after Google login:', req.session); // 세션 로그 출력
-      return res.redirect('/todo/write');
+      return res.redirect('/todo/dashboard');
     });
   })(req, res, next);
 };
@@ -204,7 +204,7 @@ exports.kakaoCallback = (req, res, next) => {
 
       console.log('User logged in:', user); // 로그인 성공 로그
       console.log('Session after Kakao login:', req.session); // 세션 로그 출력
-      return res.redirect('/todo/write');
+      return res.redirect('/todo/dashboard');
     });
   })(req, res, next);
 };

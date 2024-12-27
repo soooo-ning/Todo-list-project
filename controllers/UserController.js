@@ -4,8 +4,9 @@ const { where } = require('sequelize');
 
 exports.getProfile = async (req, res) => {
   try {
+    const userId = req.user.id;
     const user = await User.findOne({
-      where: { id: 1 }, //추후 id불러오기
+      where: { id: userId }, //추후 id불러오기
       attributes: ['email'],
     });
     res.render('profile_setting', {
@@ -20,6 +21,7 @@ exports.getProfile = async (req, res) => {
 
 exports.editProfile = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { nickname, photo } = req.body;
     console.log(nickname, photo);
     if (!nickname && !photo) {
@@ -30,10 +32,10 @@ exports.editProfile = async (req, res) => {
         nickname: nickname,
         profile_image: photo,
       },
-      { where: { id: 1 } },
+      { where: { id: userId } },
     );
     const user = await User.findOne({
-      where: { id: 1 }, //추후 id불러오기
+      where: { id: userId }, //추후 id불러오기
       attributes: ['nickname', 'profile_image'],
     });
     console.log(updateUser);
@@ -63,8 +65,9 @@ exports.uploadPhoto = async (req, res) => {
 
 exports.getResetPw = async (req, res) => {
   try {
+    const userId = req.user.id;
     const user = await User.findOne({
-      where: { id: 1 }, //추후 id불러오기
+      where: { id: userId }, //추후 id불러오기
       attributes: ['pw'],
     });
     res.render('change_pw', {
@@ -80,7 +83,7 @@ exports.getResetPw = async (req, res) => {
 exports.resetPw = async (req, res) => {
   try {
     const { currentPw, newPw } = req.body;
-    const userId = 1; // 현재는 하드코딩된 ID, 추후 로그인한 사용자의 ID로 변경
+    const userId = req.user.id;
 
     // 사용자 정보 가져오기
     const user = await User.findOne({ where: { id: userId } });
@@ -112,7 +115,7 @@ exports.getDeleteAccount = async (req, res) => {
     // User모델에서 닉네임 불러오기
     // const userId = req.body
     const user = await User.findOne({
-      where: { id: 1 }, //추후 id불러오기
+      where: { id: userId }, //추후 id불러오기
       attributes: ['pw'],
     });
     res.render('delete_account', {
@@ -128,7 +131,8 @@ exports.getDeleteAccount = async (req, res) => {
 const jwt = require('jsonwebtoken');
 
 exports.deleteAccount = async (req, res) => {
-  const userId = req.session.userId || req.body.userId; // 세션 또는 요청 본문에서 userId 가져오기
+  // const userId = req.session.user.id || req.body.userId || req.user.id; // 세션 또는 요청 본문에서 userId 가져오기
+  const userId = req.user.id;
 
   if (!userId) {
     return res.status(400).json({ message: '사용자 인증 정보가 필요합니다.' });
@@ -151,9 +155,11 @@ exports.deleteAccount = async (req, res) => {
           .status(500)
           .json({ message: '세션 삭제 오류 발생', error: err });
       }
-
+      console.log('세션이 성공적으로 삭제되었습니다.');
       // 토큰 삭제는 프론트에서 처리
-      res.status(200).json({ message: '회원 탈퇴가 완료되었습니다.' });
+      return res.status(200).json({
+        message: '회원 탈퇴가 완료되었습니다. 다음에 더 좋은 모습으로 만나요!',
+      });
     });
   } catch (err) {
     return res

@@ -31,9 +31,14 @@
     </div>
   </div>
   <div class="naviBar">
-    <input type="search" id="search-comment" placeholder="search.." />
+    <div class="search-container">
+      <input type="search" id="search-comment" placeholder="search.." />
+      <button type="button" id="nav-search-btn">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
     <p>TODO리스트</p>
-    <a href="/todo/api/calendar"
+    <a href="/todo/calendar"
       ><i class="fa-regular fa-calendar-check"></i> 캘린더</a
     ><br />
     <a href="/todo/api/deleted-todo"
@@ -91,6 +96,33 @@
       themeToggle.classList.remove('btn-light');
       themeToggle.classList.add('btn-dark');
     }
+
+    // 검색 기능 추가
+    const searchInput = document.getElementById('search-comment');
+    const searchBtn = document.getElementById('nav-search-btn');
+
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        window.location.href = `/todo/search?query=${encodeURIComponent(
+          query,
+        )}`;
+      } else {
+        alert('검색어를 입력해주세요.');
+      }
+    }
+
+    // 검색 버튼 클릭 이벤트
+    searchBtn && searchBtn.addEventListener('click', performSearch);
+
+    // 엔터키 이벤트
+    searchInput &&
+      searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          performSearch();
+        }
+      });
   });
 
   themeToggle.addEventListener('click', () => {

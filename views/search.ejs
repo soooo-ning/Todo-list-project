@@ -7,63 +7,75 @@
     <main class="container search_wrap">
       <div class="content">
         <h3 class="sub_title"><span>검색 결과</span></h3>
-        <div class="card-container add" id="cardContainer">
-          <% if (todos && todos.length > 0) { %> <% todos.forEach((todo) => { %>
-          <div class="card">
-            <div class="card-title"><%= todo.title %></div>
-            <ul class="todo-list">
-              <% (todo.todo_contents || []).forEach((content) => { %>
-              <li class="<%= content.state ? 'completed' : '' %>">
-                <%= content.content %>
-              </li>
-              <% }) %>
-            </ul>
-          </div>
-          <% }) %> <% } else { %>
-          <p>검색 결과가 없습니다.</p>
-          <% } %>
-        </div>
+        <div class="card-container add" id="cardContainer"></div>
       </div>
     </main>
 
     <%- include('include/popup') %>
 
     <script>
-      // 검색 버튼 이벤트 처리
+      async function searchTodos(query) {
+        try {
+          const response = await fetch(
+            `/todo/api/search?query=${encodeURIComponent(query)}`,
+          );
+          const result = await response.json();
+
+          const cardContainer = document.getElementById('cardContainer');
+
+          if (result.status === 'success') {
+            if (!result.data || result.data.length === 0) {
+              cardContainer.innerHTML =
+                '<p class="no-results">검색 결과가 없습니다.</p>';
+              return;
+            }
+
+            const html = result.data
+              .map((todo) => {
+                return `
+                <div class="card">
+                  <div class="card-title">${todo.title}</div>
+                  <ul class="todo-list">
+                    ${(todo.todo_contents || [])
+                      .map(
+                        (content) => `
+                      <li class="${content.state ? 'completed' : ''}">${
+                          content.content
+                        }</li>
+                    `,
+                      )
+                      .join('')}
+                  </ul>
+                </div>
+              `;
+              })
+              .join('');
+
+            cardContainer.innerHTML = html;
+          } else {
+            cardContainer.innerHTML =
+              '<p class="error">검색 결과를 불러오는데 실패했습니다.</p>';
+          }
+        } catch (error) {
+          console.error('검색 오류:', error);
+          document.getElementById('cardContainer').innerHTML =
+            '<p class="error">검색 중 오류가 발생했습니다.</p>';
+        }
+      }
+
       document.addEventListener('DOMContentLoaded', () => {
-        const searchInput = document.getElementById('search-comment');
-        const searchButton = document.querySelector('.naviBar button');
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('query');
 
-        if (searchInput && searchButton) {
-          searchButton.addEventListener('click', () => {
-            const query = searchInput.value.trim();
-            if (query) {
-              window.location.href = `/todo/api/search?query=${encodeURIComponent(
-                query,
-              )}`;
-            } else {
-              alert('검색어를 입력해주세요.');
-            }
-          });
+        if (query) {
+          const searchInput = document.getElementById('search-comment');
+          if (searchInput) {
+            searchInput.value = query;
+          }
 
-          searchInput.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-              searchButton.click();
-            }
-          });
+          searchTodos(query);
         }
       });
-
-      const cardContainer = document.getElementById('cardContainer');
-      if (cardContainer) {
-        cardContainer.addEventListener('click', (e) => {
-          const card = e.target.closest('.card');
-          if (card) {
-            const title = card.querySelector('.card-title').textContent.trim();
-            alert(`"${title}"를 선택했습니다.`);
-          }
-        });
-      }
     </script>
   </body>
 </html>

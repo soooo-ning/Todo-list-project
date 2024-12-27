@@ -1,4 +1,4 @@
-# 📄간결하고 직관적인 투두리스트 Todo Checkk
+# 📄 Todo Checkk
 
 간결함과 직관성을 최우선으로 한 투두리스트 웹사이트!
 사용자 중심적인 설계를 통해 불편함을 최소화하고, 할 일 관리에 충실한 서비스를 제공합니다.
@@ -95,11 +95,11 @@ src
 <table>
   <tbody>
     <tr>
-      <td align="center"><a href="https://github.com/soooo-ning"><img src="width="100px;" alt=""/><br /><sub><b>BE 팀장 : 이소은</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/maxbeny"><img src="" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 이채훈</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/lychee-55"><img src="" width="100px;" alt=""/><br /><sub><b>FS 팀원 : 이지원</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/baekdahyun"><img src="" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 백다현</b></sub></a><br /></td>
-      <td align="center"><a href="https://github.com/suvd0377"><img src="" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 간솝드</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/soooo-ning"><img src="/static/img/soooo-ning.jpg" width="100px;" alt=""/><br /><sub><b>BE 팀장 : 이소은</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/maxbeny"><img src="/static/img/maxbeny.png" width="100px;" alt=""/><br /><sub><b>BE 팀원 : 이채훈</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/lychee-55"><img src="/static/img/lychee-55.png" width="100px;" alt=""/><br /><sub><b>FS 팀원 : 이지원</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/baekdahyun"><img src="/static/img/baekdahyun.png" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 백다현</b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/suvd0377"><img src="/static/img/suvd0377.jpg" width="100px;" alt=""/><br /><sub><b>FE 팀원 : 간솝드</b></sub></a><br /></td>
      <tr/>
     </tr>
   </tbody>

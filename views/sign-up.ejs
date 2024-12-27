@@ -4,13 +4,7 @@
   <body>
     <div class="main_wrap">
       <div class="main_img">
-        <h1 class="main_title">Todo Checkkdfgdfg</h1>
-        <p class="main_txt">
-          Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nobis
-          quaerat quas, ipsum minus minima odit, necessitatibus fuga quisquam
-          doloremque quibusdam explicabo, suscipit magni sed! Itaque distinctio
-          nobis eveniet recusandae ab.
-        </p>
+        <h1 class="main_title">Todo Checkk</h1>
       </div>
       <div class="main_con">
         <h3 class="sub_title">
@@ -26,7 +20,7 @@
               required
             />
           </label>
-          <label>
+          <label class="email_input">
             <span>EMAIL</span>
             <input
               type="email"
@@ -51,7 +45,7 @@
         </form>
 
         <div class="link">
-          <a href="/auth/search-pw">아이디 / 비밀번호 찾기</a>
+          <a href="/auth/search-pw">비밀번호 찾기</a>
           <a href="/">로그인</a>
         </div>
       </div>
@@ -83,45 +77,35 @@
           return;
         }
 
-        // 이메일 중복 확인
+        // 이메일 중복이 없다면 회원가입 요청
         axios
-          .get(`/auth/api/sign-up/check=${userEmail}`)
-          .then((emailCheckResponse) => {
-            const emailCheckData = emailCheckResponse.data;
-            console.log(emailCheckData.message);
-
-            // 이메일 중복 시 처리
-            if (emailCheckData.success === false) {
-              alert('이미 사용 중인 이메일입니다.');
-              return;
+          .post('/auth/api/sign-up', {
+            nickname: userName, // 'userName' -> 'nickname'으로 변경
+            email: userEmail, // 'userEmail' -> 'email'으로 변경
+            pw: userPw, // 'userPw' -> 'pw'로 변경
+          })
+          .then((signUpResponse) => {
+            const signUpData = signUpResponse.data;
+            if (signUpResponse.status === 201) {
+              alert('회원가입 성공!');
+              window.location.href = '/todo/dashboard';
             }
-
-            // 이메일 중복이 없다면 회원가입 요청
-            axios
-              .post('/auth/api/sign-up', {
-                nickname: userName, // 'userName' -> 'nickname'으로 변경
-                email: userEmail, // 'userEmail' -> 'email'으로 변경
-                pw: userPw, // 'userPw' -> 'pw'로 변경
-              })
-              .then((signUpResponse) => {
-                const signUpData = signUpResponse.data;
-                if (signUpResponse.status === 201) {
-                  alert('회원가입 성공!');
-                  window.location.href = '/todo/dashboard';
-                } else {
-                  alert(
-                    signUpData.message || '회원가입 중 문제가 발생했습니다.',
-                  );
-                }
-              })
-              .catch((err) => {
-                console.error('회원가입 오류 발생:', err);
-                alert('회원가입 중 문제가 발생했습니다!');
-              });
           })
           .catch((err) => {
-            console.error('이메일 중복 확인 오류 발생:', err);
-            alert('이메일 중복 확인 중 문제가 발생했습니다!');
+            console.error('회원가입 오류 발생:', err);
+
+            const emailInput = document.querySelector('.email_input');
+
+            // 이미 에러 메시지가 존재하는지 확인
+            if (document.querySelector('.err')) {
+              document.querySelector('.err').remove(); // 기존 에러 메시지 제거
+            }
+
+            // 새 에러 메시지 생성
+            const errMsg = document.createElement('p');
+            errMsg.classList.add('err');
+            errMsg.innerText = '이미 가입된 이메일입니다';
+            emailInput.append(errMsg);
           });
       }
     </script>

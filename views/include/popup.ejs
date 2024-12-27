@@ -4,7 +4,7 @@
       <span>Write your TodoList</span>
     </h3>
     <button type="button" class="pop_close">X</button>
-    <form name="form-todo" method="post" class="view">
+    <form name="form-todo" method="post">
       <label class="todo_title">
         <input
           type="text"
@@ -45,8 +45,14 @@
         <label class="todo_key">
           <p>키워드</p>
           <select name="todoKey" id="" required>
-            <option value="work" selected>work</option>
-            <option value="study">study</option>
+            <% if (keywords && keywords.length > 0) { %> <% for (let i = 0; i <
+            keywords.length; i++) { %>
+            <option value="<%= keywords[i].id %>">
+              <%= keywords[i].keyword %>
+            </option>
+            <% } %> <% } else { %>
+            <option value="">No Keywords Available</option>
+            <% } %>
           </select>
         </label>
       </div>
@@ -61,9 +67,9 @@
         </li>
       </ul>
 
-      <button type="button" id="todoAdd">ADD</button>
-
-      <button id="todoBtn">등록</button>
+      <button type="button" id="todoAdd">추가</button>
+      <button type="button" id="todoEdit">수정</button>
+      <button type="submit" id="todoBtn">등록</button>
     </form>
   </div>
 </div>
@@ -266,4 +272,127 @@
     pop.classList.remove('on');
     document.querySelector('body').classList.remove('pop_open');
   });
+
+  /*api 부르기*/
+  const todoForm = document.forms['form-todo']; // 폼 요소
+
+  // 버튼 요소
+  const todoEditBtn = document.getElementById('todoEdit');
+  const todoSubmitBtn = document.getElementById('todoBtn');
+
+  // 기본적으로 등록 버튼만 보이게 설정
+  todoEditBtn.style.display = 'none'; // 수정 버튼 숨기기
+
+  // 등록 버튼 클릭 시 처리
+  todoSubmitBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    // 폼 데이터 가져오기
+    const todoTitle = document
+      .querySelector("input[name='todoTitle']")
+      .value.trim();
+    const todoDate = document
+      .querySelector("input[name='todoDate']")
+      .value.trim();
+    const todoPriority = document.querySelector("input[name='priority']").value;
+    const todoKey = document.querySelector("select[name='todoKey']").value;
+    const todoContents = [
+      ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+    ].map((input) => input.value.trim());
+
+    if (!todoTitle || !todoDate || !todoPriority) {
+      alert('모든 필드를 채워주세요.');
+      return;
+    }
+
+    // POST 요청: 새 투두 추가
+    axios
+      .post('/todo/api/write', {
+        user_id: 1, // 예시 user_id, 실제로는 로그인된 사용자 ID로 변경
+        keyword_id: todoKey,
+        title: todoTitle,
+        priority: todoPriority,
+        date: todoDate,
+        content: todoContents,
+      })
+      .then((response) => {
+        alert(response.data.message);
+        window.location.reload(); // 투두 목록 갱신
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('투두 추가 중 오류가 발생했습니다.');
+      });
+  });
+
+  // 수정 버튼 클릭 시 처리
+  todoEditBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    // 폼 데이터 가져오기
+    const todoTitle = document
+      .querySelector("input[name='todoTitle']")
+      .value.trim();
+    const todoDate = document
+      .querySelector("input[name='todoDate']")
+      .value.trim();
+    const todoPriority = document.querySelector("input[name='priority']").value;
+    const todoKey = document.querySelector("select[name='todoKey']").value;
+
+    const todoContents = [
+      ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+    ].map((input) => input.value.trim());
+
+    if (!todoTitle || !todoDate || !todoPriority) {
+      alert('모든 필드를 채워주세요.');
+      return;
+    }
+
+    // POST 요청: 기존 투두 수정
+    axios
+      .post(
+        '/todo/api/write',
+        {
+          user_id: 1, // 예시 user_id, 실제로는 로그인된 사용자 ID로 변경
+          keyword_id: todoKey,
+          title: todoTitle,
+          priority: todoPriority,
+          date: todoDate,
+          content: todoContents,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json', // 요청 타입을 JSON으로 설정
+          },
+        },
+      )
+      .then((response) => {
+        alert(response.data.message);
+        window.location.reload(); // 투두 목록 갱신
+      })
+      .catch((error) => {
+        console.error(error);
+        alert('투두 추가 중 오류가 발생했습니다.');
+      });
+  });
+
+  // "수정" 모드로 전환하는 함수
+  function editTodoMode(todo) {
+    todoForm.todoTitle.value = todo.title;
+    todoForm.todoDate.value = todo.date;
+    todoForm.priority.value = todo.priority;
+    todoForm.todoKey.value = todo.keyword_id;
+
+    // 기존 내용은 TodoContent에 맞게 추가 (여기서 예시로 하나만 처리)
+    const todoContentInputs = [
+      ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+    ];
+    todoContents.forEach((content, index) => {
+      if (todoContentInputs[index]) {
+        todoContentInputs[index].value = content;
+      }
+    });
+
+    // 수정 버튼 보이기, 등록 버튼 숨기기
+    todoSubmitBtn.style.display = 'none'; // 등록 버튼 숨기기
+    todoEditBtn.style.display = 'inline-block'; // 수정 버튼 보이기
+  }
 </script>

@@ -134,18 +134,33 @@ exports.todayTodo = async (req, res) => {
   try {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
     const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
         user_id,
         deleted: false,
-        date: today,
+        date: {
+          [Op.gte]: today,
+          [Op.lt]: tomorrow,
+        },
       },
-      attributes: ['title'],
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['content', 'state'],
+        },
+      ],
+      attributes: ['id', 'title', 'date'],
+      raw: false, // raw: true 제거
     });
 
-    success(res, todos, '오늘의 Todo 타이틀 조회 완료');
+    const plainTodos = todos.map((todo) => todo.get({ plain: true }));
+
+    success(res, plainTodos, '오늘의 Todo 조회 완료');
   } catch (err) {
     serverError(res, err);
   }
@@ -172,17 +187,21 @@ exports.weekTodos = async (req, res) => {
           [Op.between]: [startOfWeek, endOfWeek],
         },
       },
-      attributes: ['title'],
+      attributes: ['title', 'date'],
+      order: [['date', 'ASC']],
+      raw: false, // raw: true 제거
     });
 
-    success(res, todos, '이번 주의 Todo 타이틀 조회 완료');
+    const plainTodos = todos.map((todo) => todo.get({ plain: true }));
+
+    success(res, plainTodos, '이번 주의 Todo 타이틀 조회 완료');
   } catch (err) {
     serverError(res, err);
   }
 };
 
 // 투두 우선순위 조회 API
-// GET /todo/api/list/priority/:priority
+// GET /todo/api/priority/:priority
 exports.priorityTodos = async (req, res) => {
   try {
     const userId = req.user.id;

@@ -22,15 +22,20 @@ body {
   display: flex;
   flex-wrap: wrap;
   align-content: flex-start;
-  justify-content: flex-start;
+  justify-content: space-evenly;
   gap: 30px 0;
+  align-items: center;
 }
 .sidebar > a {
   display: inline-flex;
+  font-family: 'yg-jalnan';
+  color: #444;
+  font-size: 23px;
 }
 .sidebar > a > img {
-  width: 27px;
-  height: 27px;
+  display: none;
+  width: 28px;
+  height: 28px;
 }
 
 .sidebar::-webkit-scrollbar {
@@ -60,6 +65,18 @@ body {
   display: flex;
   flex-wrap: wrap;
   gap: 10px 0;
+}
+.naviBar .search-container {
+  position: relative;
+  overflow: hidden;
+}
+.naviBar .search-container input[type='search'] {
+  width: calc(100% - 20px);
+}
+.naviBar .search-container button {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
 .naviBar > p {
   font-weight: 600;
@@ -684,6 +701,12 @@ body.dark-mode * {
     width: 100%;
     padding: 30px 15px;
     justify-content: space-between;
+  }
+  .sidebar > a {
+    font-size: 0;
+  }
+  .sidebar > a > img {
+    display: inline-flex;
   }
   body > .nav .navi_close {
     display: inline-flex;

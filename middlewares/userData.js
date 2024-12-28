@@ -24,7 +24,7 @@ const loadUserData = async (req, res, next) => {
     let userId = null;
 
     // 디버깅용 로그 추가
-    console.log('Session data:', req.session);
+    // console.log('Session data:', req.session);
 
     // JWT 토큰에서 userId 추출
     // const token = localStorage.getItem('token');

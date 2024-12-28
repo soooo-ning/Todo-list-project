@@ -45,7 +45,7 @@ const passportConfig = (app) => {
             nickname: profile.displayName,
             kakao_id: kakao_id, // 카카오 ID 저장
             google_id: null, // 구글 ID는 null로 설정
-            profile_image: profile._json.properties.profile_image,
+            // profile_image: profile._json.properties.profile_image,
             email: email,
             pw: 'defaultPassword', // 비밀번호는 안전하게 해시 처리해야 함
           });
@@ -84,7 +84,7 @@ const passportConfig = (app) => {
             nickname: profile.displayName,
             kakao_id: null, // 카카오 ID는 null로 설정
             google_id: profile.id, // 구글 ID 저장
-            profile_image: profile._json.picture,
+            // profile_image: profile._json.picture,
             email: profile._json.email,
             pw: 'defaultPassword', // 비밀번호는 안전하게 해시 처리해야 함
           });

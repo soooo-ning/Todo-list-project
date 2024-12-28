@@ -1,16 +1,9 @@
 const { User } = require('../models'); // User 모델 가져오기
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-let host;
-// if (process.env.NODE_ENV == 'production') {
-// host = process.env.PROD_HOST;
-// } else if (process.env.NODE_ENV == 'development') {
-// host = process.env.LOCAL_HOST;
-// } else {
-// host = process.env.LOCAL_HOST;
-// }
+const bcrypt = require('bcrypt'); // bcrypt 모듈 가져오기
+
 // 로그인 페이지 요청
 exports.getSignIn = (req, res) => {
   res.render('sign-in'); // 로그인 페이지 렌더링
@@ -29,15 +22,28 @@ exports.getSearchPw = (req, res) => {
 // 로그인 메서드
 exports.signIn = async (req, res) => {
   const { email, pw } = req.body;
+
   try {
     const user = await User.findOne({ where: { email } });
-    if (!user || user.pw !== pw) {
+    if (!user) {
+      return res.status(401).json({ message: '로그인 실패' });
+    }
+
+    // 입력한 비밀번호와 저장된 비밀번호 비교
+    if (pw !== user.pw) {
       return res.status(401).json({ message: '로그인 실패' });
     }
 
     const token = jwt.sign({ id: user.id }, 'your_jwt_secret', {
       expiresIn: '24h',
     });
+
+    // 세션에 사용자 정보 저장
+    req.session.user = {
+      id: user.id,
+      nickname: user.nickname,
+      email: user.email,
+    };
 
     // 닉네임과 함께 토큰을 반환
     res.json({ token, nickname: user.nickname });
@@ -69,7 +75,7 @@ exports.signUp = async (req, res) => {
 
     const newUser = await User.create({
       nickname,
-      pw, // 비밀번호는 해시화하여 저장하는 것이 좋습니다.
+      pw, // 비밀번호를 해시화하지 않고 그대로 저장
       email,
       profile_image: null,
     });
@@ -97,46 +103,55 @@ exports.duplicatedEmail = async (req, res) => {
 
 // 비밀번호 찾기 요청 메서드
 exports.searchPw = async (req, res) => {
-  const { email } = req.query;
+  const { email } = req.query; // req.body 대신 req.query 사용
+
+  console.log('이메일:', email); // 이메일 값 로그
 
   try {
+    // 입력한 이메일로 사용자 찾기
     const user = await User.findOne({ where: { email } });
     if (!user) {
       return res.status(404).json({ message: '등록되지 않은 이메일입니다.' });
     }
 
-    // 비밀번호 재설정 토큰 생성
-    const token = crypto.randomBytes(32).toString('hex');
-    user.resetToken = token;
-    user.resetTokenExpiry = Date.now() + 3600000; // 1시간 유효
+    // 임시 비밀번호 생성 (4자리)
+    const tempPassword = crypto.randomBytes(2).toString('hex'); // 4자리 임시 비밀번호 생성
+
+    // 임시 비밀번호를 데이터베이스에 저장 (해시화하지 않음)
+    user.pw = tempPassword; // 임시 비밀번호로 업데이트
     await user.save();
 
-    // 이메일 전송 설정
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'your_email@gmail.com', // 발신 이메일
-        pass: 'your_email_password', // 발신 이메일 비밀번호
-      },
-    });
+    // 임시 비밀번호를 콘솔에 출력하거나 다른 방법으로 사용자에게 제공 (예: API 응답으로 반환)
+    console.log('임시 비밀번호:', tempPassword);
 
-    // 비밀번호 재설정 링크
-    const resetLink = `http://todosesac.r-e.kr:8080/auth/reset-password/${token}`;
+    // 결과 반환 (임시 비밀번호를 클라이언트에 반환)
+    res.status(200).json({ success: true, tempPassword }); // 응답으로 임시 비밀번호 반환
+  } catch (err) {
+    console.error(err); // 오류 로그
+    return res.status(500).json({ error: err.message });
+  }
+};
 
-    const mailOptions = {
-      from: 'your_email@gmail.com',
-      to: email,
-      subject: '비밀번호 재설정 요청',
-      text: `비밀번호 재설정을 원하시면 아래 링크를 클릭하세요:\n${resetLink}`,
-    };
+// 비밀번호 재설정 API 메서드
+exports.resetPw = async (req, res) => {
+  const { newPassword } = req.body;
 
-    await transporter.sendMail(mailOptions);
+  try {
+    const user = await User.findByPk(req.user.id); // 사용자 ID로 사용자 조회
+    if (!user) {
+      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+    }
+
+    // 새 비밀번호 직접 저장 (암호화 없이)
+    user.pw = newPassword; // 새 비밀번호로 업데이트
+    await user.save();
 
     res
       .status(200)
-      .json({ message: '비밀번호 재설정 링크를 이메일로 전송했습니다.' });
+      .json({ message: '비밀번호가 성공적으로 재설정되었습니다.' });
   } catch (err) {
-    return res.status(500).json({ error: err.message });
+    console.error(err);
+    return res.status(500).json({ error: '서버 오류가 발생했습니다.' });
   }
 };
 
@@ -161,7 +176,16 @@ exports.googleCallback = (req, res, next) => {
         console.error('Login Error:', loginErr);
         return res.redirect('/login'); // 로그인 실패 시 리다이렉트
       }
-      return res.redirect('/todo/write'); // 성공 시 리다이렉트
+
+      // 로그인 성공 후 사용자 정보를 세션에 저장
+      req.session.user = {
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+      };
+
+      console.log('Session after Google login:', req.session); // 세션 로그 출력
+      return res.redirect('/todo/dashboard');
     });
   })(req, res, next);
 };
@@ -177,13 +201,31 @@ exports.kakaoCallback = (req, res, next) => {
       console.log('No user found, redirecting to login');
       return res.redirect('/login'); // 사용자 없음
     }
-    req.logIn(user, (err) => {
-      if (err) {
-        console.error('Error during login:', err);
+    req.logIn(user, (loginErr) => {
+      if (loginErr) {
+        console.error('Error during login:', loginErr);
         return res.redirect('/login'); // 로그인 실패 시 로그인 페이지로 리다이렉트
       }
+
+      // 로그인 성공 후 사용자 정보를 세션에 저장
+      req.session.user = {
+        id: user.id,
+        nickname: user.nickname,
+        email: user.email,
+      };
+
       console.log('User logged in:', user); // 로그인 성공 로그
-      return res.redirect('/todo/write'); // 원하는 페이지로 리다이렉트
+      console.log('Session after Kakao login:', req.session); // 세션 로그 출력
+      return res.redirect('/todo/dashboard');
     });
   })(req, res, next);
+};
+
+// 세션 정보 확인 API
+exports.getSessionInfo = (req, res) => {
+  if (req.session.user) {
+    res.json({ user: req.session.user });
+  } else {
+    res.status(401).json({ message: '로그인하지 않았습니다.' });
+  }
 };

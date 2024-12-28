@@ -2,17 +2,14 @@ const { Keyword, Todo, TodoContent, User } = require('../models');
 const { Op } = require('sequelize');
 const { success, serverError, notFound } = require('../utils/common');
 
-// 대시보드 페이지 렌더링
-// GET /todo/dashboard
-exports.getDashboard = (req, res) => {
-  res.render('dashboard');
-};
-
+// Todo CRUD
 // 투두 작성 API
 // POST /todo/api/write
 exports.writeTodo = async (req, res) => {
   try {
-    const { user_id, keyword_id, title, priority, date, content } = req.body;
+    const { keyword_id, title, priority, date, content } = req.body;
+    const user_id = req.user.id;
+
     const todo = await Todo.create({
       user_id,
       keyword_id,
@@ -26,7 +23,7 @@ exports.writeTodo = async (req, res) => {
       await TodoContent.bulkCreate(
         contentArray.map((c) => ({
           todo_id: todo.id,
-          content: c.content,
+          content: c,
           state: c.state === 'true',
         })),
       );
@@ -38,17 +35,19 @@ exports.writeTodo = async (req, res) => {
   }
 };
 
-// 특정 투두 조회
+// 특정 투두 조회 API
 // GET /todo/api/get/:id
 exports.getTodo = async (req, res) => {
   try {
     const { id } = req.params;
+
     const todo = await Todo.findOne({
       where: { id },
       include: [TodoContent, Keyword, User],
     });
 
     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+
     success(res, todo, 'Todo 내용 조회 완료');
   } catch (err) {
     serverError(res, err);
@@ -103,109 +102,80 @@ exports.editTodo = async (req, res) => {
   }
 };
 
-// 투두 상태 업데이트 API
-// PATCH /todo/api/state
-exports.updateState = async (req, res) => {
-  try {
-    const { id, state } = req.body;
-    const [updated] = await TodoContent.update({ state }, { where: { id } });
-
-    if (!updated) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
-    success(res, null, 'content 상태 업데이트 완료');
-  } catch (err) {
-    serverError(res, err);
-  }
-};
-
 // 투두 삭제 API (Soft Delete)
 // DELETE /todo/api/delete
 exports.deleteTodo = async (req, res) => {
   try {
     const { id } = req.body;
+
     const [deleted] = await Todo.update(
       { deleted: true, deleted_at: new Date() },
       { where: { id } },
     );
 
     if (!deleted) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+
     success(res, null, 'Todo 삭제 완료');
   } catch (err) {
     serverError(res, err);
   }
 };
 
-// 투두 검색 조회 및 렌더링
-// GET /todo/api/search
-exports.searchTodo = async (req, res) => {
+// Todo dashboard
+// 대시보드 페이지 렌더링
+// GET /todo/dashboard
+exports.getDashboard = (req, res) => {
+  res.render('dashboard');
+};
+
+// 오늘 투두 조회 API
+// GET /todo/api/today
+exports.todayTodo = async (req, res) => {
   try {
-    const { query } = req.query;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
-        [Op.or]: [
-          { title: { [Op.like]: `%${query}%` } },
-          { '$todo_contents.content$': { [Op.like]: `%${query}%` } },
-        ],
+        date: today,
       },
-      include: [
-        {
-          model: TodoContent,
-          as: 'todo_contents',
-        },
-      ],
+      attributes: ['title'],
     });
 
-    console.log('Todos:', todos);
-
-    res.render('search', {
-      todos,
-      searchQuery: query,
-    });
+    success(res, todos, '오늘의 Todo 타이틀 조회 완료');
   } catch (err) {
     serverError(res, err);
   }
 };
 
-// 투두 캘린더형 조회 및 렌더링
-// GET /todo/api/calendar
-exports.calendarList = async (req, res) => {
+// 이번주 투두 조회 API
+// GET /todo/api/week
+exports.weekTodos = async (req, res) => {
   try {
-    let { date } = req.query;
-
-    if (!date) {
-      date = new Date().toISOString().split('T')[0];
-    }
-
-    const targetDate = new Date(date);
-    const firstDayOfMonth = new Date(
-      targetDate.getFullYear(),
-      targetDate.getMonth(),
-      1,
-    );
-    const lastDayOfMonth = new Date(
-      targetDate.getFullYear(),
-      targetDate.getMonth() + 1,
-      0,
-    );
+    const now = new Date();
+    const startOfWeek = new Date(now);
+    const endOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay() + 1);
+    startOfWeek.setHours(0, 0, 0, 0);
+    endOfWeek.setDate(startOfWeek.getDate() + 6);
+    endOfWeek.setHours(23, 59, 59, 999);
+    const user_id = req.user.id;
 
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
         date: {
-          [Op.between]: [firstDayOfMonth, lastDayOfMonth],
+          [Op.between]: [startOfWeek, endOfWeek],
         },
       },
-      include: [TodoContent],
-      order: [['date', 'ASC']],
+      attributes: ['title'],
     });
 
-    console.log('Todos:', todos);
-
-    res.render('calendar', {
-      todos,
-      selectedDate: date,
-    });
+    success(res, todos, '이번 주의 Todo 타이틀 조회 완료');
   } catch (err) {
     serverError(res, err);
   }
@@ -213,11 +183,14 @@ exports.calendarList = async (req, res) => {
 
 // 투두 우선순위 조회 API
 // GET /todo/api/list/priority/:priority
-exports.priorityList = async (req, res) => {
+exports.priorityTodos = async (req, res) => {
   try {
+    const userId = req.user.id;
     const { priority } = req.params;
+
     const todos = await Todo.findAll({
       where: {
+        user_id: userId,
         deleted: false,
         priority,
       },
@@ -230,55 +203,171 @@ exports.priorityList = async (req, res) => {
   }
 };
 
-// 투두 키워드 조회 및 뷰 렌더링
-// GET /todo/list/keyword/:id
-// exports.renderKeywordList = (req, res) => {
-//   try {
-//     const { id } = req.params;
+// Todo calendar
+// 캘린더 페이지 렌더링
+// GET /todo/calendar
+exports.getCalendar = (req, res) => {
+  res.render('calendar');
+};
 
-//     res.render({
-//       keywordId: id,
-//     });
-//   } catch (err) {
-//     serverError(res, err);
-//   }
-// };
-// GET /todo/api/list/keyword/:id
-exports.keywordList = async (req, res) => {
+// 특정 날짜 투두 조회 API
+// GET /todo/api/day
+exports.dayTodo = async (req, res) => {
   try {
-    const { id } = req.params;
+    let { date } = req.query;
+
+    if (!date) {
+      date = new Date().toISOString().split('T')[0];
+    }
+
+    const targetDate = new Date(date);
+    const firstDayOfMonth = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth(),
+      1,
+      0,
+      0,
+      0,
+    );
+    const lastDayOfMonth = new Date(
+      targetDate.getFullYear(),
+      targetDate.getMonth() + 1,
+      0,
+      23,
+      59,
+      59,
+    );
+    const user_id = req.user.id;
+
     const todos = await Todo.findAll({
       where: {
+        user_id,
         deleted: false,
-        keyword_id: id,
+        date: {
+          [Op.between]: [firstDayOfMonth, lastDayOfMonth],
+        },
       },
-      include: [TodoContent],
+      attributes: ['id', 'date', 'title'],
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['content', 'state'],
+        },
+      ],
+      order: [['date', 'ASC']],
     });
 
-    res.render('keyword', {
-      todos,
-      keywordId: id,
-    });
-    // res.json({
-    //   todos,
-    //   keywordId: id,
-    // });
+    success(res, todos, '일정 조회 성공');
   } catch (err) {
     serverError(res, err);
   }
 };
 
+// Todo search
+// 검색 페이지 렌더링
+// GET /todo/search
+exports.getSearch = (req, res) => {
+  const { query } = req.query;
+  res.render('search', {
+    searchQuery: query || '',
+  });
+};
+
+// 투두 검색 조회 API
+// GET /todo/api/search
+exports.searchTodos = async (req, res) => {
+  try {
+    const { query } = req.query;
+    const user_id = req.user.id;
+
+    if (!query) {
+      return success(res, [], '검색어를 입력해주세요');
+    }
+
+    const todos = await Todo.findAll({
+      where: {
+        user_id,
+        deleted: false,
+        [Op.or]: [
+          { title: { [Op.like]: `%${query}%` } },
+          { '$todo_contents.content$': { [Op.like]: `%${query}%` } },
+        ],
+      },
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'], // 필요한 필드만 선택
+          as: 'todo_contents',
+        },
+      ],
+      attributes: ['id', 'title', 'date', 'priority'], // 필요한 필드만 선택
+      order: [['date', 'DESC']], // 최신순 정렬 추가
+    });
+
+    success(res, todos, '검색 결과 조회 성공');
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
+// Todo keyword
+// 투두 키워드 조회 및 뷰 렌더링
+// GET /todo/api/keyword/:id
+exports.keywordTodos = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { id } = req.params;
+
+    const todos = await Todo.findAll({
+      where: {
+        user_id: userId,
+        deleted: false,
+        keyword_id: id,
+      },
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+        {
+          model: Keyword,
+          attributes: ['id', 'keyword'],
+        },
+      ],
+    });
+
+    res.render('keyword', {
+      todos: todos,
+      keywordId: id,
+    });
+  } catch (err) {
+    serverError(res, err);
+  }
+};
+
+// Todo deleted
 // 투두 휴지통 조회 및 렌더링
 // GET /todo/api/deleted-todo
-exports.deleteList = async (req, res) => {
+exports.deletedTodos = async (req, res) => {
   try {
+    const userId = req.user.id;
+
     const todos = await Todo.findAll({
-      where: { deleted: true },
-      include: [TodoContent],
+      where: {
+        user_id: userId,
+        deleted: true,
+      },
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+      ],
+      attributes: ['id', 'title', 'date', 'deleted_at'],
     });
 
     res.render('deleted', {
-      todos,
+      todos: todos,
     });
   } catch (err) {
     serverError(res, err);

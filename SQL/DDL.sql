@@ -1,3 +1,5 @@
+-- Active: 1733295583465@@127.0.0.1@3306@todo
+-- Active: 1733295583465@@127.0.0.1@3306@mysql
 CREATE DATABASE todo CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 USE todo;

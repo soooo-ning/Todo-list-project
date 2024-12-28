@@ -1,74 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('include/header', { title: 'keyword' })%>
+  <%- include('include/header', { title: 'keyword' }) %>
   <body>
     <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
     <main class="container keyword_wrap">
       <div class="content">
-        <h3 class="sub_title"><span>키워드</span></h3>
+        <h3 class="sub_title">
+          <span>
+            <% if (todos.length > 0 && todos[0].keyword) { %> <%=
+            todos[0].keyword.keyword %> <% } else { %> 키워드 할 일 <% } %>
+          </span>
+        </h3>
         <div class="card-container add">
-          <div class="card" id="sampleCard">
-            <div class="card-title"></div>
+          <% if (todos && todos.length > 0) { %> <% todos.forEach((todo) => { %>
+          <div class="card">
+            <div class="card-title"><%= todo.title %></div>
+            <% if (todo.todo_contents && todo.todo_contents.length > 0) { %>
             <ul class="todo-list">
-              <li></li>
-              <li class="completed"></li>
-              <li></li>
+              <% todo.todo_contents.forEach((content) => { %>
+              <li class="<%= content.state ? 'completed' : '' %>">
+                <%= content.content %>
+              </li>
+              <% }); %>
             </ul>
-            <!-- <form method="" action="">
-              <input type="hidden" name="title" value="" />
-            </form> -->
+            <% } %>
           </div>
+          <% }); %> <% } else { %>
+          <div class="no-todos">이 키워드에 해당하는 할 일이 없습니다.</div>
+          <% } %>
         </div>
       </div>
     </main>
 
     <%- include('include/popup') %>
-
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const userId = 1; // ID 동적 설정
-        const keywordContainer = document.querySelector('.card-container.add');
-
-        const fetchKeywords = async () => {
-          keywordContainer.innerHTML = '<div>로딩 중...</div>';
-
-          try {
-            const response = await fetch(`/todo/api/list/keyword/${userId}`);
-            if (!response.ok) throw new Error('네트워크 응답 실패');
-            const keywords = await response.json();
-
-            keywordContainer.innerHTML = '';
-
-            if (keywords.length === 0) {
-              keywordContainer.innerHTML =
-                '<div>표시할 키워드가 없습니다.</div>';
-              return;
-            }
-
-            keywords.forEach((keyword) => {
-              const card = document.createElement('div');
-              card.className = 'card';
-
-              const cardTitle = document.createElement('div');
-              cardTitle.className = 'card-title';
-              cardTitle.textContent = keyword.keyword;
-
-              card.appendChild(cardTitle);
-              keywordContainer.appendChild(card);
-            });
-          } catch (error) {
-            keywordContainer.innerHTML = '';
-            alert(
-              '키워드를 불러오는 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.',
-            );
-            console.error('키워드 데이터를 가져오는 중 오류 발생:', error);
-          }
-        };
-
-        fetchKeywords();
-      });
-    </script>
   </body>
 </html>

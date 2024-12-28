@@ -1,201 +1,124 @@
 <!DOCTYPE html>
-<html lang="ko">
-  <%- include('include/header', { title: 'dashboard' }) %>
+<html lang="en">
+  <%- include('include/header', { title: 'Calendar' }) %>
+  <style>
+    .date {
+      position: relative;
+      cursor: pointer;
+    }
+
+    .todo-marker {
+      position: absolute;
+      bottom: 5px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 6px;
+      height: 6px;
+      background-color: #ff6347;
+      border-radius: 50%;
+    }
+  </style>
   <body>
-    <!-- 네비게이션 부분 -->
+    <!-- Navigation -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
-    <main class="container dashboard_wrap">
+    <!-- Main Content -->
+    <main class="container calendar_wrap">
       <div class="content">
-        <section class="container-fluid">
-          <header>
-            <!-- 로고 -->
-            <h1 class="main_title">Todo Check</h1>
-          </header>
-
-          <!-- 진행 상태 -->
-          <form action="today-progress" method="post">
-            <div class="summary card custom-progress text-black">
-              <div class="card-body">
-                <h5 class="card-title">진행상태</h5>
-                <div class="progress-container">
-                  <div class="progress">
-                    <div
-                      id="overallProgressBar"
-                      class="progress-bar progress-bar-custom progress-bar-animated"
-                      role="progressbar"
-                      style="width: 0%"
-                    >
-                      0%
-                    </div>
-                  </div>
-                </div>
-
-                <!-- 오늘의 투두 현황 -->
-                <h4 class="mt20">오늘의 투두 상황</h4>
-                <p>오늘의 %: <span id="todayProgressPercentage">0</span>%</p>
-                <div class="progress">
-                  <div
-                    id="todayProgressBar"
-                    class="progress-bar progress-bar-custom progress-bar-animated"
-                    role="progressbar"
-                    style="width: 0%"
-                  >
-                    0%
-                  </div>
-                </div>
-              </div>
-            </div>
-          </form>
-
-          <!-- 오늘의 할 일 -->
-          <form action="today-todo">
-            <div class="card bg-light">
-              <div class="card-body">
-                <div class="flex_wrap sb">
-                  <h5 class="card-title mb0">오늘의 할일</h5>
-                  <button
-                    type="button"
-                    class="btn btn-outline-danger btn-sm"
-                    value="input"
-                  >
-                    추가
-                  </button>
-                </div>
-                <ul id="todayTasks" class="flex_wrap mt20"></ul>
-              </div>
-            </div>
-          </form>
-
-          <!-- 날씨 -->
-          <div class="card-body">
-            <h5 class="card-title">서울 날씨</h5>
-            <div class="weather-container">
-              <div id="temperature">기온: 로딩 중...</div>
-              <div id="weather">날씨: 로딩 중...</div>
-            </div>
+        <!-- Calendar Section -->
+        <div class="calendar">
+          <div class="header">
+            <button id="prevMonth">&lt;</button>
+            <h2 id="monthYear">
+              <%= new Date(selectedDate).toLocaleString('default', { month:
+              'long', year: 'numeric' }) %>
+            </h2>
+            <button id="nextMonth">&gt;</button>
           </div>
-
-          <!-- 이번주 할 일 -->
-          <div class="card-body">
-            <h5 class="card-title">이번주 할 일</h5>
-            <table class="table w100">
-              <thead>
-                <tr>
-                  <th>요일</th>
-                  <th>할 일</th>
-                </tr>
-              </thead>
-              <tbody id="weeklyTodoTable"></tbody>
-            </table>
+          <div class="days">
+            <% const days = ['일', '월', '화', '수', '목', '금', '토']; %> <%
+            days.forEach(day => { %>
+            <div><%= day %></div>
+            <% }) %>
           </div>
-
-          <!-- 요약 -->
-          <div class="card-body">
-            <div>
-              <h5 class="card-title">진행상태</h5>
-              <p>총 투두: <span id="totalTodos">0</span></p>
-              <p>완료: <span id="completedTodos">0</span></p>
-              <p>%: <span id="progressPercentage">0</span>%</p>
+          <div class="dates">
+            <% const firstDay = new Date(new Date(selectedDate).getFullYear(),
+            new Date(selectedDate).getMonth(), 1).getDay(); const lastDate = new
+            Date(new Date(selectedDate).getFullYear(), new
+            Date(selectedDate).getMonth() + 1, 0).getDate(); for (let i = 0; i <
+            firstDay; i++) { %>
+            <div></div>
+            <% } %> <% for (let i = 1; i <= lastDate; i++) { const
+            currentDateKey = `${new Date(selectedDate).getFullYear()}-${(new
+            Date(selectedDate).getMonth() + 1).toString().padStart(2,
+            '0')}-${i.toString().padStart(2, '0')}`; const todoForDate =
+            todos.filter(todo => todo.date === currentDateKey); %>
+            <div class="date" data-date="<%= currentDateKey %>">
+              <span><%= i %></span>
+              <% if (todoForDate.length > 0) { %>
+              <div class="todo-marker"></div>
+              <% } %>
             </div>
-
-            <div>
-              <h5 class="card-title mt20">오늘의 투두 상황</h5>
-              <p>오늘의 %: <span id="todayProgressPercentage">0</span>%</p>
-            </div>
+            <% } %>
           </div>
-        </section>
+        </div>
+
+        <!-- Todo -->
+        <div class="todo-list">
+          <h2>스케줄:</h2>
+          <h3 id="selected-date"><%= selectedDate %></h3>
+          <ul id="todo-items">
+            <% todos.filter(todo => todo.date === selectedDate).forEach(todo =>
+            { %>
+            <li>
+              <a
+                href="/todo/api/search?query=<%= encodeURIComponent(todo.title) %>"
+              >
+                <%= todo.title %>
+              </a>
+            </li>
+            <% }) %>
+          </ul>
+        </div>
       </div>
     </main>
 
+    <!-- Popup Include -->
     <%- include('include/popup') %>
 
-    <!-- 데이터 전달 -->
-    <div id="todoData" 
-         data-todos='<%= JSON.stringify(todos || []) %>'
-         data-today-tasks='<%= JSON.stringify(todayTasks || []) %>'
-         data-completed-tasks='<%= typeof completedTasks !== 'undefined' ? completedTasks : 0 %>'
-         data-total-tasks='<%= typeof totalTasks !== 'undefined' ? totalTasks : 0 %>'>
-    </div>
+    <!-- Axios Library -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <!-- Calendar Script -->
     <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const todoData = document.getElementById('todoData');
-        
-        // 데이터 파싱
-        const todos = JSON.parse(todoData.dataset.todos || '[]');
-        const todayTasks = JSON.parse(todoData.dataset.todayTasks || '[]');
-        const completedTasks = parseInt(todoData.dataset.completedTasks || '0', 10);
-        const totalTasks = parseInt(todoData.dataset.totalTasks || '0', 10);
+      const prevMonth = document.getElementById('prevMonth');
+      const nextMonth = document.getElementById('nextMonth');
+      const dates = document.querySelectorAll('.date');
 
-        console.log('Todos:', todos);
-        console.log('Today Tasks:', todayTasks);
-        console.log('Completed Tasks:', completedTasks);
-        console.log('Total Tasks:', totalTasks);
+      // 이전 달로 이동
+      prevMonth.addEventListener('click', () => {
+        const currentDate = new Date('<%= selectedDate %>');
+        currentDate.setMonth(currentDate.getMonth() - 1);
+        window.location.href = `/todo/api/calendar?date=${
+          currentDate.toISOString().split('T')[0]
+        }`;
+      });
 
-        // 진행 상태 업데이트
-        const overallProgressPercentage = totalTasks > 0 
-          ? ((completedTasks / totalTasks) * 100).toFixed(0) 
-          : 0;
+      // 다음 달로 이동
+      nextMonth.addEventListener('click', () => {
+        const currentDate = new Date('<%= selectedDate %>');
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        window.location.href = `/todo/api/calendar?date=${
+          currentDate.toISOString().split('T')[0]
+        }`;
+      });
 
-        const overallProgressBar = document.getElementById('overallProgressBar');
-        overallProgressBar.style.width = `${overallProgressPercentage}%`;
-        overallProgressBar.textContent = `${overallProgressPercentage}%`;
-
-        // 오늘의 투두 현황 업데이트
-        const todayProgressPercentage = todayTasks.length > 0 
-          ? ((2 / todayTasks.length) * 100).toFixed(0) 
-          : 0;
-
-        const todayProgressBar = document.getElementById('todayProgressBar');
-        todayProgressBar.style.width = `${todayProgressPercentage}%`;
-        todayProgressBar.textContent = `${todayProgressPercentage}%`;
-        document.getElementById('todayProgressPercentage').textContent = todayProgressPercentage;
-
-        // 오늘의 할 일 렌더링
-        const todayTasksList = document.getElementById('todayTasks');
-        todayTasks.forEach((task) => {
-          const li = document.createElement('li');
-          li.className = 'list-group-item d-flex align-items-center';
-          li.innerHTML = `
-            <input type="checkbox" class="form-check-input me-2" />
-            <label class="form-check-label w-100">${task}</label>
-          `;
-          todayTasksList.appendChild(li);
+      // 날짜 선택 이벤트
+      dates.forEach((date) => {
+        date.addEventListener('click', () => {
+          const selectedDate = date.getAttribute('data-date');
+          window.location.href = `/todo/api/calendar?date=${selectedDate}`;
         });
-
-        // 이번 주 할 일 렌더링
-        const weeklyTable = document.getElementById('weeklyTodoTable');
-        todos.forEach((todo) => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${todo.day}</td>
-            <td>${todo.tasks.join(', ')}</td>
-          `;
-          weeklyTable.appendChild(row);
-        });
-
-        // 날씨 API
-        const apiKey = 'da450c832635d5d57538d8acdd43e25f';
-        const weatherContainer = document.querySelector('.weather-container');
-        
-        async function fetchWeather() {
-          const url = `https://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&lang=kr&appid=${apiKey}`;
-          try {
-            const response = await fetch(url);
-            if (!response.ok) throw new Error('날씨 정보를 불러오지 못했습니다.');
-            const data = await response.json();
-            weatherContainer.innerHTML = `
-              <h2>${data.name}</h2>
-              <p>온도: ${data.main.temp}°C</p>
-              <p>상태: ${data.weather[0].description}</p>
-              <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" />
-            `;
-          } catch (error) {
-            weatherContainer.innerHTML = `<p>오류: ${error.message}</p>`;
-          }
-        }
-        fetchWeather();
       });
     </script>
   </body>

@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
   <%- include('include/header', { title: 'calendar' }) %>
+  <script
+    defer
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"
+  ></script>
   <body>
+    <!-- Navigation -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
+    <!-- Main Content -->
     <main class="container calendar_wrap">
       <div class="content">
+        <!-- Calendar Section -->
         <div class="calendar">
           <div class="header">
             <button id="prevMonth">&lt;</button>
@@ -24,6 +31,7 @@
           <div class="dates" id="dates"></div>
         </div>
 
+        <!-- Todo List Section -->
         <div class="todo-list">
           <h2>스케줄:</h2>
           <h3 id="selected-date"></h3>
@@ -41,6 +49,7 @@
       const nextMonth = document.getElementById('nextMonth');
 
       let currentDate = new Date();
+      let monthTodos = [];
 
       async function renderCalendar() {
         const year = currentDate.getFullYear();
@@ -49,6 +58,10 @@
         monthYear.textContent = `${currentDate.toLocaleString('default', {
           month: 'long',
         })} ${year}`;
+
+        const formattedMonth = String(month + 1).padStart(2, '0');
+        const dateStr = `${year}-${formattedMonth}-01`;
+        await fetchMonthTodos(dateStr);
 
         const firstDay = new Date(year, month, 1).getDay();
         const lastDate = new Date(year, month + 1, 0).getDate();
@@ -68,15 +81,70 @@
             selectDate(year, month + 1, i),
           );
 
-          const dateKey = `${year}-${month + 1}-${i}`;
-          const titles = await fetchTodoTitles(dateKey);
+          const formattedDay = String(i).padStart(2, '0');
+          const formattedMonth = String(month + 1).padStart(2, '0');
+          const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+          const todosForDate = monthTodos.filter(
+            (todo) => todo.date.split('T')[0] === dateKey,
+          );
 
-          if (titles.length > 0) {
+          if (todosForDate.length > 0) {
             dateDiv.style.backgroundColor = '#e7c6ff';
           }
 
           datesContainer.appendChild(dateDiv);
         }
+      }
+
+      async function fetchMonthTodos(dateStr) {
+        try {
+          console.log('Fetching todos for date:', dateStr);
+          const response = await fetch(`/todo/api/day?date=${dateStr}`);
+          const result = await response.json();
+          console.log('API Response:', result);
+
+          if (result.status === 'success') {
+            monthTodos = result.data;
+          } else {
+            console.error('Failed to fetch todos:', result.message);
+            monthTodos = [];
+          }
+        } catch (error) {
+          console.error('Error fetching todos:', error);
+          monthTodos = [];
+        }
+      }
+
+      function selectDate(year, month, day) {
+        const formattedMonth = String(month).padStart(2, '0');
+        const formattedDay = String(day).padStart(2, '0');
+        const dateKey = `${year}-${formattedMonth}-${formattedDay}`;
+
+        const selectedDate = `${year}년 ${month}월 ${day}일`;
+        document.getElementById('selected-date').textContent = selectedDate;
+
+        const todoItems = document.getElementById('todo-items');
+        todoItems.innerHTML = '';
+
+        console.log('Date Key:', dateKey);
+        console.log('Month Todos:', monthTodos);
+
+        const todosForDate = monthTodos.filter(
+          (todo) => todo.date.split('T')[0] === dateKey,
+        );
+
+        todosForDate.forEach((todo) => {
+          const li = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = `/todo/${todo.id}`;
+          // todo.title이 있으면 그것을 사용하고, 없으면 TodoContent의 첫 번째 항목의 content를 사용
+          link.textContent =
+            todo.title ||
+            (todo.TodoContents && todo.TodoContents[0]?.content) ||
+            '제목 없음';
+          li.appendChild(link);
+          todoItems.appendChild(li);
+        });
       }
 
       prevMonth.addEventListener('click', () => {
@@ -88,42 +156,6 @@
         currentDate.setMonth(currentDate.getMonth() + 1);
         renderCalendar();
       });
-
-      async function selectDate(year, month, day) {
-        const selectedDate = `${year}년 ${month}월 ${day}일`;
-        document.getElementById('selected-date').textContent = selectedDate;
-
-        const todoItems = document.getElementById('todo-items');
-        todoItems.innerHTML = '';
-
-        const dateKey = `${year}-${month}-${day}`;
-        const titles = await fetchTodoTitles(dateKey);
-
-        titles.forEach((title) => {
-          const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = `/todo/api/search?query=${encodeURIComponent(title)}`;
-          link.textContent = title;
-          li.appendChild(link);
-          todoItems.appendChild(li);
-        });
-      }
-
-      async function fetchTodoTitles(dateKey) {
-        try {
-          const response = await fetch(`/todo/api/calendar=${dateKey}`);
-          const data = await response.json();
-          if (response.ok && data.success) {
-            return data.todos.map((todo) => todo.title);
-          } else {
-            console.error('Error fetching todo titles:', data.message);
-            return [];
-          }
-        } catch (error) {
-          console.error('Error fetching todo titles:', error);
-          return [];
-        }
-      }
 
       renderCalendar();
     </script>

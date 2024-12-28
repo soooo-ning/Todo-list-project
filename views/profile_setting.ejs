@@ -18,7 +18,7 @@
             <h4>프로필 사진</h4>
             <div class="profileImg">
               <img
-                src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+                src="<%= locals.profile_img ? '/static/uploads/' + locals.profile_img : '/static/img/default.jpg' %>"
                 class="profile-img"
                 id="profile-img"
                 width="200"
@@ -75,12 +75,20 @@
               <h3>내 계정</h3>
               <hr />
               <h4>이메일</h4>
-              <input type="email" id="email" value="<%= email%>" readonly />
-
-              <hr />
-              <div class="deletebox" onclick="getChangePwPage()">
-                <h4>비밀번호 변경</h4>
-                <p><i class="fa-solid fa-arrow-right"></i></p>
+              <input
+                type="email"
+                id="email"
+                value="<%= email%>"
+                readonly
+                disabled
+              />
+              <div id="hidebox">
+                <hr />
+                <br />
+                <div class="changebox" onclick="getChangePwPage()">
+                  <h4>비밀번호 변경</h4>
+                  <p><i class="fa-solid fa-arrow-right"></i></p>
+                </div>
               </div>
               <hr />
               <div class="deletebox" onclick="getDeletePage()">
@@ -104,6 +112,20 @@
       function getChangePwPage() {
         document.location.href = '/user/reset-pw';
       }
+      document.addEventListener('DOMContentLoaded', () => {
+        const hideBox = document.getElementById('hidebox');
+        console.log(hideBox);
+        const token = localStorage.getItem('token');
+        const session = `<%=locals.session_userId%>`;
+        console.log(token);
+        console.log(session);
+        if (token === null && session) {
+          hideBox.classList.add('hidebox_none');
+          return;
+        } else {
+          hideBox.classList.remove('hidebox_none');
+        }
+      });
 
       function getDeletePage() {
         document.location.href = '/user/delete-account';

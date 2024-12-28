@@ -1,4 +1,4 @@
--- Active: 1732688863205@@127.0.0.1@3306@todo
+-- Active: 1733295583465@@127.0.0.1@3306@todol
 -- 키워드 추가
 INSERT INTO keyword (user_id, keyword) VALUES 
 (1, 'work'), 

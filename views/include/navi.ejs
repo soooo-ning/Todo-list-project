@@ -7,7 +7,7 @@
 </head>
 
 <div class="sidebar">
-  <a href="/" class="home"
+  <a href="/todo/dashboard"
     ><img
       src="/static/img/home.png"
       alt="홈으로 가기"
@@ -17,7 +17,7 @@
   <button type="button" class="navi_close">네비</button>
   <div class="profile">
     <img
-      src="<%= locals.profile_img===null ? '/uploads/' + locals.profile_img : '/static/img/26139_img.png' %>"
+      src="<%= locals.profile_img ? '/static/uploads/' + locals.profile_img : '/static/img/default.jpg' %>"
       class="profile-img"
       width="100"
       height="100"
@@ -25,19 +25,20 @@
     <p><b><%=locals.nickname%></b> 님 환영합니다!</p>
     <div class="navi logoutBtn">
       <a href="/user/profile"><i class="fa-solid fa-gear"></i> 프로필 설정</a>
-      <a
-        href="/logout"
-        onclick="return confirm('Are you sure you want to log out?')"
+      <a href="/" onclick="logoutBtn(event)"
         ><i class="fa-solid fa-right-from-bracket"></i> logout</a
       >
     </div>
   </div>
   <div class="naviBar">
-    <input type="search" id="search-comment" placeholder="search.." />
+    <div class="search-container">
+      <input type="search" id="search-comment" placeholder="search.." />
+      <button type="button" id="nav-search-btn">
+        <i class="fa-solid fa-magnifying-glass"></i>
+      </button>
+    </div>
     <p>TODO리스트</p>
-    <a href="/todo/api/write">새 작성</a><br />
-    <!-- <a href="/todo/api/search" >검색</a><br /> -->
-    <a href="/todo/api/calendar"
+    <a href="/todo/calendar"
       ><i class="fa-regular fa-calendar-check"></i> 캘린더</a
     ><br />
     <a href="/todo/api/deleted-todo"
@@ -54,18 +55,10 @@
     <div class="keybarTitle">
       <h3>키워드</h3>
       <button type="button" class="plusKeywordBtn">
-        <img src="/static/img/plus.png" alt="키워드추가" />
+        <i class="fa-solid fa-plus"></i>
+        <!-- <img src="/static/img/plus.png" alt="키워드추가" /> -->
       </button>
     </div>
-    <!-- <ul id="keyul">
-      <%# for (let i = 0; i < locals.keywords.length; i++) { %>
-      <li>
-        <a href="/todo/list/keyword/<%#= locals.keywords[i].id %>">
-          <i class="fa-solid fa-hashtag"></i> <%#= locals.keywords[i].keyword %>
-        </a>
-      </li>
-      <%# } %>
-    </ul> -->
     <ul id="keyul">
       <% for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
@@ -75,11 +68,12 @@
             %>
           </a>
           <button type="button" class="minusKeywordBtn">
-            <img
+            <i class="fa-solid fa-minus"></i>
+            <!-- <img
               src="/static/img/minus.png"
               alt="키워드삭제"
               id="deleteKeywordBtn"
-            />
+            /> -->
           </button>
         </div>
       </li>
@@ -104,6 +98,33 @@
       themeToggle.classList.remove('btn-light');
       themeToggle.classList.add('btn-dark');
     }
+
+    // 검색 기능 추가
+    const searchInput = document.getElementById('search-comment');
+    const searchBtn = document.getElementById('nav-search-btn');
+
+    function performSearch() {
+      const query = searchInput.value.trim();
+      if (query) {
+        window.location.href = `/todo/search?query=${encodeURIComponent(
+          query,
+        )}`;
+      } else {
+        alert('검색어를 입력해주세요.');
+      }
+    }
+
+    // 검색 버튼 클릭 이벤트
+    searchBtn && searchBtn.addEventListener('click', performSearch);
+
+    // 엔터키 이벤트
+    searchInput &&
+      searchInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          performSearch();
+        }
+      });
   });
 
   themeToggle.addEventListener('click', () => {
@@ -254,106 +275,22 @@
     });
   });
 
-  // 키워드 페이지 이동
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
+  function logoutBtn(event) {
+    event.preventDefault();
 
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
+    // 1. JWT 토큰 삭제 (localStorage에 저장된 토큰이 있을 경우)
+    localStorage.removeItem('token');
+    localStorage.removeItem('nickname'); // userId가 localStorage에 있을 경우 삭제
 
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', async (event) => {
-  //         event.preventDefault();
-
-  //         const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
-  //         try {
-  //           const response = await axios.get(href); // 수정된 라우트 경로로 요청
-
-  //           // 서버에서 받은 HTML을 그대로 렌더링
-  //           if (response.status === 200) {
-  //             document.body.innerHTML = response.data;
-  //           } else {
-  //             alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
-  //           }
-  //         } catch (error) {
-  //           console.error('API 요청 중 오류 발생:', error);
-  //           alert('API 요청 중 문제가 발생했습니다. 관리자에게 문의하세요.');
-  //         }
-  //       });
-  //     });
-  //   }
-  // });
-  /*페이지는 성공적으로 보인 코드드*/
-  document.addEventListener('DOMContentLoaded', () => {
-    const keyul = document.getElementById('keyul');
-
-    if (keyul) {
-      const links = keyul.querySelectorAll('a');
-
-      links.forEach((link) => {
-        link.addEventListener('click', (event) => {
-          event.preventDefault();
-
-          const href = event.target.closest('a').getAttribute('href'); // 링크에서 href 가져오기
-
-          // 페이지 이동
-          window.location.href = href; // 이 코드가 페이지 전환을 처리
-        });
+    // 2. 서버에 로그아웃 요청 (세션 삭제 요청)
+    axios
+      .post('/user/api/logout')
+      .then((response) => {
+        // 로그아웃 후 리디렉션
+        window.location.href = '/'; // 로그아웃 후 홈으로 리디렉션
+      })
+      .catch((error) => {
+        console.error('로그아웃 중 오류가 발생했습니다.', error);
       });
-    }
-  });
-
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
-
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
-
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', (event) => {
-  //         event.preventDefault();
-
-  //         const href = event.currentTarget.getAttribute('href'); // 수정된 부분
-
-  //         // 페이지 이동 (단, 동적 콘텐츠 로딩 처리도 고려)
-  //         window.location.href = href; // 페이지 전환
-  //       });
-  //     });
-  //   }
-  //});
-  // document.addEventListener('DOMContentLoaded', () => {
-  //   const keyul = document.getElementById('keyul');
-
-  //   if (keyul) {
-  //     const links = keyul.querySelectorAll('a');
-
-  //     links.forEach((link) => {
-  //       link.addEventListener('click', async (event) => {
-  //         event.preventDefault();
-
-  //         const keywordId = event.currentTarget.getAttribute('data-id');
-  //         if (keywordId) {
-  //           try {
-  //             // axios를 사용하여 동적으로 데이터를 가져옴
-  //             const response = await axios.get(
-  //               `/todo/api/list/keyword/${keywordId}`,
-  //             );
-  //             const todos = response.data.todos;
-
-  //             // 키워드 목록을 동적으로 업데이트하는 로직
-  //             const todoListContainer = document.getElementById('todo-list'); // 예시로 빈 div에 표시한다고 가정
-  //             todoListContainer.innerHTML = ''; // 기존 내용 지우기
-  //             todos.forEach((todo) => {
-  //               const todoItem = document.createElement('div');
-  //               todoItem.textContent = todo.content; // 예시로 투두 내용만 출력
-  //               todoListContainer.appendChild(todoItem);
-  //             });
-  //           } catch (error) {
-  //             console.error('Error loading keyword todos:', error);
-  //           }
-  //         }
-  //       });
-  //     });
-  //   }
-  // });
+  }
 </script>

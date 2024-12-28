@@ -111,7 +111,7 @@ exports.searchPw = async (req, res) => {
     // 입력한 이메일로 사용자 찾기
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({ message: '등록되지 않은 이메일입니다.' });
+      return res.status(404).render('404'); // 404 페이지로 리다이렉트
     }
 
     // 임시 비밀번호 생성 (4자리)
@@ -165,16 +165,16 @@ exports.googleCallback = (req, res, next) => {
   passport.authenticate('google', (err, user, info) => {
     if (err) {
       console.error('Authentication Error:', err);
-      return res.redirect('/login'); // 로그인 페이지로 리다이렉트
+      return res.redirect('/'); // 로그인 페이지로 리다이렉트
     }
     if (!user) {
       console.log('No user found');
-      return res.redirect('/login'); // 사용자 없을 경우 로그인 페이지로 리다이렉트
+      return res.redirect('/'); // 사용자 없을 경우 로그인 페이지로 리다이렉트
     }
     req.logIn(user, (loginErr) => {
       if (loginErr) {
         console.error('Login Error:', loginErr);
-        return res.redirect('/login'); // 로그인 실패 시 리다이렉트
+        return res.redirect('/'); // 로그인 실패 시 리다이렉트
       }
 
       // 로그인 성공 후 사용자 정보를 세션에 저장
@@ -195,16 +195,16 @@ exports.kakaoCallback = (req, res, next) => {
   passport.authenticate('kakao', (err, user, info) => {
     if (err) {
       console.error('Error during authentication:', err);
-      return res.redirect('/login'); // 에러 발생 시 로그인 페이지로 리다이렉트
+      return res.redirect('/'); // 에러 발생 시 로그인 페이지로 리다이렉트
     }
     if (!user) {
       console.log('No user found, redirecting to login');
-      return res.redirect('/login'); // 사용자 없음
+      return res.redirect('/'); // 사용자 없음
     }
     req.logIn(user, (loginErr) => {
       if (loginErr) {
         console.error('Error during login:', loginErr);
-        return res.redirect('/login'); // 로그인 실패 시 로그인 페이지로 리다이렉트
+        return res.redirect('/'); // 로그인 실패 시 로그인 페이지로 리다이렉트
       }
 
       // 로그인 성공 후 사용자 정보를 세션에 저장

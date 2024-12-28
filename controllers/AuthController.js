@@ -193,24 +193,29 @@ exports.googleCallback = (req, res, next) => {
 // Kakao OAuth 콜백
 exports.kakaoCallback = (req, res, next) => {
   passport.authenticate('kakao', (err, user, info) => {
+    // 인증 과정에서 에러 발생
     if (err) {
       console.error('Error during authentication:', err);
-      return res.redirect('/404'); // 에러 발생 시 메인 페이지로 리다이렉트
+      return res.redirect('/404'); // 에러 발생 시 404 페이지로 리다이렉트
     }
 
     // 인증 정보 로그
     console.log('Info:', info);
 
+    // 사용자 정보가 없을 경우
     if (!user) {
-      console.log('No user found, redirecting to main page');
+      console.log('No user found, redirecting to reset password page');
       console.log('User info:', user); // 사용자 정보 로그
-      return res.redirect('/user/reset-pw'); // 사용자 없음, 메인 페이지로 리다이렉트
+      console.log('Additional info:', info); // 추가 정보 로그
+      return res.redirect('/user/reset-pw'); // 사용자 없음, 비밀번호 재설정 페이지로 리다이렉트
     }
 
     req.logIn(user, (loginErr) => {
+      // 로그인 과정에서 에러 발생
       if (loginErr) {
         console.error('Error during login:', loginErr);
-        return res.redirect('/user/profile'); // 로그인 실패 시 메인 페이지로 리다이렉트
+        console.error('User attempt:', user); // 로그인 시도한 사용자 정보 로그
+        return res.redirect('/user/profile'); // 로그인 실패 시 프로필 페이지로 리다이렉트
       }
 
       // 로그인 성공 후 사용자 정보를 세션에 저장

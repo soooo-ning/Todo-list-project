@@ -195,16 +195,22 @@ exports.kakaoCallback = (req, res, next) => {
   passport.authenticate('kakao', (err, user, info) => {
     if (err) {
       console.error('Error during authentication:', err);
-      return res.redirect('/'); // 에러 발생 시 로그인 페이지로 리다이렉트
+      return res.redirect('/404'); // 에러 발생 시 메인 페이지로 리다이렉트
     }
+
+    // 인증 정보 로그
+    console.log('Info:', info);
+
     if (!user) {
-      console.log('No user found, redirecting to login');
-      return res.redirect('/'); // 사용자 없음
+      console.log('No user found, redirecting to main page');
+      console.log('User info:', user); // 사용자 정보 로그
+      return res.redirect('/user/reset-pw'); // 사용자 없음, 메인 페이지로 리다이렉트
     }
+
     req.logIn(user, (loginErr) => {
       if (loginErr) {
         console.error('Error during login:', loginErr);
-        return res.redirect('/'); // 로그인 실패 시 로그인 페이지로 리다이렉트
+        return res.redirect('/user/profile'); // 로그인 실패 시 메인 페이지로 리다이렉트
       }
 
       // 로그인 성공 후 사용자 정보를 세션에 저장
@@ -216,7 +222,7 @@ exports.kakaoCallback = (req, res, next) => {
 
       console.log('User logged in:', user); // 로그인 성공 로그
       console.log('Session after Kakao login:', req.session); // 세션 로그 출력
-      return res.redirect('/todo/dashboard');
+      return res.redirect('/todo/dashboard'); // 대시보드로 리다이렉트
     });
   })(req, res, next);
 };

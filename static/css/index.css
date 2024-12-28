@@ -209,11 +209,15 @@ body {
   cursor: pointer;
 }
 
+.changebox,
 .deletebox {
   display: flex;
   /* flex-direction: column; */
   justify-content: space-between;
   cursor: pointer;
+}
+.hidebox_none {
+  display: none;
 }
 .deletebox:hover {
   opacity: 0.7;

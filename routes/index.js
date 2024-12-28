@@ -52,11 +52,11 @@ router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
 router.delete('/todo/api/delete', todoController.deleteTodo); // 투두 삭제 api
 
-// // Todo dashboard
-// router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페이지
-// router.get('/todo/api/today', todoController.todayTodo); // 오늘 투두 조회 api
-// router.get('/todo/api/week', todoController.weekTodos); // 이번주 투두 조회 api
-// router.get('/todo/api/priority/:priority', todoController.priorityTodos); // 투두 우선순위 조회 api
+// Todo dashboard
+router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페이지
+router.get('/todo/api/today', todoController.todayTodo); // 오늘 투두 조회 api
+router.get('/todo/api/week', todoController.weekTodos); // 이번주 투두 조회 api
+router.get('/todo/api/priority/:priority', todoController.priorityTodos); // 투두 우선순위 조회 api
 
 // Todo calendar
 router.get('/todo/calendar', todoController.getCalendar); // 투두 캘린더 페이지

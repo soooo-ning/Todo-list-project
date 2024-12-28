@@ -1,0 +1,265 @@
+<div class="container popup write-popup">
+  <div class="pop_con">
+    <h3 class="sub_title">
+      <span>Write your TodoList</span>
+    </h3>
+    <button type="button" class="pop_close">X</button>
+    <form name="form-todo" method="post">
+      <label class="todo_title">
+        <input
+          type="text"
+          name="todoTitle"
+          placeholder="제목을 입력하세요"
+          required
+        />
+      </label>
+
+      <div class="todo_input">
+        <label class="calendar_input">
+          <input
+            type="text"
+            id="datetime-input"
+            name="todoDate"
+            placeholder="날짜를 입력하세요"
+            readonly
+          />
+          <div class="calendar_pop" style="display: none"></div>
+        </label>
+
+        <div class="priority">
+          <p>우선순위</p>
+          <label>
+            <input type="radio" name="priority" value="high" />
+            상
+          </label>
+          <label>
+            <input type="radio" name="priority" value="medium" />
+            중
+          </label>
+          <label>
+            <input type="radio" name="priority" value="low" />
+            하
+          </label>
+        </div>
+
+        <label class="todo_key">
+          <p>키워드</p>
+          <select name="todoKey" id="" required>
+            <% if (keywords && keywords.length > 0) { %> <% for (let i = 0; i <
+            keywords.length; i++) { %>
+            <option value="<%= keywords[i].id %>">
+              <%= keywords[i].keyword %>
+            </option>
+            <% } %> <% } else { %>
+            <option value="">No Keywords Available</option>
+            <% } %>
+          </select>
+        </label>
+      </div>
+
+      <ul class="todo_content">
+        <li>
+          <label>
+            <input type="checkbox" name="todoChk" />
+            <input type="text" name="todoCon" placeholder="할일을 입력하세요" />
+            <input type="button" value="delete" />
+          </label>
+        </li>
+      </ul>
+
+      <button type="button" id="todoAdd">추가</button>
+      <button type="submit" id="todoBtn">등록</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  /* === todo write === */
+  /* 달력 날짜 지정 */
+  document.addEventListener('DOMContentLoaded', () => {
+    const datetimeInput = document.getElementById('datetime-input');
+    const calendar = document.querySelector('.calendar_pop');
+
+    if (!datetimeInput || !calendar) {
+      console.error('Required DOM elements are missing.');
+      return;
+    }
+
+    let selectedDate = null;
+    const today = new Date();
+    const currentYear = today.getFullYear();
+    const currentMonth = today.getMonth();
+
+    // 캘린더 클릭 이벤트
+    calendar.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const target = e.target;
+      if (target.tagName === 'TD' && !target.classList.contains('disabled')) {
+        selectedDate = target.dataset.date;
+        highlightSelectedDate(target);
+        updateInputValue();
+        calendar.style.display = 'none';
+      }
+    });
+
+    // 입력 필드 클릭 시 캘린더 열기
+    datetimeInput.addEventListener('click', (e) => {
+      e.stopPropagation();
+      calendar.innerHTML = generateCalendarHTML(currentMonth, currentYear);
+      calendar.style.display = 'block';
+    });
+
+    // 외부 클릭 시 캘린더 닫기
+    document.addEventListener('click', (e) => {
+      if (!calendar.contains(e.target) && e.target !== datetimeInput) {
+        calendar.style.display = 'none';
+      }
+    });
+
+    function generateCalendarHTML(month, year) {
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const firstDay = new Date(year, month, 1).getDay();
+      const monthNames = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
+      ];
+
+      let html = `<div><strong>${monthNames[month]} ${year}</strong></div>`;
+      html += '<table><tr>';
+      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((day) => {
+        html += `<th>${day}</th>`;
+      });
+      html += '</tr><tr>';
+
+      for (let i = 0; i < firstDay; i++) {
+        html += '<td></td>';
+      }
+
+      for (let day = 1; day <= daysInMonth; day++) {
+        const dateString = `${year}-${String(month + 1).padStart(
+          2,
+          '0',
+        )}-${String(day).padStart(2, '0')}`;
+        const date = new Date(dateString);
+        const isDisabled = date < today.setHours(0, 0, 0, 0) ? 'disabled' : '';
+        html += `<td data-date="${dateString}" class="${isDisabled}">${day}</td>`;
+
+        if ((day + firstDay) % 7 === 0) {
+          html += '</tr><tr>';
+        }
+      }
+
+      html += '</tr></table>';
+      return html;
+    }
+
+    function updateInputValue() {
+      if (selectedDate) {
+        datetimeInput.value = selectedDate;
+      }
+    }
+
+    function highlightSelectedDate(target) {
+      const allDates = calendar.querySelectorAll('td');
+      allDates.forEach((td) => td.classList.remove('selected'));
+      target.classList.add('selected');
+    }
+  });
+
+  /* 팝업 열기/닫기 */
+  const writePopup = document.querySelector('.write-popup');
+  const writePopBtn = document.querySelector('.pop_btn');
+  const writePopClose = writePopup.querySelector('.pop_close');
+  const todoForm = document.forms['form-todo'];
+
+  writePopBtn.addEventListener('click', () => {
+    resetForm();
+    writePopup.classList.add('on');
+    document.querySelector('body').classList.add('pop_open');
+  });
+
+  writePopClose.addEventListener('click', () => {
+    writePopup.classList.remove('on');
+    document.querySelector('body').classList.remove('pop_open');
+    resetForm();
+  });
+
+  /* 폼 초기화 */
+  function resetForm() {
+    todoForm.reset();
+    const todoContentList = document.querySelector('.todo_content');
+    while (todoContentList.children.length > 1) {
+      todoContentList.removeChild(todoContentList.lastChild);
+    }
+    const firstInput = todoContentList.querySelector('input[name="todoCon"]');
+    if (firstInput) firstInput.value = '';
+  }
+
+  /* add버튼 클릭시 할일input 하나씩 추가 */
+  document.addEventListener('DOMContentLoaded', () => {
+    const todoAddButton = document.getElementById('todoAdd');
+    const todoContentList = document.querySelector('.todo_content');
+
+    todoAddButton.addEventListener('click', () => {
+      const newListItem = createTodoContentItem();
+      todoContentList.appendChild(newListItem);
+      updateDeleteButtons();
+    });
+
+    function updateDeleteButtons() {
+      const listItems = todoContentList.querySelectorAll('li');
+      listItems.forEach((li) => {
+        const deleteButton = li.querySelector('input[type="button"]');
+        deleteButton.style.display =
+          listItems.length === 1 ? 'none' : 'inline-block';
+      });
+    }
+
+    todoContentList.addEventListener('click', (e) => {
+      if (e.target.type === 'button' && e.target.value === 'delete') {
+        const listItem = e.target.closest('li');
+        if (listItem) {
+          listItem.remove();
+          updateDeleteButtons();
+        }
+      }
+    });
+
+    updateDeleteButtons();
+  });
+
+  /* 투두 등록 */
+  todoForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const formData = {
+      user_id: 1, // 실제 사용자 ID로 변경 필요
+      keyword_id: todoForm.todoKey.value,
+      title: todoForm.todoTitle.value.trim(),
+      priority: todoForm.querySelector('input[name="priority"]:checked').value,
+      date: todoForm.todoDate.value,
+      content: Array.from(
+        todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+      ).map((input) => input.value.trim()),
+    };
+
+    try {
+      await axios.post('/todo/api/write', formData);
+      alert('Todo가 성공적으로 생성되었습니다.');
+      window.location.reload();
+    } catch (error) {
+      console.error('Todo 생성 실패:', error);
+      alert('Todo 생성 중 오류가 발생했습니다.');
+    }
+  });
+</script>

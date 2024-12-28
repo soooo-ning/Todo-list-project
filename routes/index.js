@@ -44,6 +44,7 @@ router.get('/user/reset-pw', userController.getResetPw); // 비밀번호 재설�
 router.patch('/user/api/reset-pw', userController.resetPw); // 비밀번호 재설정 api
 router.get('/user/delete-account', userController.getDeleteAccount); // 회원 탈퇴 페이지
 router.delete('/user/api/delete-account', userController.deleteAccount); // 회원 탈퇴 api
+router.post('/user/api/logout', userController.logout); // 로그아웃 api
 
 // Todo CRUD
 router.post('/todo/api/write', todoController.writeTodo); // 투두 작성 api

@@ -11,6 +11,7 @@ exports.getProfile = async (req, res) => {
     });
     res.render('profile_setting', {
       email: user.email,
+      userId,
     });
   } catch (err) {
     console.log('keywords error', err);
@@ -114,6 +115,7 @@ exports.getDeleteAccount = async (req, res) => {
   try {
     // User모델에서 닉네임 불러오기
     // const userId = req.body
+    const userId = req.user.id;
     const user = await User.findOne({
       where: { id: userId }, //추후 id불러오기
       attributes: ['pw'],
@@ -166,4 +168,17 @@ exports.deleteAccount = async (req, res) => {
       .status(500)
       .json({ message: '회원 탈퇴 중 오류 발생', error: err.message });
   }
+};
+
+exports.logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res
+        .status(500)
+        .json({ message: '세션 삭제 오류 발생', error: err });
+    }
+    console.log('세션이 성공적으로 삭제되었습니다.');
+    // 로그아웃 성공, 클라이언트에서 세션이 삭제되었음을 알림
+    res.status(200).json({ message: '로그아웃이 완료되었습니다.' });
+  });
 };

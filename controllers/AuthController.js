@@ -111,7 +111,7 @@ exports.searchPw = async (req, res) => {
     // 입력한 이메일로 사용자 찾기
     const user = await User.findOne({ where: { email } });
     if (!user) {
-      return res.status(404).json({ message: '등록되지 않은 이메일입니다.' });
+      return res.status(404).render('404'); // 404 페이지로 리다이렉트
     }
 
     // 임시 비밀번호 생성 (4자리)

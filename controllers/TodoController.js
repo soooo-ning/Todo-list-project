@@ -43,13 +43,30 @@ exports.getTodo = async (req, res) => {
 
     const todo = await Todo.findOne({
       where: { id },
-      include: [TodoContent, Keyword, User],
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+        {
+          model: Keyword,
+          attributes: ['id', 'keyword'],
+        },
+        {
+          model: User,
+          attributes: ['id', 'nickname'],
+        },
+      ],
     });
 
     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
 
+    // 응답 데이터 로깅
+    console.log('Found todo:', todo.toJSON());
+
     success(res, todo, 'Todo 내용 조회 완료');
   } catch (err) {
+    console.error('Error in getTodo:', err);
     serverError(res, err);
   }
 };

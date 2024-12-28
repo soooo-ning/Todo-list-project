@@ -9,37 +9,92 @@
     <main class="container change_pw_wrap">
       <div class="content">
         <h3 class="sub_title"><span>비밀번호 변경</span></h3>
+        <h4 class="mb20">
+          현재 비밀번호가 일치하는 경우 새 비밀번호로 변경할 수 있습니다.
+        </h4>
         <form name="changePw" class="main-container">
-          <h4 class="mb20">현재 비밀번호가 일치하는 경우 새 비밀번호로 변경할 수 있습니다.</h4>
-        <div class="allBox">
-          <span style="font-weight: 700;">비밀번호 작성규칙:</span>
-          <span>· 비밀번호는 최소 4자 이상, 최대 18자 이하로 설정해야 합니다.</span>
-          <span>· 비밀번호는 영어 대/소문자, 숫자, 특수문자 .!@#*?만 사용가능합니다.</span>
-          <hr />
-          <div class="changePwbox">
-            <label
+          <div class="allBox">
+            <span style="font-weight: 700">비밀번호 작성규칙:</span>
+            <span
+              >· 비밀번호는 최소 4자 이상, 최대 18자 이하로 설정해야
+              합니다.</span
+            >
+            <span
+              >· 비밀번호는 영어 대/소문자, 숫자, 특수문자 .!@#*?만
+              사용가능합니다.</span
+            >
+            <hr />
+            <div class="changePwbox">
+              <label>
+                <span>현재 비밀번호</span>
+                <input
+                  type="password"
+                  id="currentPw"
+                  class="password-input"
+                  required
+                />
+                <!-- <button
+                    type="button"
+                    id="togglePassword"
+                    class="toggle-password"
+                  >
+                    <i class="fa-regular fa-eye"></i>
+                  </button> -->
+              </label>
+              <div class="pw-result" id="currentPwConfirm"></div>
+              <label>
+                <span>새 비밀번호</span>
+                <input type="password" id="newPw1" required />
+              </label>
+              <label>
+                <span>새 비밀번호 확인</span>
+                <input type="password" id="newPw2" required />
+              </label>
+              <div class="pw-result" id="newPwConfirm"></div>
+              <button
+                type="button"
+                class="changePw"
+                onclick="changePwBtn(event)"
               >
-              <span>현재 비밀번호</span>
-              <input type="password" id="currentPw" required
-            />
-          </label>
-            <div class="pw-result" id="currentPwConfirm"></div>
-            <label
-              >
-              <span>새 비밀번호</span>
-              <input type="password" id="newPw1" required
-            />
-          </label>
-            <label
-              >
-              <span>새 비밀번호 확인</span>
-              <input type="password" id="newPw2" required
-            />
-          </label>
-          <div class="pw-result" id="newPwConfirm"></div>
-            <button type="button" class="changePw" onclick="changePwBtn(event)">저장</button>
-        </div>
-      </form>
+                저장
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <br />
+        <h3 class="sub_title"><span>비밀번호 찾기</span></h3>
+        <h4 class="mb20">
+          현재 비밀번호를 잃어버리셨다면 임시 비밀번호를 발급받을 수 있습니다.
+        </h4>
+
+        <form name="form-find" class="main-container" method="post">
+          <div class="allBox">
+            <span style="font-weight: 700">임시비밀번호 발급:</span>
+            <span
+              >· 임시 비밀번호는 로그인 이메일과 작성한 이메일이 일치할 시 발급
+              받으실 수 있습니다.</span
+            >
+            <span
+              >· 임시 비밀번호 발급완료 후, 비밀번호 변경을 통해 새 비밀번호로
+              변경하는 것을 권장드립니다.</span
+            >
+            <hr />
+            <div class="getNewPwbox">
+              <label>
+                <span>이메일</span>
+                <input
+                  type="email"
+                  placeholder="로그인 이메일을 입력하세요"
+                  name="email"
+                  required
+                />
+              </label>
+              <div class="email-confirm" id="emailConfirm"></div>
+              <button type="submit" class="getnewPw">임시 비밀번호 발급</button>
+            </div>
+          </div>
+        </form>
       </div>
     </main>
 
@@ -47,49 +102,99 @@
 
     <script>
       function changePwBtn(event) {
-  event.preventDefault();
+        event.preventDefault();
 
-  const currentPw = document.getElementById("currentPw").value;
-  const newPw = document.getElementById("newPw1").value;
-  const newPwCheck = document.getElementById("newPw2").value;
+        const currentPw = document.getElementById('currentPw').value;
+        const newPw = document.getElementById('newPw1').value;
+        const newPwCheck = document.getElementById('newPw2').value;
 
-  const currentResult = document.getElementById("currentPwConfirm");
-  const newPwConfirm = document.getElementById("newPwConfirm");
+        const currentResult = document.getElementById('currentPwConfirm');
+        const newPwConfirm = document.getElementById('newPwConfirm');
 
-  const password = "<%=password%>"; // 서버에서 받은 현재 비밀번호
+        const password = '<%=password%>'; // 서버에서 받은 현재 비밀번호
 
-  // 현재 비밀번호 확인
-  if (currentPw !== password) {
-      alert("현재 비밀번호가 일치하지 않습니다!");
-      location.reload();
-      return;
-    }
+        // 현재 비밀번호 확인
+        if (currentPw !== password) {
+          alert('현재 비밀번호가 일치하지 않습니다!');
+          location.reload();
+          return;
+        }
 
-    // 새 비밀번호 확인
-    if (newPw !== newPwCheck) {
-      alert("새 비밀번호가 일치하지 않습니다!");
-      location.reload();
-      return;
-    }
+        // 새 비밀번호 확인
+        if (newPw !== newPwCheck) {
+          alert('새 비밀번호가 일치하지 않습니다!');
+          location.reload();
+          return;
+        }
 
-    // 비밀번호 변경 요청
-    axios.patch('/user/api/reset-pw', {
-      currentPw: currentPw,
-      newPw: newPw
-    })
-    .then((response) => {
-      if (response.data.success) {
-        alert("비밀번호가 성공적으로 변경되었습니다.");
-        window.location.href="/todo/dashboard";
-      } else {
-        alert("비밀번호 변경에 실패했습니다.");
+        // 비밀번호 변경 요청
+        axios
+          .patch('/user/api/reset-pw', {
+            currentPw: currentPw,
+            newPw: newPw,
+          })
+          .then((response) => {
+            if (response.data.success) {
+              alert('비밀번호가 성공적으로 변경되었습니다.');
+              window.location.href = '/todo/dashboard';
+            } else {
+              alert('비밀번호 변경에 실패했습니다.');
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+            alert('서버 오류가 발생했습니다.');
+          });
       }
-    })
-    .catch((error) => {
-      console.error(error);
-      alert("서버 오류가 발생했습니다.");
-    });
-  }
+
+      // 임시 비밀번호 발급
+      document.forms['form-find'].addEventListener('submit', function (event) {
+        event.preventDefault();
+
+        const email = document.querySelector('[name="email"]').value.trim();
+        console.log(email);
+        const loginEmail = `<%=email%>`;
+        const confirmDiv = document.getElementById('emailConfirm');
+
+        // 이메일이 빈 값인지 확인
+        if (!email) {
+          alert('이메일을 입력해주세요.');
+          return;
+        }
+        if (email !== loginEmail) {
+          confirmDiv.innerHTML = `<span style="color:red">이메일이 일치하지 않습니다!</span>`;
+          return;
+        }
+
+        // 서버로 비밀번호 재설정 요청
+        axios
+          .get(`/auth/api/search-pw?email=${encodeURIComponent(email)}`) // GET 요청으로 변경
+          .then((response) => {
+            // 서버에서 받은 성공 메시지 대신 임시 비밀번호를 alert로 띄우기
+            if (response.data.success) {
+              alert(`임시 비밀번호: ${response.data.tempPassword}`); // 임시 비밀번호 alert
+              window.location.href = '/user/profile'; //
+            }
+          })
+          .catch((error) => {
+            console.error(error); // 오류 상세 출력
+
+            if (error.response) {
+              // 서버에서 반환한 에러 응답 처리
+              if (error.response.data && error.response.data.message) {
+                alert(error.response.data.message); // 서버에서 보낸 오류 메시지 출력
+              } else {
+                alert('서버 오류가 발생했습니다. 다시 시도해주세요.');
+              }
+            } else if (error.request) {
+              // 요청은 했지만 서버에서 응답을 받지 못한 경우
+              alert('서버에 응답이 없습니다. 다시 시도해주세요.');
+            } else {
+              // 기타 오류 처리
+              alert('알 수 없는 오류가 발생했습니다.');
+            }
+          });
+      });
     </script>
   </body>
 </html>

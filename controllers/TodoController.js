@@ -215,7 +215,6 @@ exports.getCalendar = (req, res) => {
 exports.dayTodo = async (req, res) => {
   try {
     let { date } = req.query;
-    console.log('Requested date:', date); // 디버깅용 로그
 
     if (!date) {
       date = new Date().toISOString().split('T')[0];
@@ -230,7 +229,6 @@ exports.dayTodo = async (req, res) => {
       0,
       0,
     );
-
     const lastDayOfMonth = new Date(
       targetDate.getFullYear(),
       targetDate.getMonth() + 1,
@@ -239,10 +237,6 @@ exports.dayTodo = async (req, res) => {
       59,
       59,
     );
-
-    console.log('First day:', firstDayOfMonth); // 디버깅용 로그
-    console.log('Last day:', lastDayOfMonth); // 디버깅용 로그
-
     const user_id = req.user.id;
 
     const todos = await Todo.findAll({
@@ -276,7 +270,6 @@ exports.getSearch = (req, res) => {
   const { query } = req.query;
   res.render('search', {
     searchQuery: query || '',
-    title: '검색',
   });
 };
 
@@ -317,9 +310,10 @@ exports.searchTodos = async (req, res) => {
   }
 };
 
+// Todo keyword
 // 투두 키워드 조회 및 뷰 렌더링
-// GET /todo/api/list/keyword/:id
-exports.keywordList = async (req, res) => {
+// GET /todo/api/keyword/:id
+exports.keywordTodos = async (req, res) => {
   try {
     const userId = req.user.id;
     const { id } = req.params;
@@ -330,11 +324,20 @@ exports.keywordList = async (req, res) => {
         deleted: false,
         keyword_id: id,
       },
-      include: [TodoContent],
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+        {
+          model: Keyword,
+          attributes: ['id', 'keyword'],
+        },
+      ],
     });
 
     res.render('keyword', {
-      todos,
+      todos: todos,
       keywordId: id,
     });
   } catch (err) {
@@ -342,20 +345,29 @@ exports.keywordList = async (req, res) => {
   }
 };
 
+// Todo deleted
 // 투두 휴지통 조회 및 렌더링
 // GET /todo/api/deleted-todo
-exports.deleteList = async (req, res) => {
+exports.deletedTodos = async (req, res) => {
   try {
     const userId = req.user.id;
 
     const todos = await Todo.findAll({
-      user_id: userId,
-      where: { deleted: true },
-      include: [TodoContent],
+      where: {
+        user_id: userId,
+        deleted: true,
+      },
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+      ],
+      attributes: ['id', 'title', 'date', 'deleted_at'],
     });
 
     res.render('deleted', {
-      todos,
+      todos: todos,
     });
   } catch (err) {
     serverError(res, err);

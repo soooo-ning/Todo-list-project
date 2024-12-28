@@ -9,26 +9,59 @@
       <div class="content">
         <h3 class="sub_title"><span>휴지통</span></h3>
         <div class="card-container add">
-          <div class="card" id="sampleCard">
-            <button
-              type="button"
-              id="restoreSelectedButton"
-              class="multiple-button"
-            >
-              선택 복구
-            </button>
-            <div class="card-title"></div>
+          <!-- 디버깅용 -->
+          <% console.log('View todos:', todos); %> <% if (todos && todos.length
+          > 0) { %>
+          <button
+            type="button"
+            id="restoreSelectedButton"
+            class="multiple-button"
+          >
+            선택 복구
+          </button>
+
+          <% todos.forEach(function(todo) { %>
+          <div class="card">
+            <div class="card-header">
+              <input
+                type="checkbox"
+                class="select-checkbox"
+                value="<%= todo.id %>"
+              />
+              <div class="card-title">
+                <%= todo.title %> <% if (todo.deleted_at) { %>
+                <span class="delete-date"
+                  >삭제일: <%= new Date(todo.deleted_at).toLocaleDateString()
+                  %></span
+                >
+                <% } %>
+              </div>
+            </div>
+
+            <% if (todo.todo_contents && todo.todo_contents.length > 0) { %>
             <ul class="todo-list">
-              <li>
-                <input type="checkbox" class="select-checkbox" />
-                <span class="todo-item"></span>
+              <% todo.todo_contents.forEach(function(content) { %>
+              <li class="<%= content.state ? 'completed' : '' %>">
+                <%= content.content %>
               </li>
+              <% }); %>
             </ul>
-            <form>
-              <input type="hidden" name="id" value="" />
-              <button type="button" class="recover-button">복구</button>
-            </form>
+            <% } %>
+
+            <div class="card-actions">
+              <button
+                type="button"
+                class="recover-button"
+                data-id="<%= todo.id %>"
+                data-title="<%= todo.title %>"
+              >
+                복구
+              </button>
+            </div>
           </div>
+          <% }); %> <% } else { %>
+          <div class="no-items">휴지통이 비어있습니다.</div>
+          <% } %>
         </div>
       </div>
     </main>
@@ -36,108 +69,83 @@
     <%- include('include/popup') %>
 
     <script>
-      // 데이터를 추가
-      function renderData(data) {
-        const container = document.querySelector('.card-container');
-        const sampleCard = document.getElementById('sampleCard');
+      document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.card');
+        console.log('Found cards:', cards.length); // 디버깅용
 
-        sampleCard.style.display = 'none';
+        // 개별 복구 버튼 이벤트
+        document.querySelectorAll('.recover-button').forEach((button) => {
+          button.addEventListener('click', async function () {
+            const id = this.dataset.id;
+            const title = this.dataset.title;
+            console.log('Restore clicked for:', id, title); // 디버깅용
 
-        data.forEach((item) => {
-          const card = sampleCard.cloneNode(true);
-          card.style.display = 'block';
-
-          // 제목
-          const title = card.querySelector('.card-title');
-          title.textContent = item.title;
-
-          // 체크박스
-          const checkbox = card.querySelector('.select-checkbox');
-          checkbox.value = item.id;
-
-          // 투두리스트
-          const todoList = card.querySelector('.todo-list');
-          todoList.innerHTML = '';
-          item.todos.forEach((todo) => {
-            const todoItem = document.createElement('li');
-            todoItem.innerHTML = `
-              <input type="checkbox" class="select-checkbox" value="${todo.id}" />
-              <span>${todo.task}</span>
-            `;
-            if (todo.completed) {
-              todoItem.classList.add('completed');
-            }
-            todoList.appendChild(todoItem);
-          });
-
-          //복구
-          const restoreButton = card.querySelector('.recover-button');
-          restoreButton.onclick = async function () {
-            const confirmRestore = confirm(
-              `${item.title}을(를) 복구하시겠습니까?`,
-            );
-            if (confirmRestore) {
+            if (confirm(`'${title}'을(를) 복구하시겠습니까?`)) {
               try {
                 const response = await fetch('/todo/api/restore', {
                   method: 'PATCH',
                   headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ id: item.id }),
+                  body: JSON.stringify({ id }),
                 });
+
                 if (response.ok) {
-                  alert(`${item.title}이(가) 복구되었습니다!`);
-                  card.remove();
+                  alert('복구가 완료되었습니다.');
+                  this.closest('.card').remove();
                 } else {
-                  alert('복구에 실패했습니다.');
+                  throw new Error('복구 실패');
                 }
               } catch (error) {
-                console.error(error);
+                console.error('복구 중 오류:', error);
                 alert('복구 중 오류가 발생했습니다.');
               }
             }
-          };
-
-          container.appendChild(card);
+          });
         });
-      }
 
-      // 선택 복구
-      document
-        .getElementById('restoreSelectedButton')
-        .addEventListener('click', async () => {
-          const selectedCheckboxes = document.querySelectorAll(
-            '.select-checkbox:checked',
-          );
-          const selectedIds = Array.from(selectedCheckboxes).map(
-            (checkbox) => checkbox.value,
-          );
+        // 선택 복구 버튼 이벤트
+        const restoreSelectedButton = document.getElementById(
+          'restoreSelectedButton',
+        );
+        if (restoreSelectedButton) {
+          restoreSelectedButton.addEventListener('click', async () => {
+            const selectedCheckboxes = document.querySelectorAll(
+              '.select-checkbox:checked',
+            );
+            console.log('Selected items:', selectedCheckboxes.length); // 디버깅용
 
-          if (selectedIds.length === 0) {
-            alert('선택된 항목이 없습니다.');
-            return;
-          }
+            const selectedIds = Array.from(selectedCheckboxes).map(
+              (cb) => cb.value,
+            );
 
-          const confirmRestore = confirm('선택된 항목들을 복구하시겠습니까?');
-          if (confirmRestore) {
-            try {
-              const response = await fetch('/todo/api/restore/multiple', {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ids: selectedIds }),
-              });
-              if (response.ok) {
-                alert('선택된 항목들이 복구되었습니다!');
-                selectedCheckboxes.forEach((checkbox) =>
-                  checkbox.closest('.card').remove(),
-                );
-              } else {
-                alert('선택 복구에 실패했습니다.');
-              }
-            } catch (error) {
-              console.error(error);
-              alert('선택 복구 중 오류가 발생했습니다.');
+            if (selectedIds.length === 0) {
+              alert('복구할 항목을 선택해주세요.');
+              return;
             }
-          }
-        });
+
+            if (confirm('선택한 항목들을 복구하시겠습니까?')) {
+              try {
+                const response = await fetch('/todo/api/restore/multiple', {
+                  method: 'PATCH',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ ids: selectedIds }),
+                });
+
+                if (response.ok) {
+                  alert('선택한 항목들이 복구되었습니다.');
+                  selectedCheckboxes.forEach((cb) =>
+                    cb.closest('.card').remove(),
+                  );
+                } else {
+                  throw new Error('선택 복구 실패');
+                }
+              } catch (error) {
+                console.error('복구 중 오류:', error);
+                alert('복구 중 오류가 발생했습니다.');
+              }
+            }
+          });
+        }
+      });
     </script>
   </body>
 </html>

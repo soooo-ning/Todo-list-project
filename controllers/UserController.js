@@ -69,10 +69,11 @@ exports.getResetPw = async (req, res) => {
     const userId = req.user.id;
     const user = await User.findOne({
       where: { id: userId }, //추후 id불러오기
-      attributes: ['pw'],
+      attributes: ['pw', 'email'],
     });
     res.render('change_pw', {
       password: user.pw,
+      email: user.email,
     });
   } catch (err) {
     console.log('keywords error', err);

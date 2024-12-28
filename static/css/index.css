@@ -250,7 +250,7 @@ body {
             span {
               width: 150px;
             } */
-
+.getNewPwbox,
 .changePwbox {
   display: flex;
   flex-direction: column;
@@ -258,7 +258,7 @@ body {
   gap: 15px;
   margin-top: 20px;
 }
-
+button.getnewPw,
 button.changePw {
   margin-top: 30px;
   align-self: center; /* 버튼을 중앙에 정렬 */
@@ -649,6 +649,18 @@ body.dark-mode * {
   justify-content: space-between;
   cursor: pointer;
 }
+.newkeyTitle {
+  display: flex;
+  justify-content: space-between;
+  cursor: pointer;
+}
+.newkeyTitle-none {
+  display: none;
+}
+.newkeyTitle-btn {
+  margin-left: 10px;
+}
+
 .sidebar > .keyBar > .keybarTitle > .plusKeywordBtn,
 .keybarDiv {
   transition: box-shadow 0.3s ease;

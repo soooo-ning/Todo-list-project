@@ -59,11 +59,22 @@
         <!-- <img src="/static/img/plus.png" alt="키워드추가" /> -->
       </button>
     </div>
+    <div class="newkeyTitle-none" id="newKeyTitle">
+      <input
+        type="text"
+        id="new-keyword-input"
+        class="newKeywordInput"
+        placeholder="추가할 키워드를 입력하세요"
+      />
+      <button type="button" class="newkeyTitle-btn">
+        <i class="fa-regular fa-square-plus" style="font-size: 20px"></i>
+      </button>
+    </div>
     <ul id="keyul">
       <% for (let i = 0; i < locals.keywords.length; i++) { %>
       <li>
         <div class="keybarDiv">
-          <a href="/todo/api/list/keyword/<%= locals.keywords[i].id %>">
+          <a href="/todo/api/keyword/<%= locals.keywords[i].id %>">
             <i class="fa-solid fa-hashtag"></i> <%= locals.keywords[i].keyword
             %>
           </a>
@@ -169,73 +180,80 @@
   document
     .querySelector('.plusKeywordBtn')
     .addEventListener('click', function () {
-      // keybarTitle 요소 선택
-      const keybarTitle = document.querySelector('.keybarTitle');
+      const newKeywordInput = document.getElementById('new-keyword-input');
+      const newKeyTitle = document.getElementById('newKeyTitle');
 
-      // 이미 input이 생성되어 있는지 확인
-      if (document.querySelector('.newKeywordInput')) {
-        alert('이미 입력창이 생성되었습니다.');
+      // 이미 입력창이 보이는 상태라면 중복 실행 방지
+      if (!newKeyTitle.classList.contains('newkeyTitle-none')) {
+        alert('이미 입력창이 활성화되어 있습니다.');
         return;
       }
 
-      // 새로운 input 요소 생성
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.placeholder = '키워드를 입력하세요';
-      input.className = 'newKeywordInput';
+      // 입력창 보이게 만들기
+      newKeyTitle.classList.remove('newkeyTitle-none');
+      newKeyTitle.classList.add('newkeyTitle');
 
-      // keybarTitle의 형제로 input 추가
-      keybarTitle.parentNode.insertBefore(input, keybarTitle.nextSibling);
+      // 키워드 추가 로직
+      const addKeyword = () => {
+        const inputValue = newKeywordInput.value.trim(); // 입력된 키워드
+        if (!inputValue) {
+          alert('키워드를 입력해주세요.');
+          return;
+        }
 
-      // 엔터 키 입력 시 키워드 추가
-      input.addEventListener('keypress', function (event) {
-        if (event.key === 'Enter' && input.value.trim()) {
-          const ul = document.getElementById('keyul');
-          const inputValue = input.value.trim(); // 사용자 입력 값
+        const ul = document.getElementById('keyul');
+        const existingKeywords = Array.from(ul.querySelectorAll('a')).map((a) =>
+          a.textContent.trim(),
+        );
 
-          // 기존 키워드 텍스트만 추출 (앞뒤 공백 제거 후 소문자로 통일)
-          const existingKeywords = Array.from(ul.querySelectorAll('a')).map(
-            (a) => a.textContent.trim(),
-          );
-          console.log(existingKeywords);
-          // 중복 여부 확인
-          for (let i = 0; i < existingKeywords.length; i++) {
-            if (existingKeywords[i] === inputValue) {
-              alert('이미 존재하는 키워드입니다.');
-              input.remove();
-              return;
-            }
-          }
+        // 중복 확인
+        if (existingKeywords.includes(inputValue)) {
+          alert('이미 존재하는 키워드입니다.');
+          return;
+        }
 
-          // `user_id`는 로컬 변수로 받아와야 합니다. (예: locals.userId)
-          const userId = `<%= locals.userId %>`; // 이 값은 서버에서 제공해야 합니다.
+        const userId = `<%= locals.userId %>`; // 서버에서 제공되는 사용자 ID
 
-          // Axios를 사용하여 POST 요청 보내기
-          axios
-            .post('/keyword/api/create', {
-              user_id: userId,
-              keyword: inputValue,
-            })
-            .then((response) => {
-              // 성공적으로 추가되면 새 키워드를 리스트에 추가
-              const li = document.createElement('li');
-              const a = document.createElement('a');
-              a.href = `/todo/api/list/keyword?keyword=${encodeURIComponent(
-                inputValue,
-              )}`;
-              a.innerHTML = `<i class="fa-solid fa-hashtag"></i> ${inputValue}`;
-              li.appendChild(a);
-              ul.appendChild(li);
+        // 키워드 생성 요청
+        axios
+          .post('/keyword/api/create', {
+            user_id: userId,
+            keyword: inputValue,
+          })
+          .then((response) => {
+            // 성공적으로 추가되면 리스트에 반영
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/todo/api/keyword?keyword=${encodeURIComponent(
+              inputValue,
+            )}`;
+            a.innerHTML = `<i class="fa-solid fa-hashtag"></i> ${inputValue}`;
+            li.appendChild(a);
+            ul.appendChild(li);
 
-              // 입력창 제거
-              input.remove();
-              alert('키워드가 성공적으로 추가되었습니다!');
-              window.location.reload();
-            })
-            .catch((error) => {
-              console.error('키워드 추가 오류:', error);
-              alert('키워드 추가에 실패했습니다. 다시 시도해주세요.');
-            });
+            alert('키워드가 성공적으로 추가되었습니다!');
+
+            // 입력창 숨기기 및 초기화
+            newKeywordInput.value = '';
+            newKeyTitle.classList.remove('newkeyTitle');
+            newKeyTitle.classList.add('newkeyTitle-none');
+
+            // 페이지 리로드
+            window.location.reload();
+          })
+          .catch((error) => {
+            console.error('키워드 추가 오류:', error);
+            alert('키워드 추가에 실패했습니다. 다시 시도해주세요.');
+          });
+      };
+
+      // 추가 버튼 클릭 시 키워드 생성
+      document.querySelector('.newkeyTitle-btn').onclick = addKeyword;
+
+      // 엔터 키 입력 시 키워드 생성
+      newKeywordInput.addEventListener('keypress', function (event) {
+        if (event.key === 'Enter') {
+          addKeyword();
         }
       });
     });

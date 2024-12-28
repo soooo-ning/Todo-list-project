@@ -52,11 +52,11 @@ router.get('/todo/api/get/:id', todoController.getTodo); // 특정 투두 조회
 router.patch('/todo/api/edit', todoController.editTodo); // 투두 수정 api
 router.delete('/todo/api/delete', todoController.deleteTodo); // 투두 삭제 api
 
-// // Todo dashboard
-// router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페이지
-// router.get('/todo/api/today', todoController.todayTodo); // 오늘 투두 조회 api
-// router.get('/todo/api/week', todoController.weekTodos); // 이번주 투두 조회 api
-// router.get('/todo/api/priority/:priority', todoController.priorityTodos); // 투두 우선순위 조회 api
+// Todo dashboard
+router.get('/todo/dashboard', todoController.getDashboard); // 대시보드 페이지
+router.get('/todo/api/today', todoController.todayTodo); // 오늘 투두 조회 api
+router.get('/todo/api/week', todoController.weekTodos); // 이번주 투두 조회 api
+router.get('/todo/api/priority/:priority', todoController.priorityTodos); // 투두 우선순위 조회 api
 
 // Todo calendar
 router.get('/todo/calendar', todoController.getCalendar); // 투두 캘린더 페이지
@@ -66,14 +66,12 @@ router.get('/todo/api/day', todoController.dayTodo); // 특정 날짜 투두 조
 router.get('/todo/search', todoController.getSearch); // 투두 검색 페이지
 router.get('/todo/api/search', todoController.searchTodos); // 투두 검색 조회 api
 
-// // Todo keyword
-// router.get('/todo/keyword/:id', todoController.getKeyword); // 투두 키워드 페이지
-// router.get('/todo/api/keyword/:id', todoController.keywordTodos); // 투두 키워드 조회 api
+// Todo keyword
+router.get('/todo/api/keyword/:id', todoController.keywordTodos); // 투두 키워드 페이지 및 조회 api
 
-// // Todo deleted
-// router.get('/todo/deleted-todo', todoController.getDeleted); // 투두 휴지통 페이지
-// router.get('/todo/api/deleted-todo', todoController.deletedTodos); // 투두 휴지통 조회 api
-// router.patch('/todo/api/restore', todoController.restoreTodo); // 삭제된 투두 복구
+// Todo deleted
+router.get('/todo/api/deleted-todo', todoController.deletedTodos); // 투두 휴지통 페이지 및 조회 api
+router.patch('/todo/api/restore', todoController.restoreTodo); // 삭제된 투두 복구
 router.patch('/todo/api/restore/multiple', todoController.restoreTodos); // 삭제된 투두 다중 복구
 
 // Keyword

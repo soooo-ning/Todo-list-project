@@ -24,7 +24,7 @@ const loadUserData = async (req, res, next) => {
     let userId = null;
 
     // 디버깅용 로그 추가
-    console.log('Session data:', req.session);
+    // console.log('Session data:', req.session);
 
     // JWT 토큰에서 userId 추출
     // const token = localStorage.getItem('token');
@@ -43,8 +43,9 @@ const loadUserData = async (req, res, next) => {
       userId = req.session.user.id;
     }
 
+    // 인증되지 않은 사용자 처리
     if (!userId) {
-      return res.status(401).json({ message: '인증되지 않은 사용자입니다.' });
+      return res.status(404).render('404');
     }
 
     // 사용자 정보 가져오기
@@ -54,7 +55,7 @@ const loadUserData = async (req, res, next) => {
     });
 
     if (!user) {
-      return res.status(404).json({ message: '사용자를 찾을 수 없습니다.' });
+      return res.status(404).render('404');
     }
 
     // 사용자 키워드 정보 가져오기

@@ -1,124 +1,442 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('include/header', { title: 'Calendar' }) %>
-  <style>
-    .date {
-      position: relative;
-      cursor: pointer;
-    }
+  <%- include('include/header', { title: 'dashboard' })%>
 
-    .todo-marker {
-      position: absolute;
-      bottom: 5px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 6px;
-      height: 6px;
-      background-color: #ff6347;
-      border-radius: 50%;
-    }
-  </style>
   <body>
-    <!-- Navigation -->
+    <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
 
-    <!-- Main Content -->
-    <main class="container calendar_wrap">
+    <main class="container dashboard_wrap">
       <div class="content">
-        <!-- Calendar Section -->
-        <div class="calendar">
-          <div class="header">
-            <button id="prevMonth">&lt;</button>
-            <h2 id="monthYear">
-              <%= new Date(selectedDate).toLocaleString('default', { month:
-              'long', year: 'numeric' }) %>
-            </h2>
-            <button id="nextMonth">&gt;</button>
-          </div>
-          <div class="days">
-            <% const days = ['일', '월', '화', '수', '목', '금', '토']; %> <%
-            days.forEach(day => { %>
-            <div><%= day %></div>
-            <% }) %>
-          </div>
-          <div class="dates">
-            <% const firstDay = new Date(new Date(selectedDate).getFullYear(),
-            new Date(selectedDate).getMonth(), 1).getDay(); const lastDate = new
-            Date(new Date(selectedDate).getFullYear(), new
-            Date(selectedDate).getMonth() + 1, 0).getDate(); for (let i = 0; i <
-            firstDay; i++) { %>
-            <div></div>
-            <% } %> <% for (let i = 1; i <= lastDate; i++) { const
-            currentDateKey = `${new Date(selectedDate).getFullYear()}-${(new
-            Date(selectedDate).getMonth() + 1).toString().padStart(2,
-            '0')}-${i.toString().padStart(2, '0')}`; const todoForDate =
-            todos.filter(todo => todo.date === currentDateKey); %>
-            <div class="date" data-date="<%= currentDateKey %>">
-              <span><%= i %></span>
-              <% if (todoForDate.length > 0) { %>
-              <div class="todo-marker"></div>
-              <% } %>
-            </div>
-            <% } %>
-          </div>
-        </div>
+        <section class="container-fluid">
+          <header>
+            <!-- 로고 -->
+            <h1 class="main_title">Todo Checkk</h1>
+          </header>
 
-        <!-- Todo -->
-        <div class="todo-list">
-          <h2>스케줄:</h2>
-          <h3 id="selected-date"><%= selectedDate %></h3>
-          <ul id="todo-items">
-            <% todos.filter(todo => todo.date === selectedDate).forEach(todo =>
-            { %>
-            <li>
-              <a
-                href="/todo/api/search?query=<%= encodeURIComponent(todo.title) %>"
+          <!-- 진행 상태 -->
+          <div class="summary card custom-progress text-black">
+            <div class="card-body">
+              <p class="card-title">
+                이번주 투두 상황 <span id="allprogress"></span>
+              </p>
+              <div class="progress-container">
+                <div class="progress">
+                  <div
+                    id="allProgressBar"
+                    class="progress-bar progress-bar-custom progress-bar-animated"
+                    role="progressbar"
+                    style="width: 0%"
+                  >
+                    0%
+                  </div>
+                </div>
+              </div>
+
+              <!-- 오늘의 투두 현황 -->
+              <p class="card-title">
+                오늘의 투두 상황 <span id="allprogress"></span>
+              </p>
+              <div class="progress">
+                <div
+                  id="todayProgressBar"
+                  class="progress-bar progress-bar-custom progress-bar-animated"
+                  role="progressbar"
+                  style="width: 0%"
+                >
+                  0%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 오늘의 할 일 -->
+          <form action="today-todo">
+            <div class="card bg-light">
+              <div class="card-body">
+                <div class="flex_wrap sb">
+                  <h5 class="card-title mb0">오늘의 할일</h5>
+                  <a href="/todo/api/write"
+                    ><button
+                      type="button"
+                      class="btn btn-outline-danger btn-sm"
+                    >
+                      추가
+                    </button></a
+                  >
+                </div>
+                <ul id="todayTodos" class="flex_wrap mt20">
+                  <!-- 동적으로 추가될 부분 -->
+                </ul>
+              </div>
+            </div>
+          </form>
+
+          <!-- 이번주 할 일 -->
+          <div class="card-body">
+            <h5 class="card-title">이번주 할 일</h5>
+            <table class="table w100">
+              <thead>
+                <tr>
+                  <th>요일</th>
+                  <th>할 일</th>
+                </tr>
+              </thead>
+              <tbody id="weekTodos">
+                <!--데이터를 채울 부분 -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- 날씨 -->
+          <div class="card-body">
+            <h5 class="card-title">서울 날씨</h5>
+            <div class="weather-container">
+              <div id="temperature">기온: 로딩 중...</div>
+              <div id="weather">날씨: 로딩 중...</div>
+            </div>
+          </div>
+
+          <!-- 우선순위 -->
+          <div class="card-body">
+            <h5 class="card-title">우선순위</h5>
+            <div class="priority">
+              <p>우선순위</p>
+              <button
+                type="button"
+                class="high btn-outline-danger btn-sm"
+                onclick="fetchPriorityTodos('high')"
               >
-                <%= todo.title %>
-              </a>
-            </li>
-            <% }) %>
-          </ul>
-        </div>
+                상
+              </button>
+              <button
+                type="button"
+                class="medium btn-outline-danger btn-sm"
+                onclick="fetchPriorityTodos('medium')"
+              >
+                중
+              </button>
+              <button
+                type="button"
+                class="low btn-outline-danger btn-sm"
+                onclick="fetchPriorityTodos('low')"
+              >
+                하
+              </button>
+            </div>
+            <div id="todos"></div>
+          </div>
+        </section>
       </div>
     </main>
 
-    <!-- Popup Include -->
     <%- include('include/popup') %>
 
-    <!-- Axios Library -->
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-
-    <!-- Calendar Script -->
     <script>
-      const prevMonth = document.getElementById('prevMonth');
-      const nextMonth = document.getElementById('nextMonth');
-      const dates = document.querySelectorAll('.date');
+      document.addEventListener('DOMContentLoaded', () => {
+        // 진행 상황 업데이트 함수
+        const fetchProgress = () => {
+          // 이번주 투두 진행 상황
+          fetch('/todo/api/week')
+            .then((response) => {
+              if (!response.ok) throw new Error('불러오는 데 실패했습니다.');
+              return response.json();
+            })
+            .then((response) => {
+              const allTodos = response.data || [];
+              const completedTodos = allTodos.filter(
+                (todo) =>
+                  todo.todo_contents &&
+                  todo.todo_contents.every((content) => content.state),
+              ).length;
+              const totalTodos = allTodos.length;
 
-      // 이전 달로 이동
-      prevMonth.addEventListener('click', () => {
-        const currentDate = new Date('<%= selectedDate %>');
-        currentDate.setMonth(currentDate.getMonth() - 1);
-        window.location.href = `/todo/api/calendar?date=${
-          currentDate.toISOString().split('T')[0]
-        }`;
-      });
+              const progressPercentage =
+                totalTodos > 0
+                  ? Math.round((completedTodos / totalTodos) * 100)
+                  : 0;
 
-      // 다음 달로 이동
-      nextMonth.addEventListener('click', () => {
-        const currentDate = new Date('<%= selectedDate %>');
-        currentDate.setMonth(currentDate.getMonth() + 1);
-        window.location.href = `/todo/api/calendar?date=${
-          currentDate.toISOString().split('T')[0]
-        }`;
-      });
+              const allProgressBar = document.getElementById('allProgressBar');
+              const allProgressText = document.getElementById('allprogress');
 
-      // 날짜 선택 이벤트
-      dates.forEach((date) => {
-        date.addEventListener('click', () => {
-          const selectedDate = date.getAttribute('data-date');
-          window.location.href = `/todo/api/calendar?date=${selectedDate}`;
-        });
+              if (allProgressBar && allProgressText) {
+                allProgressBar.style.width = `${progressPercentage}%`;
+                allProgressBar.textContent = `${progressPercentage}%`;
+                allProgressText.textContent = `${progressPercentage}%`;
+              }
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              alert('불러오는 중 오류가 발생했습니다.');
+            });
+
+          // 오늘의 투두 상황
+          fetch('/todo/api/today')
+            .then((response) => {
+              if (!response.ok)
+                throw new Error(
+                  '오늘의 투두 데이터를 불러오는 데 실패했습니다.',
+                );
+              return response.json();
+            })
+            .then((response) => {
+              const todayTodos = response.data || [];
+              let completedCount = 0;
+              let totalCount = 0;
+
+              todayTodos.forEach((todo) => {
+                if (todo.todo_contents) {
+                  totalCount += todo.todo_contents.length;
+                  completedCount += todo.todo_contents.filter(
+                    (content) => content.state,
+                  ).length;
+                }
+              });
+
+              const todayProgressPercentage =
+                totalCount > 0
+                  ? Math.round((completedCount / totalCount) * 100)
+                  : 0;
+              const todayProgressBar =
+                document.getElementById('todayProgressBar');
+
+              if (todayProgressBar) {
+                todayProgressBar.style.width = `${todayProgressPercentage}%`;
+                todayProgressBar.textContent = `${todayProgressPercentage}%`;
+              }
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              alert('오늘의 투두 상황을 불러오는 중 오류가 발생했습니다.');
+            });
+        };
+
+        // 오늘의 할 일 가져오기
+        const fetchTodayTodos = () => {
+          fetch('/todo/api/today')
+            .then((response) => {
+              if (!response.ok)
+                throw new Error('오늘의 할 일을 불러오는 데 실패했습니다.');
+              return response.json();
+            })
+            .then((response) => {
+              console.log('Today todos:', response.data); // 데이터 확인용
+              const todayTodos = response.data || [];
+              const todoList = document.getElementById('todayTodos');
+
+              if (!todoList) return;
+
+              todoList.innerHTML = '';
+
+              if (todayTodos.length === 0) {
+                const emptyMessage = document.createElement('li');
+                emptyMessage.textContent = '오늘의 할 일이 없습니다.';
+                todoList.appendChild(emptyMessage);
+              } else {
+                todayTodos.forEach((todo) => {
+                  const listItem = document.createElement('li');
+                  // todo의 내용과 상태를 표시
+                  const todoContentsHtml = Array.isArray(todo.todo_contents)
+                    ? todo.todo_contents
+                        .map(
+                          (content) => `
+                  <div class="todo-content ${
+                    content.state ? 'completed' : 'incomplete'
+                  }">
+                    <span class="content-text">${content.content}</span>
+                    <span class="state-badge ${
+                      content.state ? 'completed' : 'incomplete'
+                    }">
+                      ${content.state ? '완료' : '미완료'}
+                    </span>
+                  </div>
+                `,
+                        )
+                        .join('')
+                    : '<div class="todo-content">내용 없음</div>';
+
+                  listItem.innerHTML = `
+              <div class="todo-item">
+                <h6 class="todo-title">${todo.title || '제목 없음'}</h6>
+                <div class="todo-contents">
+                  ${todoContentsHtml}
+                </div>
+              </div>
+            `;
+                  todoList.appendChild(listItem);
+                });
+              }
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              alert('오늘의 할 일을 불러오는 중 오류가 발생했습니다.');
+            });
+        };
+
+        // 이번주 할 일 가져오기
+        const fetchWeeklyTodos = () => {
+          const days = [
+            '일요일',
+            '월요일',
+            '화요일',
+            '수요일',
+            '목요일',
+            '금요일',
+            '토요일',
+          ];
+
+          fetch('/todo/api/week')
+            .then((response) => {
+              if (!response.ok)
+                throw new Error('이번주 할 일을 불러오는 데 실패했습니다.');
+              return response.json();
+            })
+            .then((response) => {
+              console.log('Weekly todos:', response.data);
+              const weeklyTodos = response.data || [];
+              const tableBody = document.getElementById('weekTodos');
+
+              if (!tableBody) return;
+
+              tableBody.innerHTML = '';
+
+              // 날짜별로 할 일 그룹화
+              const groupedTodos = weeklyTodos.reduce((acc, todo) => {
+                const dateKey = new Date(todo.date).toDateString();
+                if (!acc[dateKey]) {
+                  acc[dateKey] = {
+                    date: new Date(todo.date),
+                    todos: [],
+                  };
+                }
+                acc[dateKey].todos.push(todo.title);
+                return acc;
+              }, {});
+
+              // 그룹화된 데이터를 날짜순으로 정렬하여 표시
+              Object.values(groupedTodos)
+                .sort((a, b) => a.date - b.date)
+                .forEach(({ date, todos }) => {
+                  const row = document.createElement('tr');
+
+                  const dayCell = document.createElement('td');
+                  dayCell.style.verticalAlign = 'top';
+                  dayCell.textContent = `${
+                    date.getMonth() + 1
+                  }월 ${date.getDate()}일 (${days[date.getDay()]})`;
+                  row.appendChild(dayCell);
+
+                  const taskCell = document.createElement('td');
+                  taskCell.innerHTML = todos
+                    .map(
+                      (todo) =>
+                        `<div class="todo-item">• ${
+                          todo || '할 일 없음'
+                        }</div>`,
+                    )
+                    .join('');
+                  row.appendChild(taskCell);
+
+                  tableBody.appendChild(row);
+                });
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              alert('이번주 할 일을 불러오는 중 오류가 발생했습니다.');
+            });
+        };
+
+        // 우선순위별 할 일 가져오기
+        window.fetchPriorityTodos = (priority) => {
+          const todosContainer = document.getElementById('todos');
+          if (!todosContainer) return;
+
+          // 모든 우선순위 버튼에서 active 클래스 제거
+          document.querySelectorAll('.priority button').forEach((btn) => {
+            btn.classList.remove('active');
+          });
+
+          // 클릭된 버튼에 active 클래스 추가
+          const clickedBtn = document.querySelector(`.priority .${priority}`);
+          if (clickedBtn) {
+            clickedBtn.classList.add('active');
+          }
+
+          fetch(`/todo/api/priority/${priority}`)
+            .then((response) => {
+              if (!response.ok)
+                throw new Error('우선순위별 할 일을 불러오는 데 실패했습니다.');
+              return response.json();
+            })
+            .then((response) => {
+              const todos = response.data || [];
+              todosContainer.innerHTML = '';
+
+              if (todos.length === 0) {
+                todosContainer.innerHTML = `<p>${priority} 우선순위에 해당하는 할 일이 없습니다.</p>`;
+                return;
+              }
+
+              const list = document.createElement('ul');
+              list.className = 'priority-todos';
+
+              todos.forEach((todo) => {
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+            <strong>제목:</strong> ${todo.title || '제목 없음'}<br>
+            <strong>날짜:</strong> ${new Date(
+              todo.date,
+            ).toLocaleDateString()}<br>
+            <strong>내용:</strong> ${
+              todo.todo_contents && todo.todo_contents.length > 0
+                ? todo.todo_contents
+                    .map((content) => content.content)
+                    .join(', ')
+                : '내용 없음'
+            }
+          `;
+                list.appendChild(listItem);
+              });
+
+              todosContainer.appendChild(list);
+            })
+            .catch((error) => {
+              console.error('오류:', error);
+              todosContainer.innerHTML =
+                '<p>우선순위별 할 일을 불러오는 중 오류가 발생했습니다.</p>';
+            });
+        };
+
+        // 날씨 API
+        const fetchWeather = async () => {
+          const apiKey = 'da450c832635d5d57538d8acdd43e25f';
+          const weatherContainer = document.querySelector('.weather-container');
+
+          try {
+            const response = await fetch(
+              `https://api.openweathermap.org/data/2.5/weather?q=Seoul&units=metric&lang=kr&appid=${apiKey}`,
+            );
+            if (!response.ok)
+              throw new Error('날씨 정보를 불러오지 못했습니다.');
+
+            const data = await response.json();
+            weatherContainer.innerHTML = `
+        <h2>${data.name}</h2>
+        <p>온도: ${data.main.temp}°C</p>
+        <p>상태: ${data.weather[0].description}</p>
+        <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" />
+      `;
+          } catch (error) {
+            weatherContainer.innerHTML = `<p>오류: ${error.message}</p>`;
+          }
+        };
+
+        // 초기 데이터 로드
+        fetchProgress();
+        fetchTodayTodos();
+        fetchWeeklyTodos();
+        fetchPriorityTodos('high'); // 페이지 로드 시 '상' 우선순위 데이터 로드
+        fetchWeather();
       });
     </script>
   </body>

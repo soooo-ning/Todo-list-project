@@ -39,7 +39,7 @@
             </div>
 
             <% if (todo.todo_contents && todo.todo_contents.length > 0) { %>
-            <ul class="todo-list">
+            <ul class="todo-list-all">
               <% todo.todo_contents.forEach(function(content) { %>
               <li class="<%= content.state ? 'completed' : '' %>">
                 <%= content.content %>

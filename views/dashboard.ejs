@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <%- include('include/header', { title: 'dashboard' })%>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/weather-icons/2.0.12/css/weather-icons.min.css"
+  />
 
   <body>
     <!-- 네비게이션 부분 -->
@@ -94,6 +98,7 @@
             <div class="weather-container">
               <div id="temperature">기온: 로딩 중...</div>
               <div id="weather">날씨: 로딩 중...</div>
+              <i class="wi wi-day-sunny weather-icon"></i>
             </div>
           </div>
 
@@ -408,9 +413,28 @@
         };
 
         // 날씨 API
+        const weatherIconMap = {
+          Clear: 'wi-day-sunny',
+          Clouds: 'wi-cloudy',
+          Rain: 'wi-rain',
+          Drizzle: 'wi-sprinkle',
+          Thunderstorm: 'wi-thunderstorm',
+          Snow: 'wi-snow',
+          Mist: 'wi-fog',
+          Smoke: 'wi-smoke',
+          Haze: 'wi-day-haze',
+          Dust: 'wi-dust',
+          Fog: 'wi-fog',
+          Sand: 'wi-sandstorm',
+          Ash: 'wi-volcano',
+          Squall: 'wi-strong-wind',
+          Tornado: 'wi-tornado',
+        };
+
         const fetchWeather = async () => {
           const apiKey = 'da450c832635d5d57538d8acdd43e25f';
           const weatherContainer = document.querySelector('.weather-container');
+          const weatherIcon = document.querySelector('.weather-icon');
 
           try {
             const response = await fetch(
@@ -420,14 +444,17 @@
               throw new Error('날씨 정보를 불러오지 못했습니다.');
 
             const data = await response.json();
+            const weatherMain = data.weather[0].main;
+            const iconClass = weatherIconMap[weatherMain] || 'wi-na';
+
             weatherContainer.innerHTML = `
-        <h2>${data.name}</h2>
-        <p>온도: ${data.main.temp}°C</p>
-        <p>상태: ${data.weather[0].description}</p>
-        <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" />
-      `;
+          <h2>${data.name}</h2>
+          <p>온도: ${data.main.temp}°C</p>
+          <p>상태: ${data.weather[0].description}</p>
+          <i class="wi ${iconClass} weather-icon"></i>
+        `;
           } catch (error) {
-            weatherContainer.innerHTML = `<p>오류: ${error.message}</p>`;
+            weatherContainer.innerHTML = `<p class="error">오류: ${error.message}</p>`;
           }
         };
 
@@ -436,7 +463,8 @@
         fetchTodayTodos();
         fetchWeeklyTodos();
         fetchPriorityTodos('high'); // 페이지 로드 시 '상' 우선순위 데이터 로드
-        fetchWeather();
+        // fetchWeather();
+        window.onload = fetchWeather;
       });
     </script>
   </body>

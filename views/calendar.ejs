@@ -89,7 +89,17 @@
           );
 
           if (todosForDate.length > 0) {
-            dateDiv.style.backgroundColor = '#e7c6ff';
+            if (
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            ) {
+              // 다크 모드
+              dateDiv.style.backgroundColor = '#ffffff';
+              dateDiv.style.color = '#000000';
+            } else {
+              // 라이트 모드
+              dateDiv.style.backgroundColor = '#e7c6ff5b';
+            }
           }
 
           datesContainer.appendChild(dateDiv);

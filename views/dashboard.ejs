@@ -140,139 +140,156 @@
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
 
     <script>
+      window.handleTodoClick = async function (todoId) {
+        if (!todoId) {
+          console.error('Todo ID is required');
+          return;
+        }
+
+        console.log('Todo ID:', todoId);
+
+        try {
+          const response = await axios.get(`/todo/api/get/${todoId}`);
+          console.log('전체 응답:', response.data);
+
+          if (!response.data || !response.data.data) {
+            throw new Error('Invalid response data');
+          }
+
+          const todo = response.data.data;
+          const detailPopup = document.querySelector('.detail-popup');
+          if (!detailPopup) {
+            console.error('Detail popup element not found');
+            return;
+          }
+
+          const detailForm = document.forms['form-todo-detail'];
+
+          // 기본 데이터 설정
+          detailForm.querySelector('input[name="todoTitle"]').value =
+            todo.title || '';
+          detailForm.querySelector('input[name="todoDate"]').value =
+            todo.date || '';
+
+          // 우선순위 설정
+          const priorityInput = detailForm.querySelector(
+            `input[name="priority"][value="${todo.priority}"]`,
+          );
+          if (priorityInput) {
+            priorityInput.checked = true;
+          }
+
+          // 키워드 설정
+          const keywordSelect = detailForm.querySelector(
+            'select[name="todoKey"]',
+          );
+          if (keywordSelect && todo.keyword_id) {
+            keywordSelect.value = todo.keyword_id;
+          }
+
+          // Todo 내용 설정
+          const todoContentList = detailForm.querySelector('.todo_content');
+          todoContentList.innerHTML = '';
+
+          if (todo.todo_contents && todo.todo_contents.length > 0) {
+            todo.todo_contents.forEach((content) => {
+              const li = document.createElement('li');
+              li.dataset.contentId = content.id;
+              li.innerHTML = `
+                      <input type="checkbox" ${
+                        content.state ? 'checked' : ''
+                      } disabled>
+                      <input type="text" name="todoCon" value="${
+                        content.content || ''
+                      }" disabled>
+                    `;
+              todoContentList.appendChild(li);
+            });
+          } else {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                    <input type="checkbox" disabled>
+                    <input type="text" name="todoCon" value="내용 없음" disabled>
+                  `;
+            todoContentList.appendChild(li);
+          }
+
+          // 팝업 표시
+          detailPopup.classList.add('on');
+          document.querySelector('body').classList.add('pop_open');
+        } catch (error) {
+          console.error('Error fetching todo:', error);
+          alert('Todo를 불러오는 중 오류가 발생했습니다.');
+        }
+      };
+
       document.addEventListener('DOMContentLoaded', () => {
-        // 진행 상황 업데이트 함수
-        const fetchProgress = () => {
-          // 이번주 투두 진행 상황
-          fetch('/todo/api/week')
-            .then((response) => {
-              if (!response.ok) throw new Error('불러오는 데 실패했습니다.');
-              return response.json();
-            })
-            .then((response) => {
-              const allTodos = response.data || [];
-              const completedTodos = allTodos.filter(
-                (todo) =>
-                  todo.todo_contents &&
-                  todo.todo_contents.every((content) => content.state),
-              ).length;
-              const totalTodos = allTodos.length;
-
-              const progressPercentage =
-                totalTodos > 0
-                  ? Math.round((completedTodos / totalTodos) * 100)
-                  : 0;
-
-              const allProgressBar = document.getElementById('allProgressBar');
-              const allProgressText = document.getElementById('allprogress');
-
-              if (allProgressBar && allProgressText) {
-                allProgressBar.style.width = `${progressPercentage}%`;
-                allProgressBar.textContent = `${progressPercentage}%`;
-                allProgressText.textContent = `${progressPercentage}%`;
-              }
-            })
-            .catch((error) => {
-              console.error('오류:', error);
-              alert('불러오는 중 오류가 발생했습니다.');
-            });
-
-          // 오늘의 투두 상황
-          fetch('/todo/api/today')
-            .then((response) => {
-              if (!response.ok)
-                throw new Error(
-                  '오늘의 투두 데이터를 불러오는 데 실패했습니다.',
-                );
-              return response.json();
-            })
-            .then((response) => {
-              const todayTodos = response.data || [];
-              let completedCount = 0;
-              let totalCount = 0;
-
-              todayTodos.forEach((todo) => {
-                if (todo.todo_contents) {
-                  totalCount += todo.todo_contents.length;
-                  completedCount += todo.todo_contents.filter(
-                    (content) => content.state,
-                  ).length;
-                }
-              });
-
-              const todayProgressPercentage =
-                totalCount > 0
-                  ? Math.round((completedCount / totalCount) * 100)
-                  : 0;
-              const todayProgressBar =
-                document.getElementById('todayProgressBar');
-
-              if (todayProgressBar) {
-                todayProgressBar.style.width = `${todayProgressPercentage}%`;
-                todayProgressBar.textContent = `${todayProgressPercentage}%`;
-              }
-            })
-            .catch((error) => {
-              console.error('오류:', error);
-              alert('오늘의 투두 상황을 불러오는 중 오류가 발생했습니다.');
-            });
-        };
-
-        // 오늘의 할 일 가져오기
         const fetchTodayTodos = () => {
           fetch('/todo/api/today')
+            .then((response) => response.json())
             .then((response) => {
-              if (!response.ok)
-                throw new Error('오늘의 할 일을 불러오는 데 실패했습니다.');
-              return response.json();
-            })
-            .then((response) => {
-              console.log('Today todos:', response.data); // 데이터 확인용
               const todayTodos = response.data || [];
               const todoList = document.getElementById('todayTodos');
 
-              if (!todoList) return;
+              if (!todoList) {
+                console.error('todoList element not found');
+                return;
+              }
 
               todoList.innerHTML = '';
 
               if (todayTodos.length === 0) {
-                const emptyMessage = document.createElement('li');
-                emptyMessage.textContent = '오늘의 할 일이 없습니다.';
-                todoList.appendChild(emptyMessage);
-              } else {
-                todayTodos.forEach((todo) => {
-                  const listItem = document.createElement('li');
-                  // todo의 내용과 상태를 표시
-                  const todoContentsHtml = Array.isArray(todo.todo_contents)
-                    ? todo.todo_contents
-                        .map(
-                          (content) => `
-                  <div class="todo-content ${
-                    content.state ? 'completed' : 'incomplete'
-                  }">
-                    <span class="content-text">${content.content}</span>
-                    <span class="state-badge ${
-                      content.state ? 'completed' : 'incomplete'
-                    }">
-                      ${content.state ? '완료' : '미완료'}
-                    </span>
-                  </div>
-                `,
-                        )
-                        .join('')
-                    : '<div class="todo-content">내용 없음</div>';
-
-                  listItem.innerHTML = `
-              <div class="todo-item">
-                <h6 class="todo-title">${todo.title || '제목 없음'}</h6>
-                <div class="todo-contents">
-                  ${todoContentsHtml}
-                </div>
-              </div>
-            `;
-                  todoList.appendChild(listItem);
-                });
+                todoList.innerHTML = '<li>오늘의 할 일이 없습니다.</li>';
+                return;
               }
+
+              todayTodos.forEach((todo) => {
+                const todoContentsHtml = todo.todo_contents
+                  ? todo.todo_contents
+                      .map(
+                        (content) => `
+                              <div class="todo-content ${
+                                content.state ? 'completed' : 'incomplete'
+                              }">
+                                <span class="content-text">${
+                                  content.content
+                                }</span>
+                                <span class="state-badge ${
+                                  content.state ? 'completed' : 'incomplete'
+                                }">
+                                  ${content.state ? '완료' : '미완료'}
+                                </span>
+                              </div>
+                            `,
+                      )
+                      .join('')
+                  : '<div class="todo-content">내용 없음</div>';
+
+                const listItem = document.createElement('li');
+                listItem.innerHTML = `
+                        <div class="todo-item" data-todo-id="${
+                          todo.id
+                        }" style="cursor: pointer;">
+                          <h6 class="todo-title">${
+                            todo.title || '제목 없음'
+                          }</h6>
+                          <div class="todo-contents">
+                            ${todoContentsHtml}
+                          </div>
+                        </div>
+                      `;
+
+                listItem
+                  .querySelector('.todo-item')
+                  .addEventListener('click', (e) => {
+                    const todoId = e.currentTarget.dataset.todoId;
+                    if (todoId) {
+                      handleTodoClick(todoId);
+                    }
+                  });
+
+                todoList.appendChild(listItem);
+              });
             })
             .catch((error) => {
               console.error('오류:', error);
@@ -280,7 +297,7 @@
             });
         };
 
-        // 이번주 할 일 가져오기
+        // 이번주 할 일
         const fetchWeeklyTodos = () => {
           const days = [
             '일요일',
@@ -299,7 +316,7 @@
               return response.json();
             })
             .then((response) => {
-              console.log('Weekly todos:', response.data);
+              console.log('Weekly todos response:', response.data); // 원본 데이터 확인
               const weeklyTodos = response.data || [];
               const tableBody = document.getElementById('weekTodos');
 
@@ -307,8 +324,9 @@
 
               tableBody.innerHTML = '';
 
-              // 날짜별로 할 일 그룹화
+              // 날짜별로 할 일 그룹화 - todo 객체 전체를 보존
               const groupedTodos = weeklyTodos.reduce((acc, todo) => {
+                console.log('Processing todo:', todo); // 각 todo 객체 확인
                 const dateKey = new Date(todo.date).toDateString();
                 if (!acc[dateKey]) {
                   acc[dateKey] = {
@@ -316,7 +334,13 @@
                     todos: [],
                   };
                 }
-                acc[dateKey].todos.push(todo.title);
+                // todo 객체 전체를 보존하여 push
+                acc[dateKey].todos.push({
+                  id: todo.id, // id 명시적 포함
+                  title: todo.title,
+                  date: todo.date,
+                  // 기타 필요한 필드들도 포함
+                });
                 return acc;
               }, {});
 
@@ -335,17 +359,33 @@
 
                   const taskCell = document.createElement('td');
                   taskCell.innerHTML = todos
-                    .map(
-                      (todo) =>
-                        `<div class="todo-item">• ${
-                          todo || '할 일 없음'
-                        }</div>`,
-                    )
+                    .map((todo) => {
+                      console.log('Creating todo item:', todo); // todo 객체 확인
+                      return `<div class="todo-item" data-todo-id="${
+                        todo.id
+                      }" data-todo-title="${todo.title}">${
+                        todo.title || '할 일 없음'
+                      }</div>`;
+                    })
                     .join('');
                   row.appendChild(taskCell);
 
                   tableBody.appendChild(row);
                 });
+
+              // 각 투두 항목에 클릭 이벤트 추가
+              tableBody.querySelectorAll('.todo-item').forEach((item) => {
+                item.addEventListener('click', () => {
+                  const todoId = item.dataset.todoId;
+                  console.log('클릭된 todo 항목:', item); // 클릭된 요소 확인
+                  console.log('클릭된 todoId:', todoId); // todoId 확인
+                  if (todoId && todoId !== 'undefined') {
+                    handleTodoClick(todoId);
+                  } else {
+                    console.error('Todo ID is missing or invalid:', item);
+                  }
+                });
+              });
             })
             .catch((error) => {
               console.error('오류:', error);
@@ -357,17 +397,6 @@
         window.fetchPriorityTodos = (priority) => {
           const todosContainer = document.getElementById('todos');
           if (!todosContainer) return;
-
-          // 모든 우선순위 버튼에서 active 클래스 제거
-          document.querySelectorAll('.priority button').forEach((btn) => {
-            btn.classList.remove('active');
-          });
-
-          // 클릭된 버튼에 active 클래스 추가
-          const clickedBtn = document.querySelector(`.priority .${priority}`);
-          if (clickedBtn) {
-            clickedBtn.classList.add('active');
-          }
 
           fetch(`/todo/api/priority/${priority}`)
             .then((response) => {
@@ -390,18 +419,25 @@
               todos.forEach((todo) => {
                 const listItem = document.createElement('li');
                 listItem.innerHTML = `
-            <strong>제목:</strong> ${todo.title || '제목 없음'}<br>
-            <strong>날짜:</strong> ${new Date(
-              todo.date,
-            ).toLocaleDateString()}<br>
-            <strong>내용:</strong> ${
-              todo.todo_contents && todo.todo_contents.length > 0
-                ? todo.todo_contents
-                    .map((content) => content.content)
-                    .join(', ')
-                : '내용 없음'
-            }
-          `;
+                  <div class="todo-item" data-todo-id="${todo.id}">
+                    <strong>제목:</strong> ${todo.title || '제목 없음'}<br>
+                    <strong>날짜:</strong> ${new Date(
+                      todo.date,
+                    ).toLocaleDateString()}<br>
+                    <strong>내용:</strong> ${
+                      todo.todo_contents && todo.todo_contents.length > 0
+                        ? todo.todo_contents
+                            .map((content) => content.content)
+                            .join(', ')
+                        : '내용 없음'
+                    }
+                  </div>
+                `;
+                listItem
+                  .querySelector('.todo-item')
+                  .addEventListener('click', () => {
+                    handleTodoClick(todo.id); // 투두 클릭 시 상세 조회
+                  });
                 list.appendChild(listItem);
               });
 
@@ -415,28 +451,9 @@
         };
 
         // 날씨 API
-        const weatherIconMap = {
-          Clear: 'wi-day-sunny',
-          Clouds: 'wi-cloudy',
-          Rain: 'wi-rain',
-          Drizzle: 'wi-sprinkle',
-          Thunderstorm: 'wi-thunderstorm',
-          Snow: 'wi-snow',
-          Mist: 'wi-fog',
-          Smoke: 'wi-smoke',
-          Haze: 'wi-day-haze',
-          Dust: 'wi-dust',
-          Fog: 'wi-fog',
-          Sand: 'wi-sandstorm',
-          Ash: 'wi-volcano',
-          Squall: 'wi-strong-wind',
-          Tornado: 'wi-tornado',
-        };
-
         const fetchWeather = async () => {
           const apiKey = 'da450c832635d5d57538d8acdd43e25f';
           const weatherContainer = document.querySelector('.weather-container');
-          const weatherIcon = document.querySelector('.weather-icon');
 
           try {
             const response = await fetch(
@@ -446,28 +463,22 @@
               throw new Error('날씨 정보를 불러오지 못했습니다.');
 
             const data = await response.json();
-            const weatherMain = data.weather[0].main;
-            const iconClass = weatherIconMap[weatherMain] || 'wi-na';
-
             weatherContainer.innerHTML = `
-
-          <h2>${data.name}</h2>
-          <p>온도: ${data.main.temp}°C</p>
-          <p>상태: ${data.weather[0].description}</p>
-          <i class="wi ${iconClass} weather-icon"></i>
-        `;
+              <h2>${data.name}</h2>
+              <p>온도: ${data.main.temp}°C</p>
+              <p>상태: ${data.weather[0].description}</p>
+              <img src="https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png" />
+            `;
           } catch (error) {
-            weatherContainer.innerHTML = `<p class="error">오류: ${error.message}</p>`;
+            weatherContainer.innerHTML = `<p>오류: ${error.message}</p>`;
           }
         };
 
         // 초기 데이터 로드
-        fetchProgress();
         fetchTodayTodos();
         fetchWeeklyTodos();
         fetchPriorityTodos('high'); // 페이지 로드 시 '상' 우선순위 데이터 로드
-        // fetchWeather();
-        window.onload = fetchWeather;
+        fetchWeather();
       });
     </script>
   </body>

@@ -18,19 +18,19 @@ exports.writeTodo = async (req, res) => {
       date,
     });
 
-    if (content) {
-      const contentArray = Array.isArray(content) ? content : [content];
-      await TodoContent.bulkCreate(
-        contentArray.map((c) => ({
-          todo_id: todo.id,
-          content: c,
-          state: c.state === 'true',
-        })),
-      );
+    if (content && content.length > 0) {
+      const contentData = content.map((item) => ({
+        todo_id: todo.id,
+        content: typeof item === 'string' ? item : item.content,
+        state: typeof item === 'string' ? false : !!item.state,
+      }));
+
+      await TodoContent.bulkCreate(contentData);
     }
 
     success(res, todo, 'Todo 생성 완료');
   } catch (err) {
+    console.error('Todo 생성 에러:', err);
     serverError(res, err);
   }
 };
@@ -204,9 +204,9 @@ exports.weekTodos = async (req, res) => {
           [Op.between]: [startOfWeek, endOfWeek],
         },
       },
-      attributes: ['title', 'date'],
+      attributes: ['id', 'title', 'date'], // id 필드 추가
       order: [['date', 'ASC']],
-      raw: false, // raw: true 제거
+      raw: false,
     });
 
     const plainTodos = todos.map((todo) => todo.get({ plain: true }));

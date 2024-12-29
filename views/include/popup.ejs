@@ -44,14 +44,14 @@
 
         <label class="todo_key">
           <p>키워드</p>
-          <select name="todoKey" id="" required>
+          <select name="todoKey" id="">
             <% if (keywords && keywords.length > 0) { %> <% for (let i = 0; i <
             keywords.length; i++) { %>
             <option value="<%= keywords[i].id %>">
               <%= keywords[i].keyword %>
             </option>
             <% } %> <% } else { %>
-            <option value="">No Keywords Available</option>
+            <option value="">키워드 선택 안함</option>
             <% } %>
           </select>
         </label>
@@ -294,7 +294,8 @@
       .querySelector("input[name='todoDate']")
       .value.trim();
     const todoPriority = document.querySelector("input[name='priority']").value;
-    const todoKey = document.querySelector("select[name='todoKey']").value;
+    const todoKey =
+      document.querySelector("select[name='todoKey']").value || null;
     const todoContents = [
       ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
     ].map((input) => input.value.trim());
@@ -324,6 +325,38 @@
       });
   });
 
+  // 모든 입력 필드에서 엔터 키로 이동 처리
+  // 각 인풋 필드를 배열로 저장
+  // const inputs = document.querySelectorAll('input');
+
+  // // 'Enter' 키가 눌렸을 때 포커스를 다음 인풋으로 이동시키는 함수
+  // inputs.forEach((input, index) => {
+  //   input.addEventListener('keydown', function (event) {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault(); // Enter 키의 기본 동작(폼 제출)을 막음
+  //       if (inputs[index + 1]) {
+  //         inputs[index + 1].focus(); // 다음 인풋으로 포커스를 이동
+  //       }
+  //     }
+  //   });
+  // });
+  // const allInputs = document.querySelectorAll(
+  //   "input[name='todoTitle'], input[name='todoDate'], input[name='priority'], .todo_content input[name='todoCon']",
+  // );
+  // allInputs.forEach((input, index) => {
+  //   input.addEventListener('keydown', (event) => {
+  //     if (event.key === 'Enter') {
+  //       event.preventDefault(); // 기본 엔터 키 동작 방지
+  //       const nextInput = allInputs[index + 1];
+  //       if (nextInput) {
+  //         nextInput.focus(); // 다음 필드로 포커스 이동
+  //       } else {
+  //         todoSubmitBtn.focus(); // 마지막 필드에서는 등록 버튼에 포커스
+  //       }
+  //     }
+  //   });
+  // });
+
   // 수정 버튼 클릭 시 처리
   todoEditBtn.addEventListener('click', (event) => {
     event.preventDefault();
@@ -335,11 +368,11 @@
       .querySelector("input[name='todoDate']")
       .value.trim();
     const todoPriority = document.querySelector("input[name='priority']").value;
-    const todoKey = document.querySelector("select[name='todoKey']").value;
-
-    const todoContents = document
-      .querySelector(".todo_content input[name='todoCon']")
-      .value.trim();
+    const todoKey =
+      document.querySelector("select[name='todoKey']").value || null;
+    const todoContents = [
+      ...todoForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+    ].map((input) => input.value.trim());
 
     if (!todoTitle || !todoDate || !todoPriority) {
       alert('모든 필드를 채워주세요.');

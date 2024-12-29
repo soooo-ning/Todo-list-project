@@ -22,9 +22,9 @@
             id="detail-datetime-input"
             name="todoDate"
             placeholder="날짜를 입력하세요"
-            readonly
             disabled
           />
+          <div class="calendar_pop" style="display: none"></div>
         </label>
 
         <div class="priority">
@@ -59,12 +59,9 @@
       </div>
 
       <ul class="todo_content"></ul>
-
-      <div class="todo-content-controls">
-        <button type="button" id="addContentBtn" style="display: none">
-          추가
-        </button>
-      </div>
+      <button type="button" id="addContentBtn" style="display: none">
+        추가
+      </button>
 
       <div class="button-group">
         <button type="button" id="todoEdit">수정</button>
@@ -79,21 +76,31 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
+    // 전역 변수 선언
     let currentTodoId = null;
+    let isEditMode = false;
     const detailPopup = document.querySelector('.detail-popup');
     const detailForm = document.forms['form-todo-detail'];
     const todoEditBtn = document.getElementById('todoEdit');
     const todoSubmitBtn = document.getElementById('todoSubmit');
     const todoDeleteBtn = document.getElementById('todoDelete');
     const addContentBtn = document.getElementById('addContentBtn');
+    const dateInput = document.getElementById('detail-datetime-input');
+    const calendarPopup = detailForm.querySelector('.calendar_pop');
 
     // Todo 상세 정보 로드 함수
     async function loadTodoDetail(todoId) {
       try {
         showLoading();
         const response = await axios.get(`/todo/api/detail/${todoId}`);
+        console.log('Todo detail response:', response.data);
+
+        // ID 설정
         currentTodoId = todoId;
-        populateForm(response.data);
+        window.currentTodoId = todoId;
+        console.log('currentTodoId set to:', currentTodoId);
+
+        populateForm(response.data.data);
       } catch (error) {
         handleError('Todo 정보를 불러오는데 실패했습니다.', error);
       } finally {
@@ -101,9 +108,10 @@
       }
     }
 
-    // 폼에 데이터 채우기
+    // 폼에 데이터 채우기 함수
     function populateForm(data) {
       if (!detailForm) return;
+      console.log('Populating form with data:', data);
 
       const titleInput = detailForm.querySelector('[name="todoTitle"]');
       const dateInput = detailForm.querySelector('[name="todoDate"]');
@@ -113,7 +121,10 @@
       const keywordSelect = detailForm.querySelector('[name="todoKey"]');
 
       if (titleInput) titleInput.value = data.title || '';
-      if (dateInput) dateInput.value = data.date || '';
+      if (dateInput)
+        dateInput.value = data.date
+          ? new Date(data.date).toISOString().split('T')[0]
+          : '';
       if (priorityInput) priorityInput.checked = true;
       if (keywordSelect) keywordSelect.value = data.keyword_id || '';
 
@@ -127,6 +138,7 @@
         } else {
           addContentItem();
         }
+        updateDeleteButtons();
       }
     }
 
@@ -141,10 +153,11 @@
       <label>
         <input type="checkbox" name="todoChk" ${
           content.state ? 'checked' : ''
-        } disabled>
+        } ${isEditMode ? '' : 'disabled'}>
         <input type="text" name="todoCon" value="${escapeHtml(
           content.content || '',
-        )}" placeholder="할일을 입력하세요" disabled>
+        )}"
+               placeholder="할일을 입력하세요" ${isEditMode ? '' : 'disabled'}>
         <input type="button" class="delete-content" value="delete" style="display: none">
       </label>
     `;
@@ -161,10 +174,36 @@
           }
         });
       }
+
+      updateDeleteButtons();
     }
 
-    // 팝업 열기
+    // 삭제 버튼 상태 업데이트 함수
+    function updateDeleteButtons() {
+      console.log('updateDeleteButtons called - isEditMode:', isEditMode);
+      const todoContentList = detailForm.querySelector('.todo_content');
+      if (!todoContentList) return;
+
+      const listItems = todoContentList.querySelectorAll('li');
+      console.log('Number of items:', listItems.length);
+
+      const deleteButtons = todoContentList.querySelectorAll('.delete-content');
+      const shouldShow = isEditMode && listItems.length > 1;
+
+      deleteButtons.forEach((btn) => {
+        btn.style.display = shouldShow ? 'inline-block' : 'none';
+      });
+    }
+
+    // 팝업 열기 함수
     window.openTodoDetail = function (todoId) {
+      console.log('Opening todo detail with ID:', todoId);
+
+      currentTodoId = todoId;
+      window.currentTodoId = todoId;
+
+      console.log('currentTodoId after set:', currentTodoId);
+
       loadTodoDetail(todoId);
       if (detailPopup) {
         detailPopup.classList.add('on');
@@ -172,44 +211,44 @@
       }
     };
 
-    // 팝업 닫기 버튼 이벤트
+    // 팝업 닫기 이벤트
     const detailPopClose = detailPopup?.querySelector('.pop_close');
     if (detailPopClose) {
       detailPopClose.addEventListener('click', () => {
         detailPopup.classList.remove('on');
         document.querySelector('body')?.classList.remove('pop_open');
         resetDetailForm();
+        currentTodoId = null;
+        window.currentTodoId = null;
       });
     }
 
-    // 폼 초기화
+    // 폼 초기화 함수
     function resetDetailForm() {
       if (!detailForm) return;
 
+      isEditMode = false;
       detailForm.reset();
-      currentTodoId = null;
+
       const todoContentList = detailForm.querySelector('.todo_content');
       if (todoContentList) todoContentList.innerHTML = '';
 
       enableFormEditing(false);
+      updateDeleteButtons();
 
       if (todoEditBtn) todoEditBtn.style.display = 'inline-block';
       if (todoSubmitBtn) todoSubmitBtn.style.display = 'none';
       if (addContentBtn) addContentBtn.style.display = 'none';
-
-      hideDeleteButtons();
     }
 
-    // 폼 수정 가능/불가능 토글
+    // 수정 가능/불가능 토글 함수
     function enableFormEditing(enabled) {
       if (!detailForm) return;
 
       const formElements = detailForm.elements;
-      if (formElements) {
-        for (let element of formElements) {
-          if (element.type !== 'button' && element.type !== 'submit') {
-            element.disabled = !enabled;
-          }
+      for (let element of formElements) {
+        if (element.type !== 'button' && element.type !== 'submit') {
+          element.disabled = !enabled;
         }
       }
 
@@ -217,32 +256,23 @@
       if (todoContentList) {
         const contentItems = todoContentList.querySelectorAll('li');
         contentItems.forEach((item) => {
-          if (!item) return;
-
-          const checkbox = item.querySelector('input[type="checkbox"]');
-          const textInput = item.querySelector('input[name="todoCon"]');
-          const deleteButton = item.querySelector('.delete-content');
-
-          if (checkbox) checkbox.disabled = !enabled;
-          if (textInput) textInput.disabled = !enabled;
-          if (deleteButton)
-            deleteButton.style.display = enabled ? 'inline-block' : 'none';
+          const inputs = item.querySelectorAll(
+            'input[type="checkbox"], input[name="todoCon"]',
+          );
+          inputs.forEach((input) => {
+            input.disabled = !enabled;
+          });
         });
       }
 
-      if (addContentBtn)
+      if (addContentBtn) {
         addContentBtn.style.display = enabled ? 'inline-block' : 'none';
+      }
+
+      updateDeleteButtons();
     }
 
-    // 삭제 버튼 숨기기
-    function hideDeleteButtons() {
-      const deleteButtons = detailForm?.querySelectorAll('.delete-content');
-      deleteButtons?.forEach((btn) => {
-        btn.style.display = 'none';
-      });
-    }
-
-    // XSS 방지를 위한 HTML 이스케이프
+    // XSS 방지 함수
     function escapeHtml(unsafe) {
       return unsafe
         .replace(/&/g, '&amp;')
@@ -255,7 +285,6 @@
     // 로딩 표시 함수
     function showLoading() {
       if (!detailPopup) return;
-
       const loadingDiv = document.createElement('div');
       loadingDiv.className = 'loading';
       loadingDiv.innerHTML = '로딩 중...';
@@ -276,28 +305,48 @@
     // 수정 버튼 클릭 이벤트
     if (todoEditBtn) {
       todoEditBtn.addEventListener('click', () => {
-        enableFormEditing(true);
-
+        isEditMode = true;
         if (todoEditBtn) todoEditBtn.style.display = 'none';
         if (todoSubmitBtn) todoSubmitBtn.style.display = 'inline-block';
+
+        enableFormEditing(true);
+        updateDeleteButtons();
       });
     }
 
     // 삭제 버튼 클릭 이벤트
     if (todoDeleteBtn) {
-      todoDeleteBtn.addEventListener('click', () => {
+      todoDeleteBtn.addEventListener('click', async () => {
+        console.log('Delete button clicked');
+        console.log('Local currentTodoId:', currentTodoId);
+        console.log('Window currentTodoId:', window.currentTodoId);
+
+        const todoId = currentTodoId || window.currentTodoId;
+
+        if (!todoId) {
+          console.error('No todo ID found');
+          alert('Todo 정보를 찾을 수 없습니다.');
+          return;
+        }
+
         if (confirm('정말 삭제하시겠습니까?')) {
-          // 삭제 로직
-          axios
-            .delete(`/todo/api/delete/${currentTodoId}`)
-            .then(() => {
-              alert('삭제되었습니다.');
-              resetDetailForm();
-            })
-            .catch((error) => {
-              alert('삭제에 실패했습니다.');
-              console.error(error);
+          try {
+            const response = await axios.post('/todo/api/delete', {
+              id: todoId,
             });
+
+            if (response.data.status === 'success') {
+              alert('삭제되었습니다.');
+              detailPopup.classList.remove('on');
+              document.querySelector('body').classList.remove('pop_open');
+              window.location.reload();
+            } else {
+              throw new Error(response.data.message || '삭제에 실패했습니다.');
+            }
+          } catch (error) {
+            console.error('Todo 삭제 실패:', error);
+            alert(error.response?.data?.message || '삭제에 실패했습니다.');
+          }
         }
       });
     }
@@ -314,7 +363,15 @@
       todoSubmitBtn.addEventListener('click', async (event) => {
         event.preventDefault();
 
-        // 폼 데이터 가져오기
+        const todoId = currentTodoId || window.currentTodoId;
+        console.log('Current todo ID when submitting:', todoId);
+
+        if (!todoId) {
+          alert('Todo 정보를 찾을 수 없습니다.');
+          return;
+        }
+
+        // 폼 데이터 수집
         const todoTitle = detailForm
           .querySelector("input[name='todoTitle']")
           .value.trim();
@@ -343,22 +400,22 @@
 
         // API 요청 데이터 구성
         const formData = {
+          id: todoId,
           keyword_id: todoKey,
           title: todoTitle,
           priority: todoPriorityElem.value,
           date: todoDate,
-          content: Array.from(
-            detailForm.querySelectorAll('.todo_content input[name="todoCon"]'),
-          )
-            .map((input) => input.value.trim())
-            .filter((content) => content !== ''),
+          contents: Array.from(detailForm.querySelectorAll('.todo_content li'))
+            .map((li) => ({
+              id: li.dataset.contentId || null,
+              content: li.querySelector('input[name="todoCon"]').value.trim(),
+              state: li.querySelector('input[type="checkbox"]').checked,
+            }))
+            .filter((content) => content.content !== ''),
         };
 
         try {
-          const response = await axios.put(
-            `/todo/api/update/${currentTodoId}`,
-            formData,
-          );
+          const response = await axios.patch('/todo/api/edit', formData);
           alert('Todo가 성공적으로 수정되었습니다.');
           detailPopup.classList.remove('on');
           document.querySelector('body').classList.remove('pop_open');
@@ -366,6 +423,94 @@
         } catch (error) {
           console.error('Todo 수정 실패:', error);
           alert('Todo 수정 중 오류가 발생했습니다.');
+        }
+      });
+    }
+
+    // 달력 기능 구현
+    if (dateInput && calendarPopup) {
+      function generateCalendar() {
+        const today = new Date();
+        const currentYear = today.getFullYear();
+        const currentMonth = today.getMonth();
+        const daysInMonth = new Date(
+          currentYear,
+          currentMonth + 1,
+          0,
+        ).getDate();
+        const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+        const monthNames = [
+          'January',
+          'February',
+          'March',
+          'April',
+          'May',
+          'June',
+          'July',
+          'August',
+          'September',
+          'October',
+          'November',
+          'December',
+        ];
+
+        let html = `<div><strong>${monthNames[currentMonth]} ${currentYear}</strong></div>`;
+        html += '<table><tr>';
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach((day) => {
+          html += `<th>${day}</th>`;
+        });
+        html += '</tr><tr>';
+
+        for (let i = 0; i < firstDay; i++) {
+          html += '<td></td>';
+        }
+
+        for (let day = 1; day <= daysInMonth; day++) {
+          const date = new Date(currentYear, currentMonth, day);
+          const dateString = date.toISOString().split('T')[0];
+          const isDisabled = date < new Date(today.setHours(0, 0, 0, 0));
+
+          html += `
+          <td data-date="${dateString}" ${isDisabled ? 'class="disabled"' : ''}
+              style="cursor: ${isDisabled ? 'not-allowed' : 'pointer'}">
+            ${day}
+          </td>
+        `;
+
+          if ((day + firstDay) % 7 === 0) {
+            html += '</tr><tr>';
+          }
+        }
+
+        html += '</tr></table>';
+        calendarPopup.innerHTML = html;
+      }
+
+      dateInput.addEventListener('click', (e) => {
+        e.stopPropagation();
+        generateCalendar();
+        calendarPopup.style.display = 'block';
+      });
+
+      document.addEventListener('click', (e) => {
+        if (
+          calendarPopup.style.display === 'block' &&
+          !calendarPopup.contains(e.target) &&
+          e.target !== dateInput
+        ) {
+          calendarPopup.style.display = 'none';
+        }
+      });
+
+      calendarPopup.addEventListener('click', (e) => {
+        const td = e.target;
+        if (
+          td.tagName === 'TD' &&
+          !td.classList.contains('disabled') &&
+          td.dataset.date
+        ) {
+          dateInput.value = td.dataset.date;
+          calendarPopup.style.display = 'none';
         }
       });
     }

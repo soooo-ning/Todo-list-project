@@ -1,0 +1,198 @@
+<div class="container popup detail-popup">
+  <div class="pop_con">
+    <h3 class="sub_title">
+      <span>Todo Detail</span>
+    </h3>
+    <button type="button" class="pop_close">X</button>
+    <form name="form-todo-detail" method="post">
+      <label class="todo_title">
+        <input
+          type="text"
+          name="todoTitle"
+          placeholder="제목을 입력하세요"
+          required
+          disabled
+        />
+      </label>
+
+      <div class="todo_input">
+        <label class="calendar_input">
+          <input
+            type="text"
+            id="detail-datetime-input"
+            name="todoDate"
+            placeholder="날짜를 입력하세요"
+            readonly
+            disabled
+          />
+        </label>
+
+        <div class="priority">
+          <p>우선순위</p>
+          <label>
+            <input type="radio" name="priority" value="high" disabled />
+            상
+          </label>
+          <label>
+            <input type="radio" name="priority" value="medium" disabled />
+            중
+          </label>
+          <label>
+            <input type="radio" name="priority" value="low" disabled />
+            하
+          </label>
+        </div>
+
+        <label class="todo_key">
+          <p>키워드</p>
+          <select name="todoKey" required disabled></select>
+        </label>
+      </div>
+
+      <ul class="todo_content"></ul>
+
+      <button type="button" id="todoEdit">수정</button>
+      <button type="submit" id="todoSubmit" style="display: none">저장</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentTodoId = null;
+    const detailPopup = document.querySelector('.detail-popup');
+    const detailPopClose = detailPopup.querySelector('.pop_close');
+    const detailForm = document.forms['form-todo-detail'];
+    const todoEditBtn = document.getElementById('todoEdit');
+    const todoSubmitBtn = document.getElementById('todoSubmit');
+
+    // 팝업 닫기
+    detailPopClose.addEventListener('click', () => {
+      detailPopup.classList.remove('on');
+      document.querySelector('body').classList.remove('pop_open');
+      resetDetailForm();
+    });
+
+    // 폼 초기화
+    function resetDetailForm() {
+      detailForm.reset();
+      currentTodoId = null;
+      const todoContentList = detailForm.querySelector('.todo_content');
+      todoContentList.innerHTML = '';
+      enableFormEditing(false);
+      todoEditBtn.style.display = 'inline-block';
+      todoSubmitBtn.style.display = 'none';
+    }
+
+    // 폼 필드 활성화/비활성화
+    function enableFormEditing(enabled) {
+      const formElements = detailForm.elements;
+      for (let element of formElements) {
+        if (element.type !== 'button' && element.type !== 'submit') {
+          element.disabled = !enabled;
+        }
+      }
+    }
+
+    // 폼 데이터 채우기
+    function fillFormData(todo) {
+      if (!todo) return;
+
+      detailForm.todoTitle.value = todo.title || '';
+      detailForm.todoDate.value = todo.date || '';
+
+      if (todo.priority) {
+        const priorityInput = detailForm.querySelector(
+          `input[name="priority"][value="${todo.priority}"]`,
+        );
+        if (priorityInput) priorityInput.checked = true;
+      }
+
+      if (todo.keyword_id) {
+        const keywordSelect = detailForm.todoKey;
+        keywordSelect.value = todo.keyword_id;
+      }
+
+      const todoContentList = detailForm.querySelector('.todo_content');
+      todoContentList.innerHTML = '';
+
+      if (todo.TodoContents && Array.isArray(todo.TodoContents)) {
+        todo.TodoContents.forEach((content) => {
+          if (content) {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <label>
+                <input type="checkbox" name="todoChk" ${
+                  content.state ? 'checked' : ''
+                } disabled />
+                <input type="text" name="todoCon" value="${
+                  content.content || ''
+                }" disabled />
+              </label>
+            `;
+            todoContentList.appendChild(li);
+          }
+        });
+      }
+    }
+
+    // getTodo 함수를 전역으로 선언
+    window.getTodo = async function (todoId) {
+      try {
+        const response = await axios.get(`/todo/api/get/${todoId}`);
+        const todo = response.data.data;
+        currentTodoId = todoId;
+
+        detailPopup.classList.add('on');
+        document.querySelector('body').classList.add('pop_open');
+
+        if (todo) {
+          fillFormData(todo);
+        }
+
+        todoEditBtn.onclick = () => {
+          enableFormEditing(true);
+          todoEditBtn.style.display = 'none';
+          todoSubmitBtn.style.display = 'inline-block';
+        };
+      } catch (error) {
+        console.error('Todo 조회 실패:', error);
+        alert('Todo 조회 중 오류가 발생했습니다.');
+      }
+    };
+
+    // 수정 제출
+    detailForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      if (!currentTodoId) {
+        alert('수정할 Todo를 찾을 수 없습니다.');
+        return;
+      }
+
+      const formData = {
+        id: currentTodoId,
+        keyword_id: detailForm.todoKey.value,
+        title: detailForm.todoTitle.value.trim(),
+        priority: detailForm.querySelector('input[name="priority"]:checked')
+          .value,
+        date: detailForm.todoDate.value,
+        contents: Array.from(
+          detailForm.querySelectorAll('.todo_content input[name="todoCon"]'),
+        ).map((input) => ({
+          content: input.value.trim(),
+          state: input.previousElementSibling.checked,
+        })),
+      };
+
+      try {
+        await axios.patch('/todo/api/edit', formData);
+        alert('Todo가 성공적으로 수정되었습니다.');
+        window.location.reload();
+      } catch (error) {
+        console.error('Todo 수정 실패:', error);
+        alert('Todo 수정 중 오류가 발생했습니다.');
+      }
+    });
+  });
+</script>

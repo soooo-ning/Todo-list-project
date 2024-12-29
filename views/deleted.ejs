@@ -12,13 +12,15 @@
           <!-- 디버깅용 -->
           <% console.log('View todos:', todos); %> <% if (todos && todos.length
           > 0) { %>
-          <button
-            type="button"
-            id="restoreSelectedButton"
-            class="multiple-button"
-          >
-            선택 복구
-          </button>
+          <div class="btn_wrap">
+            <button
+              type="button"
+              id="restoreSelectedButton"
+              class="multiple-button"
+            >
+              선택 복구
+            </button>
+          </div>
 
           <% todos.forEach(function(todo) { %>
           <div class="card">

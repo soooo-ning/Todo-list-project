@@ -293,7 +293,7 @@ body.load::after {
   overflow: hidden;
 }
 .container.popup .pop_con > .sub_title {
-  width: calc(100% - 33px);
+  width: calc(100% - 34px);
   display: inline-block;
   vertical-align: top;
 }
@@ -483,6 +483,10 @@ a:after,
 body.dark-mode * a:after,
 .sidebar a:after {
   background: rgba(255, 255, 255, 0.2) !important;
+}
+.sidebar > a:after {
+  top: 3px;
+  height: 30px;
 }
 a:hover:after,
 .sidebar a:hover:after,

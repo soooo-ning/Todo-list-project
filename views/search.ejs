@@ -7,8 +7,14 @@
     <main class="container search_wrap">
       <div class="content">
         <h3 class="sub_title">
-          <span><%= query ? `${query} 검색 결과`'검색 결과' %></span>
+          <span
+            ><i class="search_tit"
+              >"<%= searchQuery ? `${searchQuery}` : ' ' %>"</i
+            >
+            검색 결과</span
+          >
         </h3>
+
         <!-- <h3 class="sub_title"><span>검색 결과</span></h3> -->
         <div class="card-container add" id="cardContainer"></div>
       </div>

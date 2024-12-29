@@ -12,6 +12,7 @@ body {
 } */
 
 /* navi */
+
 .sidebar {
   height: 100%;
   width: 300px;
@@ -55,9 +56,9 @@ body {
 }
 
 /* a {
-              text-decoration: none;
-              color: var(--text-color);
-            } */
+                text-decoration: none;
+                color: var(--text-color);
+              } */
 
 .naviBar {
   width: 100%;
@@ -227,12 +228,12 @@ body {
 #nicknameForm button {
 }
 /* input {
-              /* width: 20rem; 
-              max-width: 100%;
-              border: 1px solid darkgray;
-              border-radius: 30px;
-              padding: 5px 10px;
-            } */
+                /* width: 20rem; 
+                max-width: 100%;
+                border: 1px solid darkgray;
+                border-radius: 30px;
+                padding: 5px 10px;
+              } */
 
 .pwbox {
   display: flex;
@@ -257,14 +258,14 @@ body {
 }
 
 /* label {
-              display: flex;
-              margin: 10px 0px;
-              justify-content: center;
-            }
-            
-            span {
-              width: 150px;
-            } */
+                display: flex;
+                margin: 10px 0px;
+                justify-content: center;
+              }
+              
+              span {
+                width: 150px;
+              } */
 .getNewPwbox,
 .changePwbox {
   display: flex;
@@ -347,44 +348,110 @@ body.dark-mode * {
   border-color: #777 !important;
 }
 
-/* ==솝드== */
 /*search,keyword, deleted*/
+.sub_title span:first-child > i.search_tit {
+  font-style: normal;
+  font-size: 23px;
+  margin-right: 10px;
+  font-weight: 500;
+}
 .title {
   text-align: center;
   font-size: 2em;
   margin-bottom: 20px;
   color: #b8c0ff;
 }
+[class$='_wrap'].container .card-container.add {
+  margin-top: 30px;
+  justify-content: space-evenly;
+}
+[class$='_wrap'].container .card-container.add .card {
+  flex: none;
+  min-width: calc(33% - 20px);
+  width: auto;
+  border-radius: 20px;
+  box-shadow: 1px 3px 7px 2px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background: #fff;
+}
+[class$='_wrap'].container .card-container.add .card .card-title {
+  color: #555;
+  font-weight: 600;
+}
+[class$='_wrap'].container
+  .card-container.add
+  .card
+  .todo-list-all
+  li:first-child {
+  margin: 10px auto 0;
+  padding-top: 10px;
+  border-top: 1px dotted #999;
+}
+[class$='_wrap'].container
+  .card-container.add
+  .card
+  .todo-list-all
+  li.completed {
+  text-decoration: line-through;
+  color: #999;
+}
 
 .card-container {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 20px;
-  justify-content: flex-start;
-  align-items: flex-start;
-  overflow-x: auto;
-  padding: 10px;
+  justify-content: space-between;
+}
+.deleted_wrap .card-container.add {
+  justify-content: space-evenly;
+}
+.deleted_wrap .card-container.add .btn_wrap {
+  width: 100%;
+  text-align: right;
+  margin-bottom: 20px;
+}
+.deleted_wrap .card-container.add .card {
+  min-width: calc((100% / 3) - 20px);
+  width: auto;
+  flex: none;
+  border-radius: 20px;
+  box-shadow: 1px 3px 7px 2px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  background: #fff;
+}
+.deleted_wrap .card-container.add .card .card-header {
+  text-align: left;
+  display: flex;
+  gap: 0 5px;
+}
+.deleted_wrap .card-container.add .card .todo-list-all {
+}
+.deleted_wrap .card-container.add .card .todo-list-all li:first-child {
+  padding-top: 10px;
+  border-top: 1px dotted #999;
+}
+.deleted_wrap .card-container.add .card .todo-list-all li.completed {
+  text-decoration: line-through;
+  color: #888;
+}
+.keyword_wrap .no-todos,
+.deleted_wrap .card-container > .no-items {
+  width: 100%;
+  display: block;
+  font-size: 20px;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 20px;
 }
 
 .card {
-  /* flex: 0 0 calc(25% - 20px); */
-  width: 250px;
-  height: auto;
+  flex: 1 1 calc(33.333% - 20px);
   background: #fff;
+  /* padding: 20px; */
   border-radius: 15px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
+  /* box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); */
   box-sizing: border-box;
-  overflow: hidden;
-  border: 1px solid #eee;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
 }
-
-.card:hover {
-  transform: scale(1.05);
-}
-
 .card-container.add .card {
   padding: 20px;
 }
@@ -396,12 +463,12 @@ body.dark-mode * {
   font-weight: 500;
 }
 
-.card-container.add .card .todo-list-all {
+.card-container.add .card .todo-list {
   border: 1px solid #eee;
   border-radius: 0;
 }
 
-.todo-list-all {
+.todo-list {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -409,7 +476,7 @@ body.dark-mode * {
   overflow-y: auto;
 }
 
-.todo-list-all li {
+.todo-list li {
   background: #f9f9f9;
   margin-bottom: 10px;
   padding: 10px;
@@ -417,42 +484,17 @@ body.dark-mode * {
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.todo-list-all li.completed {
+.todo-list li.completed {
   text-decoration: line-through;
   color: #888;
 }
-
-@media (max-width: 1024px) {
-  .card {
-    flex: 0 0 calc(33.33% - 20px); /* 3개씩 표시 */
-  }
-}
-
-@media (max-width: 768px) {
-  .card {
-    flex: 0 0 calc(50% - 20px); /* 2개씩 표시 */
-  }
-}
-
-@media (max-width: 480px) {
-  .card {
-    flex: 0 0 calc(100% - 20px); /* 1개씩 표시 */
-  }
-}
-
-/* .no-todos {
-  text-align: center;
-  font-size: 1.2em;
-  margin-top: 20px;
-  color: #888;
-} */
 
 .recover-button {
   display: block;
   width: 100%;
   padding: 10px;
   background-color: #b8c0ff;
-  color: black;
+  color: #333;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -460,14 +502,21 @@ body.dark-mode * {
   margin-top: 20px;
 }
 
-.multiple-button {
-  padding: 10px 20px;
-  border: none;
-  background-color: #b8c0ff;
-  color: black;
-  cursor: pointer;
-  margin-right: 10px;
-}
+/* .recover-button:hover {
+    background-color: #bbd0ff;
+  } */
+
+/* @media (max-width: 768px) {
+                .card {
+                  flex: 1 1 calc(50% - 20px);
+                }
+              }
+              
+              @media (max-width: 480px) {
+                .card {
+                  flex: 1 1 100%;
+                }
+              } */
 
 /*dash*/
 .container-fluid {
@@ -497,13 +546,25 @@ body.dark-mode * {
   background: linear-gradient(180deg, #f5f5f5, rgba(245, 245, 245, 0.1));
   padding-bottom: 10px;
 }
+.card {
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+}
 
 .card h5 {
   font-size: 1.25rem;
 }
 
+.custom-progress {
+  /* background-color: #ebf8f667; */
+}
+
 .progress-container {
   margin-top: 20px;
+}
+
+.summary,
+.today-todos {
+  /* margin: 20px 0; */
 }
 
 .progress-bar {
@@ -552,9 +613,16 @@ body.dark-mode * {
   text-align: center;
   line-height: 30px;
 }
-
 /* ==솝드== */
 /* dash/날씨 */
+.multiple-button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #b8c0ff;
+  color: black;
+  cursor: pointer;
+  margin-right: 10px;
+}
 .weather-container {
   margin-top: 10px;
 }
@@ -586,16 +654,45 @@ body.dark-mode * {
   font-weight: bold;
   margin-top: 10px;
 }
-
-/* ==솝드== */
 /*calendar*/
+.calendar_wrap .calendar {
+  max-width: 70%;
+  margin: 0 auto 50px;
+}
+.calendar_wrap .calendar .date {
+  background: transparent !important;
+  padding: 2vh 1vw;
+}
+.calendar_wrap .calendar .date.bg {
+  overflow: hidden;
+}
+.calendar_wrap .calendar .date.bg:after {
+  content: '';
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: #c8b6ff;
+  border-radius: 50%;
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.calendar_wrap .calendar .dates {
+  margin-top: 10px;
+}
+
+.calendar_wrap .calendar + .todo-list {
+  max-width: 50%;
+  margin: 0 auto;
+  max-height: unset;
+}
 .calendar {
-  width: 700px;
+  width: auto;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 10px #b8c0ff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   padding: 30px;
-  margin-top: 200px; /*!!50px*/
 }
 
 .header {
@@ -606,7 +703,6 @@ body.dark-mode * {
   align-items: center;
   padding: 10px 20px;
   background-color: #c8b6ff;
-  border-radius: 12px;
   color: white;
 }
 
@@ -622,17 +718,6 @@ body.dark-mode * {
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
   gap: 15px;
-}
-
-.days div,
-.dates div {
-  aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  padding: 5px;
-  transition: background-color 0.3s;
 }
 
 .day {
@@ -654,7 +739,7 @@ body.dark-mode * {
 .date {
   padding: 20px;
   font-size: 18px;
-  border-radius: 50%;
+  /* border-radius: 50%; */
   cursor: pointer;
   transition: background-color 0.3s;
   position: relative;
@@ -664,40 +749,21 @@ body.dark-mode * {
   background-color: #f0f0f0;
 }
 
-/* .date[data-has-todo='true'] {
-  color: #fff;
-  font-weight: bold;
-  border-radius: 50%;
-  aspect-ratio: 1 / 1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-} */
-
 .today {
   background-color: black;
   color: white;
 }
 
 .todo-list {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
   margin-top: 20px;
-  padding: 30px;
-  flex-wrap: wrap;
+  padding: 20px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 4px 10px #c8b6ff;
-  width: 700px;
-  height: auto;
-  text-align: center;
-  /* height: 100px;
-  width: auto; */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: auto;
 }
 
-/* .todo-list h3 {
+.todo-list h3 {
   margin: 0;
   margin-bottom: 15px;
   font-size: 24px;
@@ -707,31 +773,17 @@ body.dark-mode * {
   list-style: none;
   padding: 0;
   margin: 0;
-} */
-
-/* .todo-list ul {
-  list-style: none;
-  padding: 0;
-  margin: 20px 0 0;
-  max-height: 300px;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-} */
+}
 
 .todo-list ul li {
-  width: 300px;
-  background: #e7c6ff4b;
-  margin: 10px;
+  background: #f0f0f0;
+  margin: 8px 0;
   padding: 12px;
   font-size: 18px;
   border-radius: 5px;
-  text-align: center;
-  list-style: none;
 }
 
-/* .flex_wrap {
+.flex_wrap {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -751,7 +803,7 @@ body.dark-mode * {
 }
 .flex_wrap.sb {
   justify-content: space-between;
-} */
+}
 
 #todayTodos {
   flex-wrap: wrap;
@@ -945,6 +997,9 @@ body.dark-mode * {
   .container-fluid > * {
     width: 100%;
   }
+  [class$='_wrap'].container .card-container.add .card {
+    min-width: calc(50% - 20px);
+  }
 }
 
 @media (max-width: 720px) {
@@ -959,6 +1014,11 @@ body.dark-mode * {
   input[type='checkbox'] {
     width: 15px;
     height: 15px;
+  }
+  [class$='_wrap'].container .card-container.add .card {
+    min-width: unset;
+    width: 100%;
+    text-align: center;
   }
   .container.popup * {
     font-size: 14px;
@@ -1001,7 +1061,16 @@ body.dark-mode * {
   .container .main_title {
     font-size: 6vw;
   }
+  .calendar_wrap .calendar {
+    max-width: 100%;
+  }
+  .calendar_wrap .calendar .date {
+    padding: 2vh 0;
+  }
+  .calendar_wrap .calendar + .todo-list {
+    max-width: 80%;
+  }
   /* .minusKeywordBtn {
-    visibility: visible;
-  } */
+      visibility: visible;
+    } */
 }

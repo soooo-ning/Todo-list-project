@@ -15,7 +15,7 @@
         </h3>
         <div class="card-container add">
           <% if (todos && todos.length > 0) { %> <% todos.forEach((todo) => { %>
-          <div class="card">
+          <div class="card" data-id="<%= todo.id %>">
             <div class="card-title"><%= todo.title %></div>
             <% if (todo.todo_contents && todo.todo_contents.length > 0) { %>
             <ul class="todo-list-all">
@@ -33,15 +33,97 @@
         </div>
       </div>
     </main>
+
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
+
     <script>
+      window.handleTodoClick = async function (todoId) {
+        if (!todoId) {
+          console.error('Todo ID is required');
+          return;
+        }
+
+        try {
+          const response = await axios.get(`/todo/api/get/${todoId}`);
+          const todo = response.data.data;
+
+          if (!todo) {
+            throw new Error('Todo 데이터를 불러오지 못했습니다.');
+          }
+
+          // 팝업 데이터 채우기
+          const detailPopup = document.querySelector('.detail-popup');
+          const detailForm = document.forms['form-todo-detail'];
+
+          detailForm.elements['todoTitle'].value = todo.title || '';
+          detailForm.elements['todoDate'].value = todo.date || '';
+
+          const priorityInput = detailForm.querySelector(
+            `input[name="priority"][value="${todo.priority}"]`,
+          );
+          if (priorityInput) priorityInput.checked = true;
+
+          const keywordSelect = detailForm.elements['todoKey'];
+          if (keywordSelect) keywordSelect.value = todo.keyword_id || '';
+
+          // Todo Content 채우기
+          const todoContentList = detailForm.querySelector('.todo_content');
+          todoContentList.innerHTML = '';
+          if (todo.todo_contents && todo.todo_contents.length > 0) {
+            todo.todo_contents.forEach((content) => {
+              addContentItem(content);
+            });
+          } else {
+            addContentItem(); // 빈 내용 추가
+          }
+
+          // 팝업 열기
+          detailPopup.classList.add('on');
+          document.body.classList.add('pop_open');
+        } catch (error) {
+          console.error('Failed to load todo details:', error);
+          alert('Todo 상세 정보를 불러오는 데 실패했습니다.');
+        }
+      };
+
+      // 내용 항목 추가 함수
+      function addContentItem(
+        content = { id: null, content: '', state: false },
+      ) {
+        const todoContentList = document.querySelector('.todo_content');
+        if (!todoContentList) return;
+
+        const li = document.createElement('li');
+        li.dataset.contentId = content.id || '';
+        li.innerHTML = `
+    <label>
+      <input type="checkbox" name="todoChk" ${
+        content.state ? 'checked' : ''
+      } disabled>
+      <input type="text" name="todoCon" value="${escapeHtml(
+        content.content || '',
+      )}" placeholder="할일을 입력하세요" disabled>
+    </label>
+  `;
+        todoContentList.appendChild(li);
+      }
+
       document.addEventListener('DOMContentLoaded', () => {
+        // 제목 클릭
         document.querySelectorAll('.card').forEach((card) => {
-          card.addEventListener('click', () => {
-            const id = card.getAttribute('data-id');
-            if (id) {
-              // detail-popup.ejs
-              window.location.href = `/detail-popup?id=${id}`;
+          card.addEventListener('click', async () => {
+            const todoId = card.dataset.id; // data에서 todoId
+
+            if (!todoId) {
+              console.error('Todo ID is missing.');
+              return;
+            }
+
+            // handle 함수 호출
+            if (window.handleTodoClick) {
+              window.handleTodoClick(todoId);
+            } else {
+              console.error('handleTodoClick 함수가 정의되지 않았습니다.');
             }
           });
         });

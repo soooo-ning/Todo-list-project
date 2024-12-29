@@ -18,7 +18,7 @@
           <div class="card">
             <div class="card-title"><%= todo.title %></div>
             <% if (todo.todo_contents && todo.todo_contents.length > 0) { %>
-            <ul class="todo-list">
+            <ul class="todo-list-all">
               <% todo.todo_contents.forEach((content) => { %>
               <li class="<%= content.state ? 'completed' : '' %>">
                 <%= content.content %>
@@ -33,7 +33,19 @@
         </div>
       </div>
     </main>
-
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.card').forEach((card) => {
+          card.addEventListener('click', () => {
+            const id = card.getAttribute('data-id');
+            if (id) {
+              // detail-popup.ejs
+              window.location.href = `/detail-popup?id=${id}`;
+            }
+          });
+        });
+      });
+    </script>
   </body>
 </html>

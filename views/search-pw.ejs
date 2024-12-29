@@ -4,7 +4,7 @@
   <body>
     <div class="main_wrap">
       <div class="main_img">
-        <h1 class="main_title">Todo Checkk</h1>
+        <a href="/" class="main_title">Todo Checkk</a>
       </div>
       <div class="main_con">
         <h3 class="sub_title">
@@ -23,13 +23,24 @@
 
           <button type="submit">임시 비밀번호 발급</button>
         </form>
-
-        <div class="link">
-          <a href="/">로그인</a>
-        </div>
       </div>
     </div>
     <script>
+      // 각 인풋 필드를 배열로 저장
+      const inputs = document.querySelectorAll('input');
+
+      // 'Enter' 키가 눌렸을 때 포커스를 다음 인풋으로 이동시키는 함수
+      inputs.forEach((input, index) => {
+        input.addEventListener('keydown', function (event) {
+          if (event.key === 'Enter') {
+            event.preventDefault(); // Enter 키의 기본 동작(폼 제출)을 막음
+            if (inputs[index + 1]) {
+              inputs[index + 1].focus(); // 다음 인풋으로 포커스를 이동
+            }
+          }
+        });
+      });
+
       // 폼 제출 이벤트 처리
       document.forms['form-find'].addEventListener('submit', function (event) {
         event.preventDefault();

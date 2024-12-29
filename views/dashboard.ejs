@@ -104,30 +104,32 @@
 
           <!-- 우선순위 -->
           <div class="card-body">
-            <h5 class="card-title">우선순위</h5>
-            <div class="priority">
-              <p>우선순위</p>
-              <button
-                type="button"
-                class="high btn-outline-danger btn-sm"
-                onclick="fetchPriorityTodos('high')"
-              >
-                상
-              </button>
-              <button
-                type="button"
-                class="medium btn-outline-danger btn-sm"
-                onclick="fetchPriorityTodos('medium')"
-              >
-                중
-              </button>
-              <button
-                type="button"
-                class="low btn-outline-danger btn-sm"
-                onclick="fetchPriorityTodos('low')"
-              >
-                하
-              </button>
+            <div class="flex_wrap sb">
+              <h5 class="card-title">우선순위</h5>
+              <div class="priority">
+                <p>우선순위</p>
+                <button
+                  type="button"
+                  class="high btn-outline-danger btn-sm"
+                  onclick="fetchPriorityTodos('high')"
+                >
+                  상
+                </button>
+                <button
+                  type="button"
+                  class="medium btn-outline-danger btn-sm"
+                  onclick="fetchPriorityTodos('medium')"
+                >
+                  중
+                </button>
+                <button
+                  type="button"
+                  class="low btn-outline-danger btn-sm"
+                  onclick="fetchPriorityTodos('low')"
+                >
+                  하
+                </button>
+              </div>
             </div>
             <div id="todos"></div>
           </div>
@@ -448,6 +450,7 @@
             const iconClass = weatherIconMap[weatherMain] || 'wi-na';
 
             weatherContainer.innerHTML = `
+
           <h2>${data.name}</h2>
           <p>온도: ${data.main.temp}°C</p>
           <p>상태: ${data.weather[0].description}</p>

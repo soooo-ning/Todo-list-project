@@ -203,8 +203,6 @@ exports.kakaoCallback = (req, res, next) => {
 
         return res.redirect('/todo/dashboard'); // 대시보드로 리다이렉트
       });
-    } else {
-      return res.redirect('/user/reset-pw'); // 사용자 없음, 비밀번호 재설정 페이지로 리다이렉트
     }
   })(req, res, next);
 };

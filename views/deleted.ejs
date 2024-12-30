@@ -30,7 +30,10 @@
                 class="select-checkbox"
                 value="<%= todo.id %>"
               />
-              <div class="card-title">
+              <div
+                class="card-title"
+                onclick="handleTodoClick('<%= todo.id %>')"
+              >
                 <%= todo.title %> <% if (todo.deleted_at) { %>
                 <span class="delete-date"
                   >삭제일: <%= new Date(todo.deleted_at).toLocaleDateString()
@@ -71,11 +74,33 @@
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
 
     <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const cards = document.querySelectorAll('.card');
-        console.log('Found cards:', cards.length); // 디버깅용
+      // 팝업 함수
+      window.handleTodoClick = async function (todoId) {
+        if (!todoId) {
+          console.error('Todo ID is required');
+          return;
+        }
 
-        // 개별 복구 버튼 이벤트
+        try {
+          const response = await axios.get(`/todo/api/get/${todoId}`);
+          const todo = response.data.data;
+
+          const detailPopup = document.querySelector('.detail-popup');
+          const detailForm = document.forms['form-todo-detail'];
+
+          detailForm.elements['todoTitle'].value = todo.title || '';
+          detailForm.elements['todoDate'].value = todo.date || '';
+          detailForm.elements['priority'].value = todo.priority || '';
+
+          detailPopup.classList.add('on');
+          document.body.classList.add('pop_open');
+        } catch (error) {
+          console.error('Failed to load todo details:', error);
+        }
+      };
+
+      document.addEventListener('DOMContentLoaded', () => {
+        // 복구 버튼
         document.querySelectorAll('.recover-button').forEach((button) => {
           button.addEventListener('click', async function () {
             const id = this.dataset.id;

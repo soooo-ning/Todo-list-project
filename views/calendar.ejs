@@ -160,7 +160,11 @@
           todoTitle.onclick = (e) => {
             e.preventDefault(); // 기본 이벤트 방지
             e.stopPropagation(); // 이벤트 전파 방지
-            getTodo(todo.id);
+            if (window.handleTodoClick) {
+              window.handleTodoClick(todo.id);
+            } else {
+              console.error('handleTodoClick 함수가 오류났습니다.');
+            }
           };
 
           li.appendChild(todoTitle);

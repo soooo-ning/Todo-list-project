@@ -627,9 +627,6 @@ body.dark-mode * {
   margin-top: 10px;
 }
 
-.weather-container > img {
-  margin: 0 auto;
-}
 .weather-container p {
   font-size: 1.1em;
   margin: 5px 0;
@@ -876,14 +873,13 @@ body.dark-mode * {
   flex-wrap: wrap;
   align-items: center;
   gap: 10px;
-  justify-content: space-between;
+  justify-content: space-evenly;
 }
 .card-body .priority-todos li {
   width: calc((100% / 3) - 10px);
   border: 1px solid #999;
   padding: 10px;
   border-radius: 10px;
-  flex-grow: 1;
 }
 
 /* 지원 ------------ */

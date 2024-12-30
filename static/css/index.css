@@ -627,6 +627,9 @@ body.dark-mode * {
   margin-top: 10px;
 }
 
+.weather-container > img {
+  margin: 0 auto;
+}
 .weather-container p {
   font-size: 1.1em;
   margin: 5px 0;
@@ -807,7 +810,7 @@ body.dark-mode * {
 
 #todayTodos {
   flex-wrap: wrap;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: stretch;
   align-content: space-around;
 }
@@ -817,7 +820,6 @@ body.dark-mode * {
   padding: 10px;
   border-radius: 10px;
   text-align: center;
-  flex-grow: 1;
 }
 #todayTodos li > div .todo-contents .todo-content.incomplete:first-child {
   /* width: 70%; */

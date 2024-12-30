@@ -192,17 +192,40 @@ exports.googleCallback = (req, res, next) => {
 
 // Kakao OAuth 콜백
 exports.kakaoCallback = (req, res, next) => {
+  console.log('Kakao OAuth callback initiated'); // 콜백 시작 로그
+
   passport.authenticate('kakao', (err, user, info) => {
+    if (err) {
+      console.error('Authentication error:', err); // 인증 오류 로그
+      return res
+        .status(500)
+        .json({ message: 'Authentication failed', error: err }); // 에러 응답
+    }
+
     if (user) {
-      req.logIn(user, () => {
+      console.log('User authenticated:', user); // 인증된 사용자 정보 로그
+
+      req.logIn(user, (loginErr) => {
+        if (loginErr) {
+          console.error('Login error:', loginErr); // 로그인 오류 로그
+          return res
+            .status(500)
+            .json({ message: 'Login failed', error: loginErr }); // 에러 응답
+        }
+
+        // 로그인 성공 후 사용자 정보를 세션에 저장
         req.session.user = {
           id: user.id,
           nickname: user.nickname,
           email: user.email,
         };
 
+        console.log('User logged in, redirecting to /todo/dashboard'); // 로그인 성공 로그
         return res.redirect('/todo/dashboard'); // 대시보드로 리다이렉트
       });
+    } else {
+      console.log('No user found, redirecting to /user/profile'); // 사용자 없음 로그
+      return res.redirect('/todo/dashboard'); // 사용자 없음 처리
     }
   })(req, res, next);
 };

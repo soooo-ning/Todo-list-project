@@ -35,7 +35,17 @@
     </main>
 
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
-
+    <script>
+      function escapeHtml(string) {
+        if (!string) return '';
+        return string
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+    </script>
     <script>
       window.handleTodoClick = async function (todoId) {
         if (!todoId) {
@@ -85,6 +95,27 @@
           alert('Todo 상세 정보를 불러오는 데 실패했습니다.');
         }
       };
+
+      function addContentItem(
+        content = { id: null, content: '', state: false },
+      ) {
+        const todoContentList = document.querySelector('.todo_content');
+        if (!todoContentList) return;
+
+        const li = document.createElement('li');
+        li.dataset.contentId = content.id || '';
+        li.innerHTML = `
+    <label>
+      <input type="checkbox" name="todoChk" ${
+        content.state ? 'checked' : ''
+      } disabled>
+      <input type="text" name="todoCon" value="${escapeHtml(
+        content.content || '',
+      )}" placeholder="할일을 입력하세요" disabled>
+    </label>
+  `;
+        todoContentList.appendChild(li);
+      }
 
       // 내용 항목 추가 함수
       function addContentItem(

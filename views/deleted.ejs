@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-  <%- include('include/header', { title: 'deleted' })%>
+  <%- include('include/header', { title: 'deleted' }) %>
   <body>
     <!-- 네비게이션 부분 -->
     <nav class="nav"><%- include('include/navi') %></nav>
@@ -9,9 +9,7 @@
       <div class="content">
         <h3 class="sub_title"><span>휴지통</span></h3>
         <div class="card-container add">
-          <!-- 디버깅용 -->
-          <% console.log('View todos:', todos); %> <% if (todos && todos.length
-          > 0) { %>
+          <% if (todos && todos.length > 0) { %>
           <div class="btn_wrap">
             <button
               type="button"
@@ -35,10 +33,9 @@
                 onclick="handleTodoClick('<%= todo.id %>')"
               >
                 <%= todo.title %> <% if (todo.deleted_at) { %>
-                <span class="delete-date"
-                  >삭제일: <%= new Date(todo.deleted_at).toLocaleDateString()
-                  %></span
-                >
+                <span class="delete-date">
+                  삭제일: <%= new Date(todo.deleted_at).toLocaleDateString() %>
+                </span>
                 <% } %>
               </div>
             </div>
@@ -72,7 +69,18 @@
     </main>
 
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
-
+    <script>
+      // escapeHtml 함수 정의
+      function escapeHtml(string) {
+        if (!string) return '';
+        return string
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      }
+    </script>
     <script>
       // 팝업 함수
       window.handleTodoClick = async function (todoId) {

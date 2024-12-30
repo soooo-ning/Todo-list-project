@@ -41,7 +41,6 @@
     </main>
 
     <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
-
     <script>
       const monthYear = document.getElementById('monthYear');
       const datesContainer = document.getElementById('dates');
@@ -183,6 +182,29 @@
       });
 
       renderCalendar();
+      window.handleTodoClick = async function (todoId) {
+        if (!todoId) {
+          console.error('Todo ID is required');
+          return;
+        }
+
+        try {
+          const response = await axios.get(`/todo/api/get/${todoId}`);
+          const todo = response.data.data;
+
+          const detailPopup = document.querySelector('.detail-popup');
+          const detailForm = document.forms['form-todo-detail'];
+
+          detailForm.elements['todoTitle'].value = todo.title || '';
+          detailForm.elements['todoDate'].value = todo.date || '';
+          detailForm.elements['priority'].value = todo.priority || '';
+
+          detailPopup.classList.add('on');
+          document.body.classList.add('pop_open');
+        } catch (error) {
+          console.error('Failed to load todo details:', error);
+        }
+      };
     </script>
   </body>
 </html>

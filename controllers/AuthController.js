@@ -224,8 +224,8 @@ exports.kakaoCallback = (req, res, next) => {
         return res.redirect('/todo/dashboard'); // 대시보드로 리다이렉트
       });
     } else {
-      console.log('No user found, redirecting to /user/profile'); // 사용자 없음 로그
-      return res.redirect('/todo/dashboard'); // 사용자 없음 처리
+      console.log('No user found, redirecting to /404'); // 사용자 없음 로그
+      return res.redirect('/404'); // 사용자 없음 처리
     }
   })(req, res, next);
 };

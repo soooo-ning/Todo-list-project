@@ -108,6 +108,10 @@ const passportConfig = (app) => {
   );
 
   passport.serializeUser((user, done) => {
+    if (!user) {
+      console.error('User is undefined during serialization'); // 사용자 정의 확인 로그
+      return done(new Error('User is not defined'));
+    }
     console.log('Serializing user:', user.id); // 사용자 직렬화 로그
     done(null, user.id);
   });

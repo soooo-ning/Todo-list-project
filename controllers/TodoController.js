@@ -18,15 +18,14 @@ exports.writeTodo = async (req, res) => {
       date,
     });
 
-    if (content) {
-      const contentArray = Array.isArray(content) ? content : [content];
-      await TodoContent.bulkCreate(
-        contentArray.map((c) => ({
-          todo_id: todo.id,
-          content: c,
-          state: c.state === 'true',
-        })),
-      );
+    if (content && content.length > 0) {
+      const contentData = content.map((item) => ({
+        todo_id: todo.id,
+        content: typeof item === 'string' ? item : item.content,
+        state: typeof item === 'string' ? false : !!item.state,
+      }));
+
+      await TodoContent.bulkCreate(contentData);
     }
 
     success(res, todo, 'Todo 생성 완료');
@@ -43,7 +42,20 @@ exports.getTodo = async (req, res) => {
 
     const todo = await Todo.findOne({
       where: { id },
-      include: [TodoContent, Keyword, User],
+      include: [
+        {
+          model: TodoContent,
+          attributes: ['id', 'content', 'state'],
+        },
+        {
+          model: Keyword,
+          attributes: ['id', 'keyword'],
+        },
+        {
+          model: User,
+          attributes: ['id', 'nickname'],
+        },
+      ],
     });
 
     if (!todo) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
@@ -107,16 +119,22 @@ exports.editTodo = async (req, res) => {
 exports.deleteTodo = async (req, res) => {
   try {
     const { id } = req.body;
+    console.log('Received delete request for id:', id);
 
     const [deleted] = await Todo.update(
       { deleted: true, deleted_at: new Date() },
       { where: { id } },
     );
 
-    if (!deleted) return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+    if (!deleted) {
+      console.log('Todo not found for id:', id);
+      return notFound(res, null, 'Todo를 찾을 수 없습니다.');
+    }
 
+    console.log('Todo deleted successfully');
     success(res, null, 'Todo 삭제 완료');
   } catch (err) {
+    console.error('Error deleting todo:', err);
     serverError(res, err);
   }
 };
@@ -155,7 +173,7 @@ exports.todayTodo = async (req, res) => {
         },
       ],
       attributes: ['id', 'title', 'date'],
-      raw: false, // raw: true 제거
+      raw: false,
     });
 
     const plainTodos = todos.map((todo) => todo.get({ plain: true }));
@@ -187,9 +205,9 @@ exports.weekTodos = async (req, res) => {
           [Op.between]: [startOfWeek, endOfWeek],
         },
       },
-      attributes: ['title', 'date'],
+      attributes: ['id', 'title', 'date'],
       order: [['date', 'ASC']],
-      raw: false, // raw: true 제거
+      raw: false,
     });
 
     const plainTodos = todos.map((todo) => todo.get({ plain: true }));
@@ -315,12 +333,12 @@ exports.searchTodos = async (req, res) => {
       include: [
         {
           model: TodoContent,
-          attributes: ['id', 'content', 'state'], // 필요한 필드만 선택
+          attributes: ['id', 'content', 'state'],
           as: 'todo_contents',
         },
       ],
-      attributes: ['id', 'title', 'date', 'priority'], // 필요한 필드만 선택
-      order: [['date', 'DESC']], // 최신순 정렬 추가
+      attributes: ['id', 'title', 'date', 'priority'],
+      order: [['date', 'DESC']],
     });
 
     success(res, todos, '검색 결과 조회 성공');

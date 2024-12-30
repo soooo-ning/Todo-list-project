@@ -40,7 +40,7 @@
       </div>
     </main>
 
-    <%- include('include/popup') %>
+    <%- include('include/write-popup') %> <%- include('include/detail-popup') %>
 
     <script>
       const monthYear = document.getElementById('monthYear');
@@ -89,7 +89,18 @@
           );
 
           if (todosForDate.length > 0) {
-            dateDiv.style.backgroundColor = '#e7c6ff';
+            dateDiv.classList.add('bg');
+            if (
+              window.matchMedia &&
+              window.matchMedia('(prefers-color-scheme: dark)').matches
+            ) {
+              // 다크 모드
+              dateDiv.style.backgroundColor = '#ffffff';
+              dateDiv.style.color = '#000000';
+            } else {
+              // 라이트 모드
+              dateDiv.style.backgroundColor = '#e7c6ff5b';
+            }
           }
 
           datesContainer.appendChild(dateDiv);
@@ -135,14 +146,28 @@
 
         todosForDate.forEach((todo) => {
           const li = document.createElement('li');
-          const link = document.createElement('a');
-          link.href = `/todo/${todo.id}`;
-          // todo.title이 있으면 그것을 사용하고, 없으면 TodoContent의 첫 번째 항목의 content를 사용
-          link.textContent =
+          li.classList.add('todo-item'); // 스타일링을 위한 클래스 추가
+
+          // a 태그 대신 div로 변경하고 클릭 이벤트 추가
+          const todoTitle = document.createElement('div');
+          todoTitle.style.cursor = 'pointer'; // 클릭 가능함을 표시
+          todoTitle.textContent =
             todo.title ||
             (todo.TodoContents && todo.TodoContents[0]?.content) ||
             '제목 없음';
-          li.appendChild(link);
+
+          // 클릭 이벤트에 getTodo 함수 연결
+          todoTitle.onclick = (e) => {
+            e.preventDefault(); // 기본 이벤트 방지
+            e.stopPropagation(); // 이벤트 전파 방지
+            if (window.handleTodoClick) {
+              window.handleTodoClick(todo.id);
+            } else {
+              console.error('handleTodoClick 함수가 오류났습니다.');
+            }
+          };
+
+          li.appendChild(todoTitle);
           todoItems.appendChild(li);
         });
       }

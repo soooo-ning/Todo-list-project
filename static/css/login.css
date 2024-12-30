@@ -275,7 +275,7 @@ body.load::after {
   display: none;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.5) !important;
   padding: 0;
   justify-content: space-evenly;
   align-items: center;
@@ -293,13 +293,16 @@ body.load::after {
   overflow: hidden;
 }
 .container.popup .pop_con > .sub_title {
-  width: calc(100% - 20px);
+  width: calc(100% - 34px);
   display: inline-block;
+  vertical-align: top;
 }
 .container.popup .pop_con > .sub_title + .pop_close {
-  font-size: 27px;
-  font-weight: 500;
-  font-family: initial;
+  font-size: 0;
+  width: 30px;
+  height: 30px;
+  background: url(../../static/img/close.png) no-repeat center !important;
+  background-size: 30px auto !important;
 }
 .container.popup .pop_con > form {
   max-width: unset;
@@ -480,6 +483,10 @@ a:after,
 body.dark-mode * a:after,
 .sidebar a:after {
   background: rgba(255, 255, 255, 0.2) !important;
+}
+.sidebar > a:after {
+  top: 3px;
+  height: 30px;
 }
 a:hover:after,
 .sidebar a:hover:after,
